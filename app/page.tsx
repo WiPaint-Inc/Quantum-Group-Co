@@ -106,7 +106,7 @@ async function HomeBody() {
         <RoboticsChapter />
       </Suspense>
 
-      <BuildLive draft={draft} />
+      <BuildLive />
 
       <StoryHalves />
       <div className="grid gap-4 px-6 md:grid-cols-2 md:px-14">

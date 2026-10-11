@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { BuildLive } from "@/components/client/BuildLive";
 import { PortalView } from "@/components/client/PortalView";
 import { PageIntro } from "@/components/site/PageIntro";
-import { draftContentEnabled } from "@/lib/flags";
 
 export const metadata: Metadata = {
   title: "Portal",
@@ -28,7 +27,7 @@ async function PortalBody() {
         title="The private project."
         lede="Nothing private is stored here. The sample below is Demo Villa, a concept only."
       />
-      <BuildLive draft={draftContentEnabled()} nested />
+      <BuildLive nested />
       <PortalView />
     </main>
   );

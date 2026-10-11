@@ -11,6 +11,7 @@ export function GET() {
     resources: {
       company: "/api/company",
       services: "/api/services",
+      clientExperience: "/api/client-experience",
       portfolio: "/api/portfolio",
       estates: "/api/estates",
       renders: "/api/renders",

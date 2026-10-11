@@ -65,6 +65,7 @@ export const markers: Marker[] = [
   { key: "contact-social", kind: "PLACEHOLDER", page: "Contact", needed: "Social links." },
   { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "leadership names/titles, if owner wants them shown" },
   { key: "representative", kind: "PLACEHOLDER", page: "Your Build, Live", needed: "Name of the designated Representative, if one should be shown." },
+  { key: "client-app", kind: "CONFIRM", page: "Your Build, Live", needed: "the client project app is not built yet. Confirm launch timing and platform (iOS/Android/web) before go-live." },
   { key: "eco-credentials", kind: "PLACEHOLDER", page: "About", needed: "eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it." },
 ];
 
@@ -324,15 +325,24 @@ export const robotics = {
 export const buildLive = {
   kicker: "Your Build, Live",
   title: "Your build, live.",
-  lede: "Weekly progress, a WhatsApp channel, a Slack channel, and a weekly video meeting. The service is customised per client, with a designated Representative and a private project app.",
-  points: [
-    "Weekly progress updates",
-    "WhatsApp and Slack channels",
-    "Weekly video meetings",
-    "A service customised per client",
-    "A designated Representative",
-    "A private project app",
+  headline:
+    "Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Wherever you are, you never miss a moment of your build.",
+  href: "/client",
+  offerings: [
+    { id: "weekly-progress", title: "Weekly progress updates", detail: "Photo and progress reporting every week." },
+    { id: "channels", title: "WhatsApp and Slack", detail: "A WhatsApp channel and a Slack channel for each client." },
+    { id: "video-meetings", title: "Weekly video meetings", detail: "A video meeting every week." },
+    { id: "custom-service", title: "Service customised to each client", detail: "The service is shaped to each client's preferences." },
+    { id: "private-app", title: "A private project app", detail: "Each client gets their own private project app." },
   ],
+  kept: [
+    { id: "shared-folder", title: "Shared project folder", detail: "Invoices, change orders, colour schedules and payments, in one folder." },
+    { id: "room-estimates", title: "Cost-per-room estimates", detail: "Estimates with costs by room and surface." },
+    { id: "materials", title: "Materials management", detail: "Materials managed through the build, with samples kept for a later repair." },
+    { id: "after-handover", title: "Care after handover", detail: "Maintenance and ongoing care after handover." },
+    { id: "representative", title: "A designated Representative", detail: "A designated Representative for the project." },
+  ],
+  markerKeys: ["representative", "client-app"],
 };
 
 export const clientArea = {

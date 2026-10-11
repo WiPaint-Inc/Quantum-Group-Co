@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BuildLive } from "@/components/client/BuildLive";
 import { PageIntro } from "@/components/site/PageIntro";
 import { howWeWork } from "@/content/site";
 
@@ -21,6 +22,7 @@ export default function HowWeWorkPage() {
           <li key={point} className="border-t border-line py-3 text-sand/80">{point}</li>
         ))}
       </ul>
+      <BuildLive nested />
     </main>
   );
 }
