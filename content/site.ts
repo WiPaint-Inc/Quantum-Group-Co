@@ -62,6 +62,7 @@ export const markers: Marker[] = [
   { key: "contact-address", kind: "PLACEHOLDER", page: "Contact", needed: "Office or showroom address." },
   { key: "contact-social", kind: "PLACEHOLDER", page: "Contact", needed: "Social links." },
   { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "leadership names/titles, if owner wants them shown" },
+  { key: "representative", kind: "PLACEHOLDER", page: "Your Build, Live", needed: "Name of the designated Representative, if one should be shown." },
 ];
 
 export function markersFor(page: string) {
@@ -69,7 +70,7 @@ export function markersFor(page: string) {
 }
 
 export const fullServiceCopy =
-  "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one accountable team handling design, construction, finishing and materials so nothing falls between the gaps.";
+  "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one company handling design, construction, finishing and materials so nothing falls between the gaps.";
 
 export const transparencyCopy = [
   "Most of our clients are international and living off island during construction. Our goal is full transparency. Throughout each project we keep a shared project folder updated with invoices, material orders, change orders and payments, and close with a full project summary so everything remains organised and visible in one place.",
@@ -107,22 +108,38 @@ export const services: Service[] = [
     slug: "full-design-and-build",
     title: "Full Design and Build Services",
     headline: "From first sketch to final finish, under one roof.",
-    lede: "One accountable team from the first planning conversation through to handover.",
+    lede: "Design, construction, finishing and materials, from the first planning conversation through to handover.",
     paragraphs: [
       fullServiceCopy,
-      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. We bring that into one company. You work with one accountable team and one point of contact, from the first planning conversation through handover and beyond.",
+      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. Renderings, design, engineering and plans through construction, finishing and in-house materials stay with one company.",
     ],
     points: [
       "Collaborative design and planning, tailored to the site and the brief",
       "Engineering and construction, coordinated in-house",
-      "Finishing trades and materials managed by the same team",
-      "One contract and one point of contact throughout",
+      "Finishing trades and materials managed with the build",
+      "Design, construction, finishing and materials carried by the company",
       "Care through handover and beyond",
     ],
     markerKeys: ["design-build-contract"],
   },
   {
     order: 2,
+    slug: "full-rendering-design-engineering-plans",
+    title: "Full Rendering, Design, Engineering & Plans",
+    headline: "The images and the drawings, before the ground is broken.",
+    lede: "Renderings, design, engineering and plans, prepared with the construction that follows.",
+    paragraphs: [
+      "A beachfront estate needs the rendering, the design, the engineering and the plans before pavilions, guest houses and the main house rise. That work is prepared here and carried on through construction, finishing and in-house materials.",
+    ],
+    points: [
+      "Renderings of the estate, the pavilions and the main rooms",
+      "Design developed with the engineering",
+      "Plans issued for construction",
+    ],
+    markerKeys: [],
+  },
+  {
+    order: 3,
     slug: "construction",
     title: "Construction",
     headline: "Built with care, built to last.",
@@ -139,11 +156,11 @@ export const services: Service[] = [
     markerKeys: ["renovation-only", "infrastructure"],
   },
   {
-    order: 3,
+    order: 4,
     slug: "engineering",
     title: "Engineering",
     headline: "Engineering that makes the design work.",
-    lede: "Civil engineering inside the same team that designs and builds, from the first sketch.",
+    lede: "Civil engineering inside the same company that designs and builds, from the first sketch.",
     paragraphs: [
       "Good design depends on sound engineering. Structural thinking shapes the project from the start, not after the drawings are finished. We manage the technical side, from structure and materials to buildability and long-term performance, and keep it aligned with the look of the house.",
       "Energy-conscious design is part of that thinking, so homes stay comfortable in the Caribbean climate.",
@@ -156,13 +173,13 @@ export const services: Service[] = [
     markerKeys: ["engineering-scope", "energy-service", "drawing-certification"],
   },
   {
-    order: 4,
+    order: 5,
     slug: "developments",
     title: "Developments",
-    headline: "From a single villa to a complete community.",
-    lede: "The same one-team approach, carried across multi-unit and larger work.",
+    headline: "From a single villa to a beachfront estate.",
+    lede: "Multi-building compounds, guest houses and the main house, carried as one development.",
     paragraphs: [
-      "Planning and design, engineering, construction, finishing and materials can be coordinated by one accountable team. For developers and investors, that means a single point of responsibility and a transparent record of progress.",
+      "Planning and design, engineering, construction, finishing and materials can run across a whole estate. For developers and investors, the company keeps a transparent record of progress.",
     ],
     points: [
       "Coordinated design, construction and finishing",
@@ -171,7 +188,7 @@ export const services: Service[] = [
     markerKeys: ["development-types", "development-role", "development-projects"],
   },
   {
-    order: 5,
+    order: 6,
     slug: "construction-materials-distribution",
     title: "Construction Materials Distribution",
     headline: "Materials we trust, available to the build.",
@@ -201,7 +218,7 @@ export const finishing = {
   title: "Finishing & Bespoke Surfaces",
   headline: "The final details, done properly.",
   paragraphs: [
-    "Finishing is where a luxury home is won or lost. The finishing team carries a project through the last fine details, coordinating the finishing trades for a consistent result on the day of handover.",
+    "Finishing is where a luxury home is won or lost. The finishing work carries a project through the last fine details, coordinating the finishing trades for a consistent result on the day of handover.",
   ],
   points: [
     "Painting for new construction and repaints, with preparation and protection before every coat",
@@ -225,7 +242,7 @@ export const howWeWork = {
     "Proposals customised per project, with labour, materials, scope and product information",
     "A shared client folder for invoices, change orders, colour schedules, payments and contracts",
     "Records kept so a later repair can find the same material",
-    "One accountable team through handover and beyond",
+    "The company stays with the work through handover and beyond",
   ],
 };
 
@@ -273,8 +290,22 @@ export const robotics = {
   title: "Robotics",
   headline: "A later chapter for machines on the site.",
   paragraphs: [
-    "This page is reserved for how AI and robotics may assist construction, layout and finishing. It is not offered as a service today.",
+    "This page is reserved for robotics in construction, layout and finishing. It is not offered as a service today.",
     "Any future note would stay general. No machine, maker, or supplier is named here.",
+  ],
+};
+
+export const buildLive = {
+  kicker: "Your Build, Live",
+  title: "Your build, live.",
+  lede: "Weekly progress, a WhatsApp channel, a Slack channel, and a weekly video meeting. The service is customised per client, with a designated Representative and a private project app.",
+  points: [
+    "Weekly progress updates",
+    "WhatsApp and Slack channels",
+    "Weekly video meetings",
+    "A service customised per client",
+    "A designated Representative",
+    "A private project app",
   ],
 };
 
@@ -389,6 +420,7 @@ assertNoPricesOrExternalUrls(
     portfolioIntro,
     team,
     robotics,
+    buildLive,
     clientArea,
     marketplaceListings,
     plans,

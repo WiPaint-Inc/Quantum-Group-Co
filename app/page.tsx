@@ -5,6 +5,7 @@ import { Journey } from "@/components/journey/Journey";
 import { ConceptFigure } from "@/components/site/ConceptFigure";
 import { JsonLd } from "@/components/site/JsonLd";
 import { MarkerNotes } from "@/components/site/MarkerNote";
+import { BuildLive } from "@/components/client/BuildLive";
 import { company, howWeWork, robotics, services, story } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 import { draftContentEnabled, roboticsEnabled } from "@/lib/flags";
@@ -36,7 +37,7 @@ async function HomeBody() {
 
       <section className="px-6 py-24 md:px-14" aria-labelledby="services-heading">
         <p className="kicker">Services</p>
-        <h2 id="services-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">Five services. One company.</h2>
+        <h2 id="services-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">Six services. One company.</h2>
       </section>
       {services.map((service) => (
         <section key={service.slug} id={service.slug} className="border-t border-line px-6 py-24 md:px-14" aria-labelledby={`${service.slug}-heading`}>
@@ -58,6 +59,8 @@ async function HomeBody() {
         <RoboticsChapter />
       </Suspense>
 
+      <BuildLive draft={draft} />
+
       <section className="px-6 py-8 md:px-14" aria-labelledby="story-heading">
         <p className="kicker">Our story</p>
         <h2 id="story-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">{story.title}</h2>
@@ -66,6 +69,7 @@ async function HomeBody() {
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
+        <ConceptFigure shot={conceptShots.dusk} draft={draft} className="mt-10 h-[42vh] min-h-64 max-w-4xl" sizes="(min-width: 768px) 70vw, 100vw" />
         <p className="mt-8 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
         <MarkerNotes keys={["partner-materials", "leadership"]} />
         <Link href="/about" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">About the company</Link>

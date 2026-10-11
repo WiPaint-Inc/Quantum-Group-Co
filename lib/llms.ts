@@ -7,19 +7,20 @@ export function buildLlmsTxt(): string {
 
   return `# Quantum Group Co
 
-> One company for design, engineering, construction and finishing in Antigua and Barbuda. Agents are the primary readers of record.
+> One company for renderings, design, engineering, construction and finishing in Antigua and Barbuda.
 
 Quantum Group Co publishes no commercial schedule for its houses. The marketplace does not mint. Payments, when enabled, are non-custodial and go wallet to wallet.
 
 ## Pages
 
-${link("/", "Home", "Hero, ocean-to-space sequence, five service chapters, and story.")}
-${link("/services", "Services", "Five services, in order.")}
-${link("/services/full-design-and-build", "Full Design and Build Services", "One team from sketch to handover.")}
-${link("/services/construction", "Construction", "Villas and homes.")}
+${link("/", "Home", "Hero, ocean-to-space sequence, six services, and story.")}
+${link("/services", "Services", "Six services, in order.")}
+${link("/services/full-design-and-build", "Full Design and Build Services", "One company from the rendering to handover.")}
+${link("/services/full-rendering-design-engineering-plans", "Full Rendering, Design, Engineering & Plans", "Renderings, design, engineering and plans.")}
+${link("/services/construction", "Construction", "Villas, pavilions and estates.")}
 ${link("/services/engineering", "Engineering", "Civil and structural input.")}
-${link("/services/developments", "Developments", "Larger work, same team.")}
-${link("/services/construction-materials-distribution", "Construction Materials Distribution", "Precast and project materials.")}${roboticsEnabled() ? `\n${link("/services/robotics", "Robotics", "AI and robotics in construction. No product names.")}` : ""}
+${link("/services/developments", "Developments", "Multi-building estates.")}
+${link("/services/construction-materials-distribution", "Construction Materials Distribution", "Precast and project materials.")}${roboticsEnabled() ? `\n${link("/services/robotics", "Robotics", "Robotics in construction. No product names.")}` : ""}
 ${link("/finishing", "Finishing", "Bespoke surfaces.")}
 ${link("/how-we-work", "How we work", "Shared client folder for off-island owners.")}
 ${link("/portfolio", "Partner portfolio", "Named works. No client names.")}

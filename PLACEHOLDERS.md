@@ -38,6 +38,7 @@ Public pages keep these notes out of production HTML. They render only in develo
 | contact-address | PLACEHOLDER | Contact | Office or showroom address. |
 | contact-social | PLACEHOLDER | Contact | Social links. |
 | leadership | PLACEHOLDER | About | leadership names/titles, if owner wants them shown |
+| representative | PLACEHOLDER | Your Build, Live | Name of the designated Representative, if one should be shown. |
 
 ## Payments
 

@@ -5,7 +5,7 @@ import { services } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: "Design, engineering, construction, finishing and materials from one Quantum Group Co team in Antigua and Barbuda.",
+  description: "Renderings, design, engineering and plans through construction, finishing and in-house materials from Quantum Group Co in Antigua and Barbuda.",
 };
 
 export default function ServicesPage() {
@@ -13,8 +13,8 @@ export default function ServicesPage() {
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
       <PageIntro
         kicker="Services"
-        title="One team, from the sketch to the last surface."
-        lede="Five services, in this order. Full design and build, construction, engineering, developments, and materials."
+        title="One company, from the rendering to the last surface."
+        lede="Six services, in this order. Full design and build, rendering and plans, construction, engineering, developments, and materials."
       />
       <ol className="mt-16 divide-y divide-line border-y border-line">
         {services.map((service) => (

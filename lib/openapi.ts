@@ -85,7 +85,7 @@ export function buildOpenApi() {
           tags: ["Company"],
           summary: "The five published services",
           operationId: "listServices",
-          responses: { "200": { description: "Full Design and Build Services, Construction, Engineering, Developments, and Construction Materials Distribution." } },
+          responses: { "200": { description: "Full Design and Build Services, Full Rendering, Design, Engineering & Plans, Construction, Engineering, Developments, and Construction Materials Distribution." } },
         },
       },
       "/api/services/{slug}": {
