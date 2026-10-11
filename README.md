@@ -1,6 +1,6 @@
 # Quantum Group Co
 
-Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice in Antigua and Barbuda. The public site is a gold-on-black sequence: a Caribbean rustic-modern aerial, a blueprint line drawing, then the ocean photograph giving way to night.
+Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice in Antigua and Barbuda. The public site is a gold-on-black sequence: a mega-estate aerial, a blueprint line drawing, then the ocean photograph giving way to night.
 
 There are no house prices. The partner portfolio names works, not clients. Payments, when enabled, are non-custodial and off by default.
 

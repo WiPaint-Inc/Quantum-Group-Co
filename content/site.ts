@@ -11,8 +11,7 @@ export const company = {
   marketCountryCode: "AG",
   tagline: "Design · Engineer · Build · Finish",
   heroTitle: "One Company. Every Detail.",
-  heroSub:
-    "Build in Antigua from anywhere in the world. Renderings, design, engineering and plans through construction, finishing and in-house materials, for beachfront estates and multi-building compounds, under one company.",
+  heroSub: "Design, engineering, construction and finishing, unified under one roof in Antigua and Barbuda.",
   heroAlt: "From Vision to Handover. One Team.",
   description:
     "Quantum Group Co is one company for the design, engineering, construction and finishing of exceptional homes in Antigua and Barbuda.",
@@ -84,30 +83,14 @@ export const transparencyCopy = [
 ] as const;
 
 export const story = {
-  title: "Two halves. One company.",
-  partnership:
-    "Quantum Group Co is a partnership between the founders of Wi Paint Inc (luxury painting and finishing, Master Painters) and the founder of VIVID Construction (construction, engineering, precast concrete).",
-  halves: [
-    {
-      id: "finishing",
-      kicker: "Finishing",
-      name: "Wi Paint Inc",
-      body: "[PLACEHOLDER: finishing heritage. No dates until the final copy arrives.]",
-    },
-    {
-      id: "construction",
-      kicker: "Construction",
-      name: "VIVID Construction",
-      body: "[PLACEHOLDER: construction heritage. No dates until the final copy arrives.]",
-    },
-  ],
-  join: "[PLACEHOLDER: how the two practices became one company. No date until the final copy arrives.]",
+  title: "One company.",
+  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, building luxury villas in Antigua since 2013. Wi Paint brings bespoke luxury finishing. Together we are one accountable team, one contract, and one point of contact, carrying your project from renderings and plans through construction to the final coat.",
 };
 
 export const homeIntro = company.intro;
 
 export const philosophy = {
-  title: "With the land.",
+  title: "Natural luxury.",
   paragraphs: [
     "The work is eco-friendly natural luxury. Houses are designed with the plants and the natural features of the site: local coral stone, timber, green roofs and native planting, so a home sits in the land rather than on top of it.",
     "Every home is designed with its own fruit forest or edible landscape, drawn into the plan with the house.",

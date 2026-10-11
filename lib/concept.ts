@@ -1,13 +1,15 @@
 export const conceptShots = {
-  hero: "rustic-modern-aerial",
-  alternate: "rustic-modern-cliffside",
-  designBuild: "rustic-modern-pavilion-dusk",
-  interior: "rustic-modern-great-room",
+  hero: "mega-estate-aerial",
+  bluehour: "mega-estate-bluehour",
+  arrival: "mega-estate-arrival",
   ocean: "ocean-golden-hour",
-  /** Secondary plates. Kept in the repo, not used on the primary pages. */
-  colonialAerial: "mega-estate-aerial",
-  colonialPavilion: "mega-estate-bluehour",
-  colonialArrival: "mega-estate-arrival",
+  ecoAerial: "rustic-modern-aerial",
+  ecoInterior: "rustic-modern-great-room",
+  beachfront: "beachfront-from-water",
+  developmentBluehour: "development-bluehour-masterplan",
+  developmentOffshore: "development-golden-offshore",
+  /** Optional plates. Present in the repo, not the lead sequence. */
+  interior: "interior-great-room",
   dusk: "hero-villa-dusk",
 } as const;
 

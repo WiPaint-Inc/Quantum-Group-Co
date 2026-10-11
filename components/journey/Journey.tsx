@@ -92,11 +92,11 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
   const ocean = fade(shown, 0.62, 0.76) * (1 - fade(shown, 0.84, 0.98));
   const space = fade(shown, 0.8, 0.98);
   const copy = 1 - fade(shown, 0.3, 0.48);
-  const join = fade(shown, 0.5, 0.58) * (1 - fade(shown, 0.66, 0.74));
   const serviceLinks = fade(shown, 0.16, 0.26) * (1 - fade(shown, 0.44, 0.54));
   const villaLinks = fade(shown, 0.74, 0.86);
   const stage = [...STAGES].reverse().find((item) => shown >= item.at)?.label ?? "Design";
-  const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : join > 0.4 ? "story" : "estate";
+  const stageTitle = (1 - copy) * blueprint;
+  const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : "estate";
 
   return (
     <div ref={track} className="relative h-[340vh]" data-scene={scene}>
@@ -141,7 +141,7 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
           <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
           <p className="mt-6 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
         </div>
-        <p className="absolute top-28 right-6 text-[0.68rem] tracking-[0.28em] text-gold-2 uppercase md:right-12" style={{ opacity: blueprint }}>
+        <p className="pointer-events-none absolute top-1/2 right-6 left-6 -translate-y-1/2 text-center font-serif text-6xl text-sand md:text-8xl" style={{ opacity: stageTitle }}>
           {stage}
         </p>
         <nav
@@ -156,19 +156,6 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
             </Link>
           ))}
         </nav>
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6" style={{ opacity: join }}>
-          <div className="grid w-full max-w-4xl gap-4 md:grid-cols-2">
-            <p className="border border-gold/50 bg-ink/70 px-6 py-10 text-center">
-              <span className="block font-serif text-4xl text-sand">Finishing</span>
-              <span className="mt-3 block text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">Wi Paint Inc</span>
-            </p>
-            <p className="border border-gold/50 bg-ink/70 px-6 py-10 text-center">
-              <span className="block font-serif text-4xl text-sand">Construction</span>
-              <span className="mt-3 block text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">VIVID Construction</span>
-            </p>
-          </div>
-          <p className="absolute text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
-        </div>
         <nav
           aria-label="Partner portfolio"
           className="absolute right-4 bottom-6 left-4 z-10 flex gap-2 overflow-x-auto md:right-10 md:left-10"

@@ -37,16 +37,8 @@ async function HomeBody() {
     <main id="content">
       <JsonLd data={organizationJsonLd()} />
       <Journey draft={draft} villas={sceneVillas} />
-      <section className="px-6 py-16 md:px-14" aria-labelledby="philosophy-heading">
+      <section className="px-6 py-16 md:px-14">
         <p className="max-w-2xl text-base leading-relaxed text-sand/75">{company.intro}</p>
-        <h2 id="philosophy-heading" className="mt-16 max-w-3xl font-serif text-5xl text-sand">{philosophy.title}</h2>
-        <div className="mt-6 max-w-2xl space-y-5 text-sand/75">
-          {philosophy.paragraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-          <p>{philosophy.ecoSlot}</p>
-        </div>
-        <MarkerNotes keys={["eco-credentials"]} />
         <div className="mt-8 flex flex-wrap gap-6 text-[0.68rem] tracking-[0.22em] uppercase">
           <Link href="/contact" className="border-b border-gold pb-1 text-sand">Start your project</Link>
           <Link href="/portfolio" className="text-gold-2">Partner Portfolio</Link>
@@ -58,16 +50,19 @@ async function HomeBody() {
         <h2 id="services-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">Six services. One company.</h2>
       </section>
       {services.map((service) => (
-        <section key={service.slug} id={service.slug} className="border-t border-line px-6 py-24 md:px-14" aria-labelledby={`${service.slug}-heading`}>
+        <section key={service.slug} id={service.slug} className="glass-panel mx-6 my-6 px-6 py-24 md:mx-14 md:px-10" aria-labelledby={`${service.slug}-heading`}>
           <p className="kicker">0{service.order}</p>
           <h2 id={`${service.slug}-heading`} className="mt-4 max-w-3xl font-serif text-5xl text-sand md:text-6xl">{service.title}</h2>
           <p className="mt-6 max-w-2xl text-lg text-sand/80">{service.lede}</p>
           <p className="mt-6 max-w-2xl text-sand/70">{serviceParagraphs(service, vividLines)[0]}</p>
           {service.slug === "full-design-and-build" ? (
-            <ConceptFigure shot={conceptShots.designBuild} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
+            <ConceptFigure shot={conceptShots.bluehour} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
           ) : null}
           {service.slug === "developments" ? (
-            <ConceptFigure shot={conceptShots.alternate} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              <ConceptFigure shot={conceptShots.developmentBluehour} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
+              <ConceptFigure shot={conceptShots.developmentOffshore} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
+            </div>
           ) : null}
           <MarkerNotes keys={service.markerKeys} />
           <div className="mt-8 flex flex-wrap gap-6">
@@ -90,11 +85,31 @@ async function HomeBody() {
       <BuildLive draft={draft} />
 
       <StoryHalves />
+      <div className="grid gap-4 px-6 md:grid-cols-2 md:px-14">
+        <ConceptFigure shot={conceptShots.bluehour} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 45vw, 100vw" />
+        <ConceptFigure shot={conceptShots.arrival} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 45vw, 100vw" />
+      </div>
       <div className="px-6 md:px-14">
-        <ConceptFigure shot={conceptShots.alternate} draft={draft} className="h-[42vh] min-h-64 max-w-4xl" sizes="(min-width: 768px) 70vw, 100vw" />
         <Link href="/about" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">About the company</Link>
       </div>
       <TeamGrid members={team} showUnconfirmed={showInternalNotes()} />
+
+      <section className="px-6 py-24 md:px-14" aria-labelledby="philosophy-heading">
+        <p className="kicker">With the land</p>
+        <h2 id="philosophy-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">{philosophy.title}</h2>
+        <div className="mt-6 max-w-2xl space-y-5 text-sand/75">
+          {philosophy.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          <p>{philosophy.ecoSlot}</p>
+        </div>
+        <MarkerNotes keys={["eco-credentials"]} />
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <ConceptFigure shot={conceptShots.ecoAerial} draft={draft} className="h-64" sizes="(min-width: 768px) 30vw, 100vw" />
+          <ConceptFigure shot={conceptShots.ecoInterior} draft={draft} className="h-64" sizes="(min-width: 768px) 30vw, 100vw" />
+          <ConceptFigure shot={conceptShots.beachfront} draft={draft} className="h-64" sizes="(min-width: 768px) 30vw, 100vw" />
+        </div>
+      </section>
 
       <section className="px-6 py-20 md:px-14" aria-labelledby="work-heading">
         <h2 id="work-heading" className="font-serif text-5xl text-sand">{howWeWork.headline}</h2>
