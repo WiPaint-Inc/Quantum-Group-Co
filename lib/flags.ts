@@ -8,6 +8,19 @@ export function roboticsEnabled(): boolean {
   return process.env.ROBOTICS_ENABLED === "true";
 }
 
+/** Concept photographs and the sample project app. Off unless the env var is exactly "true". */
+export function draftContentEnabled(): boolean {
+  return process.env.DRAFT_CONTENT === "true";
+}
+
+export function aiFeaturesEnabled(): boolean {
+  return process.env.AI_FEATURES_ENABLED === "true";
+}
+
+export function agentApiEnabled(): boolean {
+  return process.env.AGENT_API_ENABLED === "true";
+}
+
 /** Product-line name on the materials service. Set SHOW_VIVID_PRODUCT_LINES=false to remove it. */
 export function showVividProductLines(): boolean {
   return process.env.SHOW_VIVID_PRODUCT_LINES !== "false";

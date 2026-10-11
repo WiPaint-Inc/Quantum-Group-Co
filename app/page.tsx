@@ -2,30 +2,37 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { Journey } from "@/components/journey/Journey";
+import { ConceptFigure } from "@/components/site/ConceptFigure";
 import { JsonLd } from "@/components/site/JsonLd";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { company, howWeWork, robotics, services, story } from "@/content/site";
-import { roboticsEnabled } from "@/lib/flags";
+import { conceptShots } from "@/lib/concept";
+import { draftContentEnabled, roboticsEnabled } from "@/lib/flags";
 import { organizationJsonLd } from "@/lib/jsonld";
 
 export default function HomePage() {
   return (
+    <Suspense fallback={<Journey draft={false} />}>
+      <HomeBody />
+    </Suspense>
+  );
+}
+
+async function HomeBody() {
+  await connection();
+  const draft = draftContentEnabled();
+
+  return (
     <main id="content">
       <JsonLd data={organizationJsonLd()} />
-      <header className="relative flex min-h-[88dvh] flex-col justify-end px-6 pt-32 pb-16 md:px-14">
-        <p className="kicker">{company.market}</p>
-        <h1 className="mt-4 max-w-4xl font-serif text-6xl leading-[0.9] text-sand sm:text-8xl">{company.heroTitle}</h1>
-        <p className="mt-6 max-w-xl text-lg text-sand/80">{company.heroSub}</p>
-        <p className="mt-6 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
-        <p className="mt-8 max-w-2xl text-base leading-relaxed text-sand/70">{company.intro}</p>
-        <p className="mt-4 text-sm text-sand/50">{company.heroAlt}</p>
+      <Journey draft={draft} />
+      <section className="px-6 py-16 md:px-14">
+        <p className="max-w-2xl text-base leading-relaxed text-sand/75">{company.intro}</p>
         <div className="mt-8 flex flex-wrap gap-6 text-[0.68rem] tracking-[0.22em] uppercase">
           <Link href="/contact" className="border-b border-gold pb-1 text-sand">Start your project</Link>
           <Link href="/portfolio" className="text-gold-2">View our work</Link>
         </div>
-      </header>
-
-      <Journey />
+      </section>
 
       <section className="px-6 py-24 md:px-14" aria-labelledby="services-heading">
         <p className="kicker">Services</p>
@@ -37,6 +44,9 @@ export default function HomePage() {
           <h2 id={`${service.slug}-heading`} className="mt-4 max-w-3xl font-serif text-5xl text-sand md:text-6xl">{service.title}</h2>
           <p className="mt-6 max-w-2xl text-lg text-sand/80">{service.lede}</p>
           <p className="mt-6 max-w-2xl text-sand/70">{service.paragraphs[0]}</p>
+          {service.slug === "full-design-and-build" ? (
+            <ConceptFigure shot={conceptShots.designBuild} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
+          ) : null}
           <MarkerNotes keys={service.markerKeys} />
           <Link href={`/services/${service.slug}`} className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
             {service.title}

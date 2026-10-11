@@ -12,7 +12,7 @@ export const company = {
   tagline: "Design · Engineer · Build · Finish",
   heroTitle: "One Company. Every Detail.",
   heroSub:
-    "Design, engineering, construction and finishing, unified under one roof in Antigua and Barbuda.",
+    "Build in Antigua from anywhere in the world. Renderings, design, engineering and plans through construction, finishing and in-house materials, for beachfront estates and multi-building compounds, under one company.",
   heroAlt: "From Vision to Handover. One Team.",
   description:
     "Quantum Group Co is one company for the design, engineering, construction and finishing of exceptional homes in Antigua and Barbuda.",

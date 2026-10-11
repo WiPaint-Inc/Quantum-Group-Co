@@ -1,55 +1,73 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { posterImage, services } from "@/content/site";
+import { ConceptFigure } from "@/components/site/ConceptFigure";
+import { company } from "@/content/site";
+import { conceptShots } from "@/lib/concept";
 
-const JourneyScene = dynamic(() => import("@/components/journey/JourneyScene"), { ssr: false });
+const PLAN = [
+  { d: "M380 220 H1220", from: 0.04, to: 0.12 },
+  { d: "M380 420 H1220", from: 0.06, to: 0.15 },
+  { d: "M380 620 H1220", from: 0.08, to: 0.17 },
+  { d: "M540 160 V780", from: 0.05, to: 0.16 },
+  { d: "M800 160 V780", from: 0.07, to: 0.17 },
+  { d: "M1060 160 V780", from: 0.09, to: 0.18 },
+  { d: "M460 280 H1140", from: 0.18, to: 0.28 },
+  { d: "M460 540 H1140", from: 0.2, to: 0.3 },
+  { d: "M620 220 V700", from: 0.19, to: 0.3 },
+  { d: "M980 220 V700", from: 0.21, to: 0.32 },
+  { d: "M600 310 H1000 V500 H600 Z", from: 0.32, to: 0.44 },
+  { d: "M470 360 H600 V480 H470 Z", from: 0.34, to: 0.45 },
+  { d: "M1000 340 H1160 V460 H1000 Z", from: 0.36, to: 0.46 },
+  { d: "M680 500 H920 V590 H680 Z", from: 0.38, to: 0.48 },
+  { d: "M800 590 V800", from: 0.46, to: 0.55 },
+  { d: "M1040 490 H1130 V560 H1040 Z", from: 0.48, to: 0.56 },
+  { d: "M1130 510 H1220 V580 H1130 Z", from: 0.5, to: 0.58 },
+  { d: "M500 540 H680", from: 0.5, to: 0.58 },
+];
+
+const STAGES = [
+  { label: "Design", at: 0.08 },
+  { label: "Engineer", at: 0.22 },
+  { label: "Build", at: 0.36 },
+  { label: "Finish", at: 0.5 },
+];
 
 function subscribe(onChange: () => void) {
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
   media.addEventListener("change", onChange);
-  window.addEventListener("resize", onChange);
-  return () => {
-    media.removeEventListener("change", onChange);
-    window.removeEventListener("resize", onChange);
-  };
+  return () => media.removeEventListener("change", onChange);
 }
 
-function wantsStill() {
-  const forced = new URLSearchParams(window.location.search).get("experience");
-  if (forced === "still") return true;
-  if (forced === "webgl") return false;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
-  if (window.innerWidth < 900) return true;
-  return false;
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function Journey() {
-  const still = useSyncExternalStore(subscribe, wantsStill, () => true);
-  const [override, setOverride] = useState<boolean | null>(null);
-  const useStill = override ?? still;
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function fade(progress: number, start: number, end: number) {
+  return clamp01((progress - start) / (end - start));
+}
+
+export function Journey({ draft }: { draft: boolean }) {
+  const reduced = useSyncExternalStore(subscribe, prefersReducedMotion, () => false);
   const progressRef = useRef(0);
   const track = useRef<HTMLDivElement>(null);
-  const [stage, setStage] = useState(0);
-  const router = useRouter();
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (useStill) return;
+    if (reduced) return;
     const node = track.current;
     if (!node) return;
     let frame = 0;
     const update = () => {
       const rect = node.getBoundingClientRect();
       const total = node.offsetHeight - window.innerHeight;
-      const next = total <= 0 ? 0 : Math.min(1, Math.max(0, -rect.top / total));
+      const next = total <= 0 ? 0 : clamp01(-rect.top / total);
       progressRef.current = next;
-      const index = Math.min(services.length - 1, Math.floor(next * services.length));
-      setStage((current) => (current === index ? current : index));
+      setProgress((current) => (Math.abs(current - next) < 0.004 ? current : next));
     };
     const onScroll = () => {
       cancelAnimationFrame(frame);
@@ -63,84 +81,63 @@ export function Journey() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [useStill]);
+  }, [reduced]);
 
-  if (useStill) {
-    return (
-      <div>
-        <div className="relative min-h-[70dvh]">
-          <Image src={posterImage} alt="A finished villa, used when the animated sequence is not shown." fill className="object-cover" sizes="100vw" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/20" />
-          <div className="relative z-10 flex min-h-[70dvh] flex-col justify-end px-6 pt-28 pb-12">
-            <p className="kicker">Still edition</p>
-            <p className="mt-4 max-w-xl font-serif text-4xl text-sand">The sequence, held still.</p>
-            <button type="button" className="mt-6 text-left text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase" onClick={() => setOverride(false)}>
-              Play the sequence
-            </button>
-          </div>
-        </div>
-        <ol>
-          {services.map((service) => (
-            <li key={service.slug} className="border-t border-line px-6 py-16 md:px-14">
-              <p className="kicker">0{service.order}</p>
-              <h2 className="mt-3 font-serif text-5xl text-sand">{service.title}</h2>
-              <p className="mt-4 max-w-lg text-sand/70">{service.lede}</p>
-              <Link href={`/services/${service.slug}`} className="mt-6 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
-                Open the service
-              </Link>
-            </li>
-          ))}
-        </ol>
-      </div>
-    );
-  }
-
-  const current = services[stage];
+  const shown = reduced ? 0.34 : progress;
+  const blueprint = 1 - fade(shown, 0.56, 0.7);
+  const estate = 1 - fade(shown, 0.64, 0.78);
+  const ocean = fade(shown, 0.62, 0.76) * (1 - fade(shown, 0.84, 0.98));
+  const space = fade(shown, 0.8, 0.98);
+  const copy = 1 - fade(shown, 0.3, 0.48);
+  const stage = [...STAGES].reverse().find((item) => shown >= item.at)?.label ?? "Design";
+  const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : "estate";
 
   return (
-    <div ref={track} className="relative h-[420vh]">
-      <div className="sticky top-0 h-dvh overflow-hidden">
-        <Canvas
-          className="h-full w-full"
-          camera={{ position: [0.4, 3.2, 7.2], fov: 36 }}
-          gl={{ antialias: true, alpha: false }}
-          onCreated={({ gl }) => {
-            gl.setClearColor("#07060b");
-          }}
-        >
-          <JourneyScene
-            progressRef={progressRef}
-            onService={(slug) => router.push(`/services/${slug}`)}
-          />
-        </Canvas>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/75 via-transparent to-transparent" />
-        <nav className="absolute top-28 right-8 z-10 flex w-72 flex-col gap-3 border border-line bg-ink/70 p-5" aria-label="Service chapters">
-          <p className="text-[0.62rem] tracking-[0.22em] text-gold-2 uppercase">Chapters</p>
-          {services.map((service, index) => (
-            <Link
-              key={service.slug}
-              href={`/services/${service.slug}`}
-              className={index === stage ? "text-[0.68rem] tracking-[0.14em] text-sand uppercase" : "text-[0.68rem] tracking-[0.14em] text-sand/50 uppercase"}
-            >
-              0{service.order} {service.title}
-            </Link>
-          ))}
-        </nav>
-        <div className="pointer-events-none absolute right-6 bottom-8 left-6 md:left-12 md:max-w-xl">
-          <p className="kicker">0{current.order}</p>
-          <h2 className="mt-3 font-serif text-5xl text-sand md:text-7xl">{current.title}</h2>
-          <p className="mt-4 max-w-md text-sand/75">{current.lede}</p>
-          <p className="sr-only">
-            {services.map((service) => `${service.order}. ${service.title}. ${service.lede}`).join(" ")}
-          </p>
+    <div ref={track} className="relative h-[340vh]" data-scene={scene}>
+      <div className="sticky top-0 h-dvh overflow-hidden bg-ink">
+        <div className="still-space absolute inset-0" style={{ opacity: space }} />
+        <div className="absolute inset-0" style={{ opacity: ocean, transform: `translate3d(0, ${(0.5 - shown) * 36}px, 0) scale(1.06)` }}>
+          {draft ? (
+            <ConceptFigure shot={conceptShots.ocean} draft className="h-full w-full" sizes="100vw" />
+          ) : (
+            <div className="still-ocean absolute inset-0" />
+          )}
         </div>
-        <button
-          type="button"
-          className="absolute top-24 right-6 z-10 text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase"
-          onClick={() => setOverride(true)}
+        <div className="absolute inset-0" style={{ opacity: estate }}>
+          <ConceptFigure shot={conceptShots.hero} draft={draft} className="h-full w-full" sizes="100vw" priority />
+        </div>
+        <svg
+          viewBox="0 0 1600 900"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          style={{ opacity: blueprint }}
+          aria-hidden="true"
         >
-          View stills
-        </button>
+          <g fill="none" stroke="#E6D3A3" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
+            {PLAN.map((line) => {
+              const amount = fade(shown, line.from, line.to);
+              return (
+                <path
+                  key={line.d}
+                  d={line.d}
+                  pathLength={1}
+                  strokeDasharray={1}
+                  strokeDashoffset={1 - amount}
+                  opacity={shown + 0.02 >= line.from ? 0.92 : 0}
+                />
+              );
+            })}
+          </g>
+        </svg>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-ink via-ink/55 to-transparent" style={{ opacity: Math.max(copy, 0.35) }} />
+        <div className="absolute right-6 bottom-8 left-6 max-w-3xl md:left-12" style={{ opacity: copy }}>
+          <p className="kicker">{draft ? "Concept" : company.market}</p>
+          <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.9] text-sand sm:text-7xl md:text-8xl">{company.heroTitle}</h1>
+          <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
+          <p className="mt-6 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
+        </div>
+        <p className="absolute top-28 right-6 text-[0.68rem] tracking-[0.28em] text-gold-2 uppercase md:right-12" style={{ opacity: blueprint }}>
+          {stage}
+        </p>
       </div>
     </div>
   );

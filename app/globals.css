@@ -53,6 +53,12 @@ body {
   border: 0;
 }
 
+.neutral-plate {
+  background:
+    radial-gradient(720px 320px at 72% 78%, rgba(201, 169, 110, 0.2), transparent 62%),
+    linear-gradient(180deg, #0c1014 0%, #14110e 58%, #1a1714 100%);
+}
+
 .still-ocean,
 .still-space {
   position: absolute;
