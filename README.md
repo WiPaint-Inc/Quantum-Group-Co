@@ -1,6 +1,6 @@
 # Quantum Group Co
 
-Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice. Antigua and Barbuda is the market. Humans browse a dark, cinematic site. AI agents are the primary readers of record: every public fact is also in a JSON API, an OpenAPI document, JSON-LD, and `llms.txt`.
+Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice in Antigua and Barbuda. The public site is a gold-on-black sequence: a concept estate photograph, a blueprint line drawing, then the ocean photograph giving way to night.
 
 There are no house prices. The partner portfolio names works, not clients. Payments, when enabled, are non-custodial and off by default.
 
@@ -25,15 +25,9 @@ npm start
 
 ## Experience
 
-The home page opens on the company, then a four-stage scroll: Design, Engineer, Build, Finish. The scene assembles a wireframe villa into a finished house over a dark sea. Glass panels carry the same four words.
+The home page opens on a full-bleed photograph when `DRAFT_CONTENT=true`. Gold site-plan lines trace across Design, Engineer, Build, and Finish, then fade. The frame then moves from the ocean photograph into night. With the flag off, those photographs are replaced by neutral plates. The sequence is images and SVG, so it runs on a phone.
 
-Desktop uses WebGL (React Three Fiber, drei, and Three.js), loaded only in the browser. The still edition is used when any of these are true:
-
-- viewport under 900px
-- `prefers-reduced-motion: reduce`
-- `?experience=still`
-
-Force the sequence with `?experience=webgl`, or use **Play the sequence** on the still edition. The written pages carry the same facts as the sequence.
+`models/demo-villa/` holds unused glTF files. The site does not load them.
 
 ## Edit the public copy
 
@@ -100,19 +94,31 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 - Next.js App Router and TypeScript. Pages are server-rendered from `content/site.ts`.
 - Tailwind for the editorial UI.
 - React Three Fiber and Three.js for the sequence. The canvas is a client-only dynamic import.
-- Route Handlers for the agent API. `proxy.ts` gates the client portal and adds CORS on `/api`.
+- Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the agent routes answer only when `AGENT_API_ENABLED=true`. `proxy.ts` gates the client portal and adds CORS on `/api`.
 - JSON-LD on the key pages. Sitemap, robots, Open Graph image, and semantic HTML are included.
 - `src/features/crypto-pay` is self-contained apart from the Next.js routes that call it.
 
 ## Hosting
 
-Vercel runs this as-is.
+Do not use a static export. Cache Components need a Node.js runtime.
 
-Cloudflare Pages can run it through the OpenNext Cloudflare adapter, which provides a Node.js runtime. Do not use a pure static export, and do not use the older edge-only Next adapter. This project enables Next.js Cache Components, which require Node.js. Route Handlers are the agent API, so they have to stay on a server.
+Cloudflare Workers, free plan, via OpenNext:
 
-A later static-only marketing export would drop `/api/*` unless those routes move to a separate worker. Prefer Vercel, or Cloudflare via OpenNext, for Phase 1.
+```bash
+npm run build:cloudflare
+```
 
-The pay page reads `PAYMENTS_ENABLED` on each request. A static export would freeze that flag at build time.
+That runs `opennextjs-cloudflare build`. Wrangler config is `wrangler.jsonc`. Worker name `quantum-group-co`. Compatibility date `2026-10-11`. Flags `nodejs_compat` and `global_fetch_strictly_public`. No R2 bucket and no Images binding, so the free plan does not need those products.
+
+Workers Builds, connected to GitHub:
+
+- Production branch: `main`
+- Root directory: repository root
+- Build command: `npx opennextjs-cloudflare build`
+- Deploy command: `npx opennextjs-cloudflare deploy`
+- Non-production branch deploy command: `npx wrangler versions upload`
+
+`DRAFT_CONTENT`, `PAYMENTS_ENABLED`, `ROBOTICS_ENABLED`, `AI_FEATURES_ENABLED`, and `AGENT_API_ENABLED` default to false. Set them as build variables if a preview should turn one on. `NEXT_PUBLIC_SITE_URL` defaults to `https://quantum-group.example` when unset.
 
 ## Phase 2
 
