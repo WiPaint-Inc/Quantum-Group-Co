@@ -1,9 +1,15 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { BuildDashboard } from "@/components/client/BuildDashboard";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { buildLive } from "@/content/site";
+import { aiFeaturesEnabled } from "@/lib/flags";
 
-export function BuildLive({ nested = false }: { nested?: boolean }) {
+export async function BuildLive({ nested = false }: { nested?: boolean }) {
+  await connection();
+  const showAvatar = aiFeaturesEnabled();
+  const notes = showAvatar ? buildLive.markerKeys : buildLive.markerKeys.filter((key) => key !== "avatar-launch");
+
   return (
     <section id="your-build-live" className={nested ? "py-16" : "border-t border-line px-6 py-24 md:px-14"} aria-labelledby="build-live-heading">
       <p className="kicker">{buildLive.kicker}</p>
@@ -22,15 +28,17 @@ export function BuildLive({ nested = false }: { nested?: boolean }) {
           </li>
         ))}
       </ul>
-      <div className="mt-10 max-w-2xl border border-dashed border-gold/50 px-5 py-5">
-        <p className="kicker">Coming soon</p>
-        <p className="mt-3 text-sand/80">{buildLive.avatar.copy}</p>
-      </div>
+      {showAvatar ? (
+        <div className="mt-10 max-w-2xl border border-dashed border-gold/50 px-5 py-5">
+          <p className="kicker">Coming soon</p>
+          <p className="mt-3 text-sand/80">{buildLive.avatar.copy}</p>
+        </div>
+      ) : null}
       <Link href={buildLive.href} className="mt-8 inline-block border-b border-gold pb-1 text-[0.68rem] tracking-[0.22em] text-sand uppercase">
         Client area
       </Link>
-      <MarkerNotes keys={buildLive.markerKeys} />
-      <BuildDashboard />
+      <MarkerNotes keys={notes} />
+      <BuildDashboard showAvatar={showAvatar} />
     </section>
   );
 }

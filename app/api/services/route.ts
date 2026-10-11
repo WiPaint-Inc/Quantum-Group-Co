@@ -1,5 +1,5 @@
 import { buildLive, finishing, howWeWork, serviceParagraphs, services } from "@/content/site";
-import { roboticsEnabled, showVividProductLines } from "@/lib/flags";
+import { aiFeaturesEnabled, roboticsEnabled, showVividProductLines } from "@/lib/flags";
 import { apiOk } from "@/lib/http";
 
 export function GET() {
@@ -14,7 +14,7 @@ export function GET() {
       offerings: buildLive.offerings,
       kept: buildLive.kept,
       representative: buildLive.representative,
-      avatar: { status: "coming_soon" as const, copy: buildLive.avatar.copy },
+      ...(aiFeaturesEnabled() ? { avatar: { status: "coming_soon" as const, copy: buildLive.avatar.copy } } : {}),
       endpoint: "/api/client-experience",
     },
     ...(roboticsEnabled() ? { robotics: { slug: "robotics", href: "/services/robotics" } } : {}),

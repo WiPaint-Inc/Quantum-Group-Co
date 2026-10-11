@@ -109,7 +109,7 @@ function Glass() {
   );
 }
 
-export function ClientDashboard() {
+export function ClientDashboard({ showAvatar = false }: { showAvatar?: boolean }) {
   return (
     <Canvas
       className="absolute inset-0"
@@ -129,7 +129,7 @@ export function ClientDashboard() {
         <meshStandardMaterial color="#12100e" roughness={1} />
       </mesh>
       <Glass />
-      <Avatar />
+      {showAvatar ? <Avatar /> : null}
       <Stars radius={40} depth={12} count={280} factor={2} fade saturation={0} speed={0.1} />
     </Canvas>
   );

@@ -327,18 +327,18 @@ export const buildLive = {
   kicker: "Your Build, Live",
   title: "Your build, live.",
   headline:
-    "Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Wherever you are, you never miss a moment of your build.",
+    "Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Your designated Representative knows every detail of your build. Wherever you are, you never miss a moment of your build.",
   href: "/client",
   offerings: [
     { id: "weekly-progress", title: "Weekly progress updates", detail: "Photo and progress reporting every week." },
     { id: "channels", title: "WhatsApp and Slack", detail: "A WhatsApp channel and a Slack channel for each client." },
     { id: "video-meetings", title: "Weekly video meetings", detail: "A video meeting every week." },
     { id: "custom-service", title: "Service customised to each client", detail: "The service is shaped to each client's preferences." },
-    { id: "private-app", title: "A private project app", detail: "Each client gets their own private project app." },
+    { id: "private-app", title: "A private project app", detail: "A private client app, or portal, for each project." },
     {
       id: "representative",
       title: "A designated Representative",
-      detail: "Every client has a designated Representative, a dedicated person who handles their project.",
+      detail: "Your designated Representative knows every detail of your build.",
     },
   ],
   kept: [
@@ -349,7 +349,7 @@ export const buildLive = {
   ],
   representative: {
     status: "current" as const,
-    detail: "Every client has a designated Representative, a dedicated person who handles their project.",
+    detail: "Your designated Representative knows every detail of your build.",
   },
   avatar: {
     status: "coming_soon" as const,

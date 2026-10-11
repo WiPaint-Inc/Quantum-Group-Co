@@ -3,6 +3,11 @@ import { checkAgentKey } from "@/lib/agent-auth";
 import { agentApiEnabled } from "@/lib/flags";
 import { apiError, apiOk } from "@/lib/http";
 
+export function GET() {
+  if (!agentApiEnabled()) notFound();
+  return new Response(null, { status: 405, headers: { allow: "POST" } });
+}
+
 export function POST(request: Request) {
   if (!agentApiEnabled()) notFound();
   const result = checkAgentKey(request);

@@ -1,9 +1,17 @@
-import { roboticsEnabled } from "@/lib/flags";
+import { aiFeaturesEnabled, roboticsEnabled } from "@/lib/flags";
 import { absoluteUrl } from "@/lib/site";
 
 export function buildLlmsTxt(): string {
   const link = (path: string, label: string, detail: string) =>
     `- [${label}](${absoluteUrl(path)}): ${detail}`;
+  const clientExperience =
+    "Weekly progress with photographs, a WhatsApp channel and a Slack channel, weekly video meetings, a service shaped to the client, a private project app, and a designated Representative. The shared folder, cost-per-room estimates, materials management, and care after handover stay. The app is not launched yet.";
+  const avatarNote = aiFeaturesEnabled()
+    ? " A personal AI project avatar is coming soon and is not available today."
+    : "";
+  const representativeClose = aiFeaturesEnabled()
+    ? "Your designated Representative knows every detail of your build. Soon, they'll be with you around the clock as your personal AI project avatar. That avatar is coming soon. It is not available today, and no launch date is set."
+    : "Your designated Representative knows every detail of your build.";
 
   return `# Quantum Group Co
 
@@ -34,7 +42,7 @@ ${link("/client", "Client area", "Your Build, Live for owners off-island: weekly
 ${link("/api/openapi.json", "OpenAPI", "Contract.")}
 ${link("/api/company", "Company", "Name, story, and how the work is run.")}
 ${link("/api/services", "Services", "The six services, in order, plus the client-experience summary.")}
-${link("/api/client-experience", "Client experience", "Weekly progress with photographs, a WhatsApp channel and a Slack channel, weekly video meetings, a service shaped to the client, a private project app, and a designated Representative who is a person. The shared folder, cost-per-room estimates, materials management, and care after handover stay. The app is not launched yet. A personal AI project avatar is coming soon and is not available today.")}
+${link("/api/client-experience", "Client experience", `${clientExperience}${avatarNote}`)}
 ${link("/api/portfolio", "Portfolio", "Partner works and public captions.")}
 ${link("/api/estates", "Estates", "Same portfolio, kept for the Phase 1 path.")}
 ${link("/api/team", "Team", "Confirmed cards only.")}
@@ -45,11 +53,11 @@ ${link("/api/auth/agent", "Agent auth", "Header X-Quantum-Agent-Key against AGEN
 
 ## Your Build, Live
 
-Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Wherever you are, you never miss a moment of your build.
+Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Your designated Representative knows every detail of your build. Wherever you are, you never miss a moment of your build.
 
 Owners off-island also keep a shared project folder for invoices, change orders, colour schedules and payments, cost-per-room estimates, materials management, and care after handover. Every client has a designated Representative, a dedicated person who handles their project. The private project app is not built yet.
 
-Your designated Representative knows every detail of your build. Soon, they'll be with you around the clock as your personal AI project avatar. That avatar is coming soon. It is not available today, and no launch date is set.
+${representativeClose}
 
 ## Payments
 

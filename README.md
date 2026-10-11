@@ -21,7 +21,17 @@ npm run build
 npm start
 ```
 
-`NEXT_PUBLIC_SITE_URL` is optional in local development. When it is unset, metadata falls back to `https://quantum-group.example`. Set it before a public deploy. `AGENT_API_KEY` is optional. Leave it empty until you want agent authentication to succeed.
+`NEXT_PUBLIC_SITE_URL` is optional in local development. When it is unset, metadata falls back to `https://quantum-group.example`. Set it before a public deploy.
+
+## Feature flags
+
+These three switches are off for launch. Leave them unset, or set them to `false`. The code stays in the tree so a later release can turn one on.
+
+- `AI_FEATURES_ENABLED` is off for launch. When `true`, Your Build, Live shows the future figure, its coming-soon line, and a matching field on the client-experience response. When off, that line, the figure, and the field are omitted. Standard JSON-LD stays on either way.
+- `ROBOTICS_ENABLED` is off for launch. When `true`, the reserved construction page, its API entry, and its sitemap URL are published. When off, that page returns 404 and stays out of the sitemap.
+- `AGENT_API_ENABLED` is off for launch. When `false`, `/llms.txt`, `/api/openapi`, `/api/openapi.json`, `/api`, and `/api/auth/agent` return 404. They stay out of the sitemap, the robots allow list, and the footer. When `true`, those discovery files are served. `AGENT_API_KEY` is optional and stays empty until a key should succeed.
+
+`PAYMENTS_ENABLED` and `DRAFT_CONTENT` also default to false. `SHOW_VIVID_PRODUCT_LINES` stays on unless it is set to `false`.
 
 ## Experience
 
@@ -84,7 +94,7 @@ The module’s own notes, including the compliance controls and what the card li
 
 The site never holds keys or funds, and it does not convert, swap, or forward them. Payments go wallet to wallet. Tip mode exists in the module for another host and is not shown on this site.
 
-## Agent API
+## Read API
 
 | Method | Path | Auth |
 | --- | --- | --- |
@@ -92,8 +102,8 @@ The site never holds keys or funds, and it does not convert, swap, or forward th
 | GET | `/api` | Public |
 | GET | `/api/openapi.json` | Public |
 | GET | `/api/company` | Public |
-| GET | `/api/services` and `/api/services/{slug}` | Public. Robotics is absent unless `ROBOTICS_ENABLED=true`. Includes the Your Build, Live summary. |
-| GET | `/api/client-experience` | Public. Weekly updates, channels, video meetings, the private project app, the designated Representative, and the shared folder. The project avatar is `coming_soon`. |
+| GET | `/api/services` and `/api/services/{slug}` | Public. The reserved construction page is absent unless `ROBOTICS_ENABLED=true`. Includes the Your Build, Live summary. |
+| GET | `/api/client-experience` | Public. Weekly updates, channels, video meetings, the private project app, the designated Representative, and the shared folder. The future figure is included only when `AI_FEATURES_ENABLED=true`. |
 | GET | `/api/portfolio` and `/api/portfolio/{slug}` | Public |
 | GET | `/api/team` | Public. Confirmed cards only. |
 | GET | `/api/estates` and `/api/estates/{slug}` | Public. Same portfolio, kept for the Phase 1 path. |
@@ -111,7 +121,7 @@ The site never holds keys or funds, and it does not convert, swap, or forward th
 | GET, POST, DELETE | `/api/session` | Human placeholder cookie. POST body `{ email }`. |
 | POST | `/api/auth/agent` | Header `X-Quantum-Agent-Key`, compared with `AGENT_API_KEY`. |
 
-Catalog reads are public so an agent can learn the site without a secret. If a key is sent to the mint stub and it does not match, the call is rejected. If the header is omitted, the stub still answers and mints nothing. `POST /api/auth/agent` returns 503 when `AGENT_API_KEY` is unset, 401 when the key is wrong, and 200 when it matches. No key is stored in the repository.
+Catalog reads stay available without a secret. Discovery files answer only when `AGENT_API_ENABLED=true`. If a key is sent to the mint stub and it does not match, the call is rejected. If the header is omitted, the stub still answers and mints nothing. `POST /api/auth/agent` returns 404 while `AGENT_API_ENABLED` is off, 503 when `AGENT_API_KEY` is unset, 401 when the key is wrong, and 200 when it matches. No key is stored in the repository.
 
 Responses use `{ ok, placeholder, data }` or `{ ok: false, error: { code, message } }`.
 
@@ -122,7 +132,7 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 - Next.js App Router and TypeScript. Pages are server-rendered from `content/site.ts`.
 - Tailwind for the editorial UI.
 - React Three Fiber and Three.js for the home journey, the service vignettes, and the portfolio scenes. Each canvas is a client-only dynamic import. Lenis drives smooth scrolling.
-- Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the agent routes answer only when `AGENT_API_ENABLED=true`. `proxy.ts` gates the client portal and adds CORS on `/api`.
+- Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the discovery routes answer only when `AGENT_API_ENABLED=true`. `proxy.ts` gates the client portal and adds CORS on `/api`.
 - JSON-LD on the key pages. Sitemap, robots, Open Graph image, and semantic HTML are included.
 - `src/features/crypto-pay` is self-contained apart from the Next.js routes that call it.
 

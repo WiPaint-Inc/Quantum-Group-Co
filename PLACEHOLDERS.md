@@ -46,6 +46,8 @@ Public pages keep these notes out of production HTML. They render only in develo
 
 [CONFIRM: AI project avatar launch timing before referencing any date.]
 
+This confirm is internal. The public site does not render it unless `AI_FEATURES_ENABLED=true`. Launch leaves that flag off, so the line, the figure, and the API field stay hidden.
+
 [CONFIRM: the client project app is not built yet. Confirm launch timing and platform (iOS/Android/web) before go-live.]
 | eco-credentials | PLACEHOLDER | About | eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it. |
 
