@@ -50,6 +50,10 @@ Each service is a short procedural scene:
 
 The partner portfolio is a flight from project to project. Scroll or choose a name. Opening a project shows a `ProjectScene`: the owner's photographs as floating planes, ready for a model.
 
+## Estates
+
+`/estates` is the concept collection, five studies in the order of the printed portfolio. The pages use the book’s cream paper, serif titles, gold rules and caption style. Photographs, zoning, the furnishing grid and the Grand Beachfront specification appear only when `DRAFT_CONTENT=true`. Otherwise each estate keeps its title and the line “Specifications in preparation”. Plates are labelled Concept render or Concept. `/api/estates` remains the partner portfolio.
+
 ## Models
 
 To replace a project's photographs with a model:

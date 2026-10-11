@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Outfit } from "next/font/google";
+import { Bodoni_Moda, Cormorant_Garamond, Outfit } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
+import { PaperTone } from "@/components/estates/PaperTone";
 import { Cursor } from "@/components/experience/Cursor";
 import { SmoothScroll } from "@/components/experience/SmoothScroll";
 import { Footer } from "@/components/site/Footer";
@@ -22,6 +23,13 @@ const display = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-cormorant",
+  display: "swap",
+});
+
+const paperFace = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -64,8 +72,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${display.variable} h-full antialiased`}>
+    <html lang="en" className={`${sans.variable} ${display.variable} ${paperFace.variable} h-full antialiased`}>
       <body className="min-h-dvh bg-ink font-sans text-sand">
+        <PaperTone />
         <SmoothScroll />
         <Cursor />
         <JsonLd data={organizationJsonLd()} />

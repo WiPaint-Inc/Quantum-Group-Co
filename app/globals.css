@@ -41,6 +41,41 @@ body {
   color: #e6d2a8;
 }
 
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+.paper {
+  background: #f3efe6;
+  color: #1a1a1a;
+}
+
+.paper-kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8d7344;
+}
+
+body[data-sheet="paper"] {
+  background: #f3efe6;
+  color: #1a1a1a;
+}
+
+body[data-sheet="paper"] footer {
+  background: #f3efe6;
+  border-color: rgba(197, 160, 89, 0.55);
+}
+
+body[data-sheet="paper"] footer p,
+body[data-sheet="paper"] footer a {
+  color: #1a1a1a;
+}
+
+body[data-sheet="paper"] footer p.text-gold-2 {
+  color: #8d7344;
+}
+
 .crawlable-index {
   position: absolute;
   width: 1px;

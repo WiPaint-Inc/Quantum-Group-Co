@@ -42,6 +42,7 @@ async function HomeBody() {
         <p className="max-w-2xl text-base leading-relaxed text-sand/75">{company.intro}</p>
         <div className="mt-8 flex flex-wrap gap-6 text-[0.68rem] tracking-[0.22em] uppercase">
           <Link href="/contact" className="border-b border-gold pb-1 text-sand">Start your project</Link>
+          <Link href="/estates" className="text-gold-2">Estates</Link>
           <Link href="/portfolio" className="text-gold-2">Partner Portfolio</Link>
         </div>
       </section>
