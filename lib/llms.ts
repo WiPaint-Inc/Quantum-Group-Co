@@ -16,7 +16,7 @@ Quantum Group Co publishes no commercial schedule for its houses. The marketplac
 ${link("/", "Home", "Hero, ocean-to-space sequence, six services, and story.")}
 ${link("/services", "Services", "Six services, in order.")}
 ${link("/services/full-design-and-build", "Full Design and Build Services", "One company from the rendering to handover.")}
-${link("/services/full-rendering-design-engineering-plans", "Full Rendering, Design, Engineering & Plans", "Renderings, design, engineering and plans.")}
+${link("/services/rendering-design-engineering-plans", "Full Rendering, Design, Engineering & Plans", "3D renderings and visualisations, design development, engineering, and construction plans and drawings.")}
 ${link("/services/construction", "Construction", "Villas, pavilions and estates.")}
 ${link("/services/engineering", "Engineering", "Civil and structural input.")}
 ${link("/services/developments", "Developments", "Multi-building estates.")}
@@ -33,7 +33,7 @@ ${link("/client", "Client", "Placeholder session and per-home slots.")}
 
 ${link("/api/openapi.json", "OpenAPI", "Contract.")}
 ${link("/api/company", "Company", "Name, story, and how the work is run.")}
-${link("/api/services", "Services", "The five services, in order.")}
+${link("/api/services", "Services", "The six services, in order.")}
 ${link("/api/portfolio", "Portfolio", "Partner works and public captions.")}
 ${link("/api/estates", "Estates", "Same portfolio, kept for the Phase 1 path.")}
 ${link("/api/team", "Team", "Confirmed cards only.")}

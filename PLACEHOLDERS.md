@@ -6,7 +6,7 @@ Public pages keep these notes out of production HTML. They render only in develo
 | --- | --- | --- | --- |
 | design-build-contract | CONFIRM | Full Design and Build Services | Whether the service is one fixed-scope contract or phased. |
 | engineering-scope | CONFIRM | Engineering | In-house engineering scope versus engineers retained per project. |
-| drawing-certification | CONFIRM | Engineering | Drawing certification or stamping details. Do not claim sealed drawings until this is answered. |
+| drawing-certification | CONFIRM | Full Rendering, Design, Engineering & Plans | drawing certification / stamping details |
 | renovation-only | CONFIRM | Construction | Whether renovation-only projects are taken. |
 | infrastructure | CONFIRM | Construction | Whether infrastructure is offered to private clients or only inside developments. |
 | energy-service | CONFIRM | Engineering | Whether energy engineering is a named service. |
@@ -44,6 +44,7 @@ Public pages keep these notes out of production HTML. They render only in develo
 | contact-social | PLACEHOLDER | Contact | Social links. |
 | leadership | PLACEHOLDER | About | leadership names/titles, if owner wants them shown |
 | representative | PLACEHOLDER | Your Build, Live | Name of the designated Representative, if one should be shown. |
+| eco-credentials | PLACEHOLDER | About | eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it. |
 
 ## Payments
 

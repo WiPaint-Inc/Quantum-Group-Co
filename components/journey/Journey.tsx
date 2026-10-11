@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ConceptFigure } from "@/components/site/ConceptFigure";
-import { company } from "@/content/site";
+import { company, services } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 
 export type SceneVilla = { slug: string; name: string; location: string };
@@ -93,6 +93,7 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
   const space = fade(shown, 0.8, 0.98);
   const copy = 1 - fade(shown, 0.3, 0.48);
   const join = fade(shown, 0.5, 0.58) * (1 - fade(shown, 0.66, 0.74));
+  const serviceLinks = fade(shown, 0.16, 0.26) * (1 - fade(shown, 0.44, 0.54));
   const villaLinks = fade(shown, 0.74, 0.86);
   const stage = [...STAGES].reverse().find((item) => shown >= item.at)?.label ?? "Design";
   const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : join > 0.4 ? "story" : "estate";
@@ -143,6 +144,18 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
         <p className="absolute top-28 right-6 text-[0.68rem] tracking-[0.28em] text-gold-2 uppercase md:right-12" style={{ opacity: blueprint }}>
           {stage}
         </p>
+        <nav
+          aria-label="Services"
+          className="absolute top-28 left-6 z-10 max-w-xs space-y-2 md:left-12"
+          style={{ opacity: serviceLinks, pointerEvents: serviceLinks > 0.4 ? "auto" : "none" }}
+        >
+          {services.map((service) => (
+            <Link key={service.slug} href={`/services/${service.slug}`} className="flex items-start gap-3 text-sand">
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gold-2" aria-hidden="true" />
+              <span className="text-[0.62rem] leading-snug tracking-[0.14em] uppercase">0{service.order} {service.title}</span>
+            </Link>
+          ))}
+        </nav>
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6" style={{ opacity: join }}>
           <div className="grid w-full max-w-4xl gap-4 md:grid-cols-2">
             <p className="border border-gold/50 bg-ink/70 px-6 py-10 text-center">

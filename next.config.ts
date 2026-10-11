@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/services/full-rendering-design-engineering-plans",
+        destination: "/services/rendering-design-engineering-plans",
+        permanent: false,
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {

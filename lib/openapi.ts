@@ -83,7 +83,7 @@ export function buildOpenApi() {
       "/api/services": {
         get: {
           tags: ["Company"],
-          summary: "The five published services",
+          summary: "The six published services",
           operationId: "listServices",
           responses: { "200": { description: "Full Design and Build Services, Full Rendering, Design, Engineering & Plans, Construction, Engineering, Developments, and Construction Materials Distribution." } },
         },

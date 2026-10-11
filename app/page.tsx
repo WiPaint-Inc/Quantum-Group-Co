@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { BuildLive } from "@/components/client/BuildLive";
 import { portfolioProjects } from "@/content/portfolio";
-import { company, howWeWork, robotics, serviceParagraphs, services, team } from "@/content/site";
+import { company, howWeWork, philosophy, robotics, serviceParagraphs, services, team } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 import { draftContentEnabled, roboticsEnabled, showInternalNotes, showVividProductLines } from "@/lib/flags";
 import { organizationJsonLd } from "@/lib/jsonld";
@@ -37,8 +37,16 @@ async function HomeBody() {
     <main id="content">
       <JsonLd data={organizationJsonLd()} />
       <Journey draft={draft} villas={sceneVillas} />
-      <section className="px-6 py-16 md:px-14">
+      <section className="px-6 py-16 md:px-14" aria-labelledby="philosophy-heading">
         <p className="max-w-2xl text-base leading-relaxed text-sand/75">{company.intro}</p>
+        <h2 id="philosophy-heading" className="mt-16 max-w-3xl font-serif text-5xl text-sand">{philosophy.title}</h2>
+        <div className="mt-6 max-w-2xl space-y-5 text-sand/75">
+          {philosophy.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          <p>{philosophy.ecoSlot}</p>
+        </div>
+        <MarkerNotes keys={["eco-credentials"]} />
         <div className="mt-8 flex flex-wrap gap-6 text-[0.68rem] tracking-[0.22em] uppercase">
           <Link href="/contact" className="border-b border-gold pb-1 text-sand">Start your project</Link>
           <Link href="/portfolio" className="text-gold-2">Partner Portfolio</Link>
@@ -58,10 +66,20 @@ async function HomeBody() {
           {service.slug === "full-design-and-build" ? (
             <ConceptFigure shot={conceptShots.designBuild} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
           ) : null}
+          {service.slug === "developments" ? (
+            <ConceptFigure shot={conceptShots.alternate} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
+          ) : null}
           <MarkerNotes keys={service.markerKeys} />
-          <Link href={`/services/${service.slug}`} className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
-            {service.title}
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-6">
+            <Link href={`/services/${service.slug}`} className="text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
+              {service.title}
+            </Link>
+            {service.related?.map((link) => (
+              <Link key={link.href} href={link.href} className="text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </section>
       ))}
 
@@ -73,7 +91,7 @@ async function HomeBody() {
 
       <StoryHalves />
       <div className="px-6 md:px-14">
-        <ConceptFigure shot={conceptShots.dusk} draft={draft} className="h-[42vh] min-h-64 max-w-4xl" sizes="(min-width: 768px) 70vw, 100vw" />
+        <ConceptFigure shot={conceptShots.alternate} draft={draft} className="h-[42vh] min-h-64 max-w-4xl" sizes="(min-width: 768px) 70vw, 100vw" />
         <Link href="/about" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">About the company</Link>
       </div>
       <TeamGrid members={team} showUnconfirmed={showInternalNotes()} />

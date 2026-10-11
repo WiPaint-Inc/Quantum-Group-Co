@@ -1,9 +1,13 @@
 export const conceptShots = {
-  hero: "mega-estate-aerial",
-  designBuild: "mega-estate-bluehour",
-  arrival: "mega-estate-arrival",
-  interior: "interior-great-room",
+  hero: "rustic-modern-aerial",
+  alternate: "rustic-modern-cliffside",
+  designBuild: "rustic-modern-pavilion-dusk",
+  interior: "rustic-modern-great-room",
   ocean: "ocean-golden-hour",
+  /** Secondary plates. Kept in the repo, not used on the primary pages. */
+  colonialAerial: "mega-estate-aerial",
+  colonialPavilion: "mega-estate-bluehour",
+  colonialArrival: "mega-estate-arrival",
   dusk: "hero-villa-dusk",
 } as const;
 

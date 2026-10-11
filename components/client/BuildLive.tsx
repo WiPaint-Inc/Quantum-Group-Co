@@ -15,7 +15,7 @@ export function BuildLive({ draft, nested = false }: { draft: boolean; nested?: 
         ))}
       </ul>
       <div className="mt-12 grid gap-6 lg:grid-cols-12">
-        <ConceptFigure shot={conceptShots.arrival} draft={draft} className="h-[48vh] min-h-72 lg:col-span-7" sizes="(min-width: 1024px) 58vw, 100vw" />
+        <ConceptFigure shot={conceptShots.alternate} draft={draft} className="h-[48vh] min-h-72 lg:col-span-7" sizes="(min-width: 1024px) 58vw, 100vw" />
         <div className="border border-line bg-white/[0.03] p-6 lg:col-span-5">
           <p className="kicker">Private project</p>
           <p className="mt-3 font-serif text-4xl text-sand">Demo Villa</p>

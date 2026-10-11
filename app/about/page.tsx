@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { StoryHalves } from "@/components/site/StoryHalves";
 import { TeamGrid } from "@/components/site/TeamGrid";
-import { company, team } from "@/content/site";
+import { MarkerNotes } from "@/components/site/MarkerNote";
+import { company, philosophy, team } from "@/content/site";
 import { showInternalNotes } from "@/lib/flags";
 
 export const metadata: Metadata = {
@@ -16,6 +17,14 @@ export default function AboutPage() {
         <p className="kicker">About</p>
         <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.92] text-sand sm:text-7xl">{company.heroTitle}</h1>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-sand/75">{company.intro}</p>
+        <h2 className="mt-16 max-w-3xl font-serif text-5xl text-sand">{philosophy.title}</h2>
+        <div className="mt-6 max-w-2xl space-y-5 text-sand/75">
+          {philosophy.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          <p>{philosophy.ecoSlot}</p>
+        </div>
+        <MarkerNotes keys={["eco-credentials"]} />
       </section>
       <StoryHalves />
       <TeamGrid members={team} showUnconfirmed={showInternalNotes()} />

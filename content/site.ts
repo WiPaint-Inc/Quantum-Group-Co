@@ -30,7 +30,7 @@ export type Marker = {
 export const markers: Marker[] = [
   { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build Services", needed: "Whether the service is one fixed-scope contract or phased." },
   { key: "engineering-scope", kind: "CONFIRM", page: "Engineering", needed: "In-house engineering scope versus engineers retained per project." },
-  { key: "drawing-certification", kind: "CONFIRM", page: "Engineering", needed: "Drawing certification or stamping details. Do not claim sealed drawings until this is answered." },
+  { key: "drawing-certification", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "drawing certification / stamping details" },
   { key: "renovation-only", kind: "CONFIRM", page: "Construction", needed: "Whether renovation-only projects are taken." },
   { key: "infrastructure", kind: "CONFIRM", page: "Construction", needed: "Whether infrastructure is offered to private clients or only inside developments." },
   { key: "energy-service", kind: "CONFIRM", page: "Engineering", needed: "Whether energy engineering is a named service." },
@@ -68,6 +68,7 @@ export const markers: Marker[] = [
   { key: "contact-social", kind: "PLACEHOLDER", page: "Contact", needed: "Social links." },
   { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "leadership names/titles, if owner wants them shown" },
   { key: "representative", kind: "PLACEHOLDER", page: "Your Build, Live", needed: "Name of the designated Representative, if one should be shown." },
+  { key: "eco-credentials", kind: "PLACEHOLDER", page: "About", needed: "eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it." },
 ];
 
 export function markersFor(page: string) {
@@ -105,6 +106,15 @@ export const story = {
 
 export const homeIntro = company.intro;
 
+export const philosophy = {
+  title: "With the land.",
+  paragraphs: [
+    "The work is eco-friendly natural luxury. Houses are designed with the plants and the natural features of the site: local coral stone, timber, green roofs and native planting, so a home sits in the land rather than on top of it.",
+    "Every home is designed with its own fruit forest or edible landscape, drawn into the plan with the house.",
+  ],
+  ecoSlot: "[PLACEHOLDER: eco credentials]",
+};
+
 export type Service = {
   order: number;
   slug: string;
@@ -114,6 +124,7 @@ export type Service = {
   paragraphs: string[];
   points: string[];
   markerKeys: string[];
+  related?: { href: string; label: string }[];
 };
 
 const materialsIntro = {
@@ -145,19 +156,22 @@ export const services: Service[] = [
   },
   {
     order: 2,
-    slug: "full-rendering-design-engineering-plans",
+    slug: "rendering-design-engineering-plans",
     title: "Full Rendering, Design, Engineering & Plans",
-    headline: "The images and the drawings, before the ground is broken.",
-    lede: "Renderings, design, engineering and plans, prepared with the construction that follows.",
+    headline: "See the home, and refine it, before the ground is broken.",
+    lede: "3D renderings and visualisations, design development, engineering, and full construction plans and drawings.",
     paragraphs: [
-      "A beachfront estate needs the rendering, the design, the engineering and the plans before pavilions, guest houses and the main house rise. That work is prepared here and carried on through construction, finishing and in-house materials.",
+      "3D renderings and visualisations show the house before construction starts. Clients use them to see the rooms, the light and the materials, and to refine the design while it can still change.",
+      "Design development, engineering, and the full set of construction plans and drawings are prepared together, so the images and the drawings describe the same house. Those studies are also the basis for a later private marketplace of renders and plans.",
     ],
     points: [
-      "Renderings of the estate, the pavilions and the main rooms",
-      "Design developed with the engineering",
-      "Plans issued for construction",
+      "3D renderings and visualisations",
+      "Design development before the ground is broken",
+      "Engineering carried with the design",
+      "Full construction plans and drawings",
     ],
-    markerKeys: [],
+    markerKeys: ["drawing-certification"],
+    related: [{ href: "/marketplace", label: "Renders and plans" }],
   },
   {
     order: 3,
@@ -167,7 +181,7 @@ export const services: Service[] = [
     lede: "Luxury villas and homes in Antigua and Barbuda, made to be looked after for years.",
     paragraphs: [
       "We build luxury villas and homes with a focus on quality, safety, and houses that are straightforward to maintain. Careful planning, disciplined site management and quality control are how the home you were promised is the home you receive.",
-      "Natural stone, timber, concrete and textured finishes are chosen for the island's sun, salt air and seasonal rain.",
+      "Local coral stone, timber, green roofs and native planting are chosen with the plants and the natural features already on the site, for the island's sun, salt air and seasonal rain.",
     ],
     points: [
       "New-build luxury villas and residences",
@@ -200,7 +214,7 @@ export const services: Service[] = [
     headline: "From a single villa to a beachfront estate.",
     lede: "Multi-building compounds, guest houses and the main house, carried as one development.",
     paragraphs: [
-      "Planning and design, engineering, construction, finishing and materials can run across a whole estate. For developers and investors, the company keeps a transparent record of progress.",
+      "Planning and design, engineering, construction, finishing and materials can run across a whole estate. Compounds are drawn into the land, with a fruit forest or an edible landscape as part of the design for each home. For developers and investors, the company keeps a transparent record of progress.",
     ],
     points: [
       "Coordinated design, construction and finishing",
@@ -439,6 +453,7 @@ assertNoPricesOrExternalUrls(
     markers,
     story,
     homeIntro,
+    philosophy,
     services,
     finishing,
     howWeWork,

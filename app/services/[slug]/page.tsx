@@ -38,7 +38,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         ))}
       </ul>
       <MarkerNotes keys={service.markerKeys} />
-      <div className="mt-12">
+      <div className="mt-12 flex flex-wrap gap-6">
+        {service.related?.map((link) => (
+          <Link key={link.href} href={link.href} className="text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">{link.label}</Link>
+        ))}
         <Link href="/services" className="text-[0.68rem] tracking-[0.2em] text-sand/60 uppercase">All services</Link>
       </div>
     </main>
