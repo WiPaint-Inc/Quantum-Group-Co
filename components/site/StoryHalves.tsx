@@ -9,7 +9,7 @@ export function StoryHalves() {
       <p className="mt-8 max-w-2xl text-lg leading-relaxed text-sand/75">{story.body}</p>
       <p className="mt-10 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
       <div className="max-w-2xl">
-        <MarkerNotes keys={["heritage-1981", "heritage-dates", "founding", "partner-materials", "leadership"]} />
+        <MarkerNotes keys={["precast-2020", "heritage-1981", "heritage-dates", "founding", "partner-materials", "leadership"]} />
       </div>
     </section>
   );

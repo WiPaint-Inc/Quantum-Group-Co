@@ -15,7 +15,7 @@ export default function PortfolioPage() {
   return (
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
       <PageIntro kicker="Partner Portfolio" title="Work already standing." lede={portfolioIntro} />
-      <MarkerNotes keys={["portfolio-captions", "portfolio-images", "page-16-grouping"]} />
+      <MarkerNotes keys={["page-16-grouping"]} />
       <ol className="mt-16 grid gap-10 md:grid-cols-2">
         {portfolioProjects.map((project) => {
           const plate = project.images[0];

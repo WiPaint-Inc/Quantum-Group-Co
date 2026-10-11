@@ -4,38 +4,41 @@ Public pages keep these notes out of production HTML. They render only in develo
 
 | Key | Kind | Page | Needed |
 | --- | --- | --- | --- |
-| design-build-contract | CONFIRM | Full Design and Build Services | Whether the service is one fixed-scope contract or phased. |
-| engineering-scope | CONFIRM | Engineering | In-house engineering scope versus engineers retained per project. |
+| design-build-contract | CONFIRM | Full Design and Build Services | Is Full Design and Build offered as a single fixed-scope contract, or structured in phases? |
+| rendering-media | CONFIRM | Full Rendering, Design, Engineering & Plans | interior, exterior, or both? Still images, animations or walkthroughs? |
+| engineering-scope | CONFIRM | Full Rendering, Design, Engineering & Plans | in-house engineering scope versus engineers retained per project |
+| drawing-sets | CONFIRM | Full Rendering, Design, Engineering & Plans | which drawing sets are included, for example architectural, structural, MEP, and who submits for planning approval |
+| plans-only | CONFIRM | Full Rendering, Design, Engineering & Plans | can clients commission plans only, without a build contract? |
 | drawing-certification | CONFIRM | Full Rendering, Design, Engineering & Plans | drawing certification / stamping details |
-| renovation-only | CONFIRM | Construction | Whether renovation-only projects are taken. |
-| infrastructure | CONFIRM | Construction | Whether infrastructure is offered to private clients or only inside developments. |
-| energy-service | CONFIRM | Engineering | Whether energy engineering is a named service. |
-| development-types | CONFIRM | Developments | Types and scale of development the company will take on. |
-| development-role | CONFIRM | Developments | Whether the company acts only as contractor, or also as co-developer or development manager. |
-| development-projects | PLACEHOLDER | Developments | Current or upcoming development projects, if any can be named publicly. |
-| product-line-name | CONFIRM | Construction Materials Distribution | Product-line name to use. The VIVID Industrial & Decor wording is behind SHOW_VIVID_PRODUCT_LINES. |
-| showroom | CONFIRM | Construction Materials Distribution | Whether there is a showroom, and where. |
-| third-party-materials | CONFIRM | Construction Materials Distribution | Whether other brands are distributed, or only the precast lines. |
-| level-5 | CONFIRM | Finishing | Whether to keep the level 5 sheetrock wording. It is a finish grade, not a certification. |
-| maintenance-plan | CONFIRM | Finishing | Whether maintenance is a contract or a service plan. |
+| renovation-only | CONFIRM | Construction | does Quantum take on renovation-only projects? |
+| infrastructure | CONFIRM | Construction | is infrastructure offered to private clients, or only within developments? |
+| engineering-drawings | CONFIRM | Engineering | exact scope, and whether drawings are produced in-house or by retained engineers |
+| energy-service | CONFIRM | Engineering | is energy engineering offered as a named service? |
+| development-types | CONFIRM | Developments | types and scale of development Quantum will take on |
+| development-role | CONFIRM | Developments | does Quantum act only as contractor, or also as co-developer or development manager? |
+| development-projects | PLACEHOLDER | Developments | current or upcoming development projects, if any can be named publicly |
+| product-line-name | CONFIRM | Construction Materials Distribution | product-line name to use on the Quantum site |
+| precast-2020 | CONFIRM | About | January 2020 precast date |
+| showroom | CONFIRM | Construction Materials Distribution | is there a showroom, and where? |
+| third-party-materials | CONFIRM | Construction Materials Distribution | does Quantum distribute other brands' materials, or only its own precast lines? |
+| level-5 | CONFIRM | Finishing | keep level 5? It is a technical finish grade, not a certification. |
+| maintenance-plan | CONFIRM | Finishing | is maintenance offered as a contract or a service plan? |
 | heritage-finishing | PLACEHOLDER | About | finishing heritage. No dates until the final copy arrives. |
 | heritage-construction | PLACEHOLDER | About | construction heritage. No dates until the final copy arrives. |
 | heritage-join | PLACEHOLDER | About | how the two practices became one company. No date until the final copy arrives. |
-| portfolio-captions | PLACEHOLDER | Partner Portfolio | public caption for each partner project. Do not add a client or company name. |
-| portfolio-images | PLACEHOLDER | Partner Portfolio | final gallery images. Current plates stay until replacements arrive. |
 | heritage-1981 | CONFIRM | About | Wording for the 1981 Italian family construction business, which the brochure says was under a different name. |
 | heritage-dates | CONFIRM | About | Approval to keep publishing 1981, 2013, and January 2020. |
 | founding | PLACEHOLDER | About | Quantum Group Co founding date and legal entity, if they should be shown. |
 | partner-materials | PLACEHOLDER | About | partner/affiliate company content — awaiting owner materials |
-| page-16-grouping | CONFIRM | Partner Portfolio | How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved. |
+| page-16-grouping | CONFIRM | Partner Portfolio | page-16 project grouping |
 | chris-headshot | PLACEHOLDER | Team | Headshot for Chris Bento. |
 | chris-bio | PLACEHOLDER | Team | Anything further Chris wants in his bio. |
 | marco-card | CONFIRM | Team | Confirm Marco Spagnolo's card for public display. |
-| marco-years | CONFIRM | Team | The 2022 brochure said 15 years. Update before showing a figure. |
+| marco-years | CONFIRM | Team | 15 years is as stated in the 2022 brochure. Update before showing a figure. |
 | marco-degree | CONFIRM | Team | Combined wording for the civil engineering degree, energy specialisation, and University of Bologna. |
 | marco-headshot | PLACEHOLDER | Team | Headshot for Marco Spagnolo. |
 | luigi-card | CONFIRM | Team | Confirm Luigi Spagnolo's card for public display. |
-| luigi-years | CONFIRM | Team | The 2022 brochure said 17 years. Update before showing a figure. |
+| luigi-years | CONFIRM | Team | 17 years is as stated in the 2022 brochure. Update before showing a figure. |
 | luigi-headshot | PLACEHOLDER | Team | Headshot for Luigi Spagnolo. |
 | contact-phone-email | PLACEHOLDER | Contact | contact phone/email |
 | contact-email | PLACEHOLDER | Contact | Quantum Group Co email. Do not reuse a partner address. |

@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ConceptFigure } from "@/components/site/ConceptFigure";
+import { posterImage } from "@/content/portfolio";
 import { company, services } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 
@@ -30,10 +32,10 @@ const PLAN = [
 ];
 
 const STAGES = [
-  { label: "Design", at: 0.08 },
-  { label: "Engineer", at: 0.22 },
-  { label: "Build", at: 0.36 },
-  { label: "Finish", at: 0.5 },
+  { label: "Design", at: 0.24 },
+  { label: "Engineer", at: 0.36 },
+  { label: "Build", at: 0.46 },
+  { label: "Finish", at: 0.54 },
 ];
 
 function subscribe(onChange: () => void) {
@@ -91,11 +93,12 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
   const estate = 1 - fade(shown, 0.64, 0.78);
   const ocean = fade(shown, 0.62, 0.76) * (1 - fade(shown, 0.84, 0.98));
   const space = fade(shown, 0.8, 0.98);
-  const copy = 1 - fade(shown, 0.3, 0.48);
+  const copy = 1 - fade(shown, 0.18, 0.28);
   const serviceLinks = fade(shown, 0.16, 0.26) * (1 - fade(shown, 0.44, 0.54));
   const villaLinks = fade(shown, 0.74, 0.86);
-  const stage = [...STAGES].reverse().find((item) => shown >= item.at)?.label ?? "Design";
-  const stageTitle = (1 - copy) * blueprint;
+  const stage = [...STAGES].reverse().find((item) => shown >= item.at) ?? STAGES[0];
+  const nextStage = STAGES[STAGES.indexOf(stage) + 1]?.at ?? 0.66;
+  const stageTitle = fade(shown, stage.at, stage.at + 0.04) * (1 - fade(shown, nextStage - 0.03, nextStage)) * blueprint;
   const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : "estate";
 
   return (
@@ -110,7 +113,11 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
           )}
         </div>
         <div className="absolute inset-0" style={{ opacity: estate }}>
-          <ConceptFigure shot={conceptShots.hero} draft={draft} className="h-full w-full" sizes="100vw" priority />
+          {draft ? (
+            <ConceptFigure shot={conceptShots.hero} draft className="h-full w-full" sizes="100vw" priority />
+          ) : (
+            <Image src={posterImage.src} alt={posterImage.alt} fill priority sizes="100vw" className="object-cover" />
+          )}
         </div>
         <svg
           viewBox="0 0 1600 900"
@@ -142,7 +149,7 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
           <p className="mt-6 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
         </div>
         <p className="pointer-events-none absolute top-1/2 right-6 left-6 -translate-y-1/2 text-center font-serif text-6xl text-sand md:text-8xl" style={{ opacity: stageTitle }}>
-          {stage}
+          {stage.label}
         </p>
         <nav
           aria-label="Services"

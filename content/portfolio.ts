@@ -1,4 +1,4 @@
-/** Public portfolio. Generated from approved gallery captions. No client names. */
+/** Public portfolio. Captions are the approved public drafts. No client names. */
 export type PortfolioImage = {
   file: string;
   src: string;
@@ -361,6 +361,10 @@ const portfolioRecords: Omit<PortfolioProject, "caption">[] = [
     ]
   }
 ];
+export const portfolioProjects: PortfolioProject[] = portfolioRecords.map((project) => ({
+  ...project,
+  caption: project.images[0]?.caption ?? project.location,
+}));
 export const atmosphereImages: PortfolioImage[] = [
   {
     "file": "finish-detail-01.jpg",
@@ -475,11 +479,14 @@ export const atmosphereImages: PortfolioImage[] = [
     "page": 11
   }
 ];
-export const portfolioProjects: PortfolioProject[] = portfolioRecords.map((project) => ({
-  ...project,
-  caption: "[PLACEHOLDER: public caption]",
-}));
+export const posterImage = {
+  src: "/images/portfolio/lazy-lizard-jumby-bay-07.jpg",
+  alt: "Aerial view of the resort setting at dusk, Jumby Bay",
+};
 
+export function atmosphereWhere(prefix: "finish-detail" | "partner-portfolio") {
+  return atmosphereImages.filter((image) => image.file.startsWith(prefix));
+}
 export function getPortfolioProject(slug: string) {
   return portfolioProjects.find((project) => project.slug === slug) ?? null;
 }

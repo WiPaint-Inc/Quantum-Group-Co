@@ -8,7 +8,8 @@ import { ConceptFigure } from "@/components/site/ConceptFigure";
 import { JsonLd } from "@/components/site/JsonLd";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { BuildLive } from "@/components/client/BuildLive";
-import { portfolioProjects } from "@/content/portfolio";
+import { AtmosphereStrip } from "@/components/site/AtmosphereStrip";
+import { atmosphereWhere, portfolioProjects } from "@/content/portfolio";
 import { company, howWeWork, philosophy, robotics, serviceParagraphs, services, team } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 import { draftContentEnabled, roboticsEnabled, showInternalNotes, showVividProductLines } from "@/lib/flags";
@@ -49,21 +50,43 @@ async function HomeBody() {
         <p className="kicker">Services</p>
         <h2 id="services-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand">Six services. One company.</h2>
       </section>
-      {services.map((service) => (
+      {services.map((service) => {
+        const paragraphs = serviceParagraphs(service, vividLines);
+        const texture =
+          service.slug === "full-design-and-build"
+            ? atmosphereWhere("partner-portfolio").slice(0, 4)
+            : service.slug === "construction"
+              ? atmosphereWhere("partner-portfolio").slice(4)
+              : [];
+        return (
         <section key={service.slug} id={service.slug} className="glass-panel mx-6 my-6 px-6 py-24 md:mx-14 md:px-10" aria-labelledby={`${service.slug}-heading`}>
           <p className="kicker">0{service.order}</p>
           <h2 id={`${service.slug}-heading`} className="mt-4 max-w-3xl font-serif text-5xl text-sand md:text-6xl">{service.title}</h2>
           <p className="mt-6 max-w-2xl text-lg text-sand/80">{service.lede}</p>
-          <p className="mt-6 max-w-2xl text-sand/70">{serviceParagraphs(service, vividLines)[0]}</p>
+          <div className="mt-6 max-w-2xl space-y-5 text-sand/70">
+            {paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <ul className="mt-8 max-w-2xl">
+            {service.points.map((point) => (
+              <li key={point} className="border-t border-line py-3 text-sand/80">{point}</li>
+            ))}
+          </ul>
           {service.slug === "full-design-and-build" ? (
             <ConceptFigure shot={conceptShots.bluehour} draft={draft} className="mt-10 h-[52vh] min-h-80" sizes="(min-width: 768px) 80vw, 100vw" />
           ) : null}
           {service.slug === "developments" ? (
-            <div className="mt-10 grid gap-4 md:grid-cols-2">
-              <ConceptFigure shot={conceptShots.developmentAerial} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
-              <ConceptFigure shot={conceptShots.developmentSea} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
-            </div>
+            <ConceptFigure
+              shot={conceptShots.development}
+              draft={draft}
+              caption="Peninsula Development"
+              blueprint
+              className="mt-10 h-[52vh] min-h-80"
+              sizes="(min-width: 768px) 80vw, 100vw"
+            />
           ) : null}
+          <AtmosphereStrip images={texture} className="mt-10" />
           <MarkerNotes keys={service.markerKeys} />
           <div className="mt-8 flex flex-wrap gap-6">
             <Link href={`/services/${service.slug}`} className="text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
@@ -76,7 +99,8 @@ async function HomeBody() {
             ))}
           </div>
         </section>
-      ))}
+        );
+      })}
 
       <Suspense fallback={null}>
         <RoboticsChapter />
@@ -101,7 +125,7 @@ async function HomeBody() {
           {philosophy.paragraphs.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
-          <p>{philosophy.ecoSlot}</p>
+          {showInternalNotes() ? <p>{philosophy.ecoSlot}</p> : null}
         </div>
         <MarkerNotes keys={["eco-credentials"]} />
         <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -119,6 +143,11 @@ async function HomeBody() {
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
+        <ul className="mt-8 max-w-2xl">
+          {howWeWork.points.map((point) => (
+            <li key={point} className="border-t border-line py-3 text-sand/80">{point}</li>
+          ))}
+        </ul>
         <Link href="/how-we-work" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">How we work</Link>
       </section>
     </main>

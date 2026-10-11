@@ -22,7 +22,7 @@ export default function AboutPage() {
           {philosophy.paragraphs.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
-          <p>{philosophy.ecoSlot}</p>
+          {showInternalNotes() ? <p>{philosophy.ecoSlot}</p> : null}
         </div>
         <MarkerNotes keys={["eco-credentials"]} />
       </section>

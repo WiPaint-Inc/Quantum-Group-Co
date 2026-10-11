@@ -27,38 +27,41 @@ export type Marker = {
 };
 
 export const markers: Marker[] = [
-  { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build Services", needed: "Whether the service is one fixed-scope contract or phased." },
-  { key: "engineering-scope", kind: "CONFIRM", page: "Engineering", needed: "In-house engineering scope versus engineers retained per project." },
+  { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build Services", needed: "Is Full Design and Build offered as a single fixed-scope contract, or structured in phases?" },
+  { key: "rendering-media", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "interior, exterior, or both? Still images, animations or walkthroughs?" },
+  { key: "engineering-scope", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "in-house engineering scope versus engineers retained per project" },
+  { key: "drawing-sets", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "which drawing sets are included, for example architectural, structural, MEP, and who submits for planning approval" },
+  { key: "plans-only", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "can clients commission plans only, without a build contract?" },
   { key: "drawing-certification", kind: "CONFIRM", page: "Full Rendering, Design, Engineering & Plans", needed: "drawing certification / stamping details" },
-  { key: "renovation-only", kind: "CONFIRM", page: "Construction", needed: "Whether renovation-only projects are taken." },
-  { key: "infrastructure", kind: "CONFIRM", page: "Construction", needed: "Whether infrastructure is offered to private clients or only inside developments." },
-  { key: "energy-service", kind: "CONFIRM", page: "Engineering", needed: "Whether energy engineering is a named service." },
-  { key: "development-types", kind: "CONFIRM", page: "Developments", needed: "Types and scale of development the company will take on." },
-  { key: "development-role", kind: "CONFIRM", page: "Developments", needed: "Whether the company acts only as contractor, or also as co-developer or development manager." },
-  { key: "development-projects", kind: "PLACEHOLDER", page: "Developments", needed: "Current or upcoming development projects, if any can be named publicly." },
-  { key: "product-line-name", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Product-line name to use. The VIVID Industrial & Decor wording is behind SHOW_VIVID_PRODUCT_LINES." },
-  { key: "showroom", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Whether there is a showroom, and where." },
-  { key: "third-party-materials", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Whether other brands are distributed, or only the precast lines." },
-  { key: "level-5", kind: "CONFIRM", page: "Finishing", needed: "Whether to keep the level 5 sheetrock wording. It is a finish grade, not a certification." },
-  { key: "maintenance-plan", kind: "CONFIRM", page: "Finishing", needed: "Whether maintenance is a contract or a service plan." },
+  { key: "renovation-only", kind: "CONFIRM", page: "Construction", needed: "does Quantum take on renovation-only projects?" },
+  { key: "infrastructure", kind: "CONFIRM", page: "Construction", needed: "is infrastructure offered to private clients, or only within developments?" },
+  { key: "engineering-drawings", kind: "CONFIRM", page: "Engineering", needed: "exact scope, and whether drawings are produced in-house or by retained engineers" },
+  { key: "energy-service", kind: "CONFIRM", page: "Engineering", needed: "is energy engineering offered as a named service?" },
+  { key: "development-types", kind: "CONFIRM", page: "Developments", needed: "types and scale of development Quantum will take on" },
+  { key: "development-role", kind: "CONFIRM", page: "Developments", needed: "does Quantum act only as contractor, or also as co-developer or development manager?" },
+  { key: "development-projects", kind: "PLACEHOLDER", page: "Developments", needed: "current or upcoming development projects, if any can be named publicly" },
+  { key: "product-line-name", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "product-line name to use on the Quantum site" },
+  { key: "precast-2020", kind: "CONFIRM", page: "About", needed: "January 2020 precast date" },
+  { key: "showroom", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "is there a showroom, and where?" },
+  { key: "third-party-materials", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "does Quantum distribute other brands' materials, or only its own precast lines?" },
+  { key: "level-5", kind: "CONFIRM", page: "Finishing", needed: "keep level 5? It is a technical finish grade, not a certification." },
+  { key: "maintenance-plan", kind: "CONFIRM", page: "Finishing", needed: "is maintenance offered as a contract or a service plan?" },
   { key: "heritage-finishing", kind: "PLACEHOLDER", page: "About", needed: "finishing heritage. No dates until the final copy arrives." },
   { key: "heritage-construction", kind: "PLACEHOLDER", page: "About", needed: "construction heritage. No dates until the final copy arrives." },
   { key: "heritage-join", kind: "PLACEHOLDER", page: "About", needed: "how the two practices became one company. No date until the final copy arrives." },
-  { key: "portfolio-captions", kind: "PLACEHOLDER", page: "Partner Portfolio", needed: "public caption for each partner project. Do not add a client or company name." },
-  { key: "portfolio-images", kind: "PLACEHOLDER", page: "Partner Portfolio", needed: "final gallery images. Current plates stay until replacements arrive." },
   { key: "heritage-1981", kind: "CONFIRM", page: "About", needed: "Wording for the 1981 Italian family construction business, which the brochure says was under a different name." },
   { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
   { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
   { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "partner/affiliate company content — awaiting owner materials" },
-  { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved." },
+  { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "page-16 project grouping" },
   { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
   { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
   { key: "marco-card", kind: "CONFIRM", page: "Team", needed: "Confirm Marco Spagnolo's card for public display." },
-  { key: "marco-years", kind: "CONFIRM", page: "Team", needed: "The 2022 brochure said 15 years. Update before showing a figure." },
+  { key: "marco-years", kind: "CONFIRM", page: "Team", needed: "15 years is as stated in the 2022 brochure. Update before showing a figure." },
   { key: "marco-degree", kind: "CONFIRM", page: "Team", needed: "Combined wording for the civil engineering degree, energy specialisation, and University of Bologna." },
   { key: "marco-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Marco Spagnolo." },
   { key: "luigi-card", kind: "CONFIRM", page: "Team", needed: "Confirm Luigi Spagnolo's card for public display." },
-  { key: "luigi-years", kind: "CONFIRM", page: "Team", needed: "The 2022 brochure said 17 years. Update before showing a figure." },
+  { key: "luigi-years", kind: "CONFIRM", page: "Team", needed: "17 years is as stated in the 2022 brochure. Update before showing a figure." },
   { key: "luigi-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Luigi Spagnolo." },
   { key: "contact-phone-email", kind: "PLACEHOLDER", page: "Contact", needed: "contact phone/email" },
   { key: "contact-email", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co email. Do not reuse a partner address." },
@@ -75,7 +78,7 @@ export function markersFor(page: string) {
 }
 
 export const fullServiceCopy =
-  "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one company handling design, construction, finishing and materials so nothing falls between the gaps.";
+  "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract and their own idea of who is responsible. We bring every one of those stages into one company, under a single contract covering every stage, from the first rendering to handover and beyond, with materials supplied in-house.";
 
 export const transparencyCopy = [
   "Most of our clients are international and living off island during construction. Our goal is full transparency. Throughout each project we keep a shared project folder updated with invoices, material orders, change orders and payments, and close with a full project summary so everything remains organised and visible in one place.",
@@ -84,7 +87,7 @@ export const transparencyCopy = [
 
 export const story = {
   title: "One company.",
-  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, building luxury villas in Antigua since 2013. Wi Paint brings bespoke luxury finishing. Together we are one accountable team, one contract, and one point of contact, carrying your project from renderings and plans through construction to the final coat.",
+  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, from an Italian family construction business established in 1981, and luxury villas in Antigua since 2013. Precast lines followed in January 2020. Wi Paint brings bespoke luxury finishing, shaped by three principles: quality of work, back-end service, and bespoke finishes. Together we are one accountable team, one contract, and one point of contact, carrying your project from renderings and plans through construction to the final coat.",
 };
 
 export const homeIntro = company.intro;
@@ -112,10 +115,14 @@ export type Service = {
 
 const materialsIntro = {
   withLines:
-    "Through the VIVID Industrial & Decor lines, we produce and supply precast concrete: bricks, pavers, pots, benches, and industrial precast.",
-  withoutLines:
-    "We produce and supply precast concrete products for builders and private clients. One line is made to make a contractor's work simpler and faster. The other is bricks, pavers, planters and pots, benches, and other pieces for interiors, exteriors, gardens and floors.",
+    "Through our VIVID Industrial & Decor product lines, we produce and supply precast concrete products for builders and private clients.",
+  withoutLines: "We produce and supply precast concrete products for builders and private clients.",
 };
+
+const materialsRest = [
+  "One line is precast concrete elements made to make a contractor's project simpler, more economical and faster to complete. The other is concrete bricks, pavers, planters and pots, benches and more, for interiors, exteriors, gardens and floors.",
+  "Alongside those precast products, we plan, purchase, transport and manage the materials used on our projects, and keep key samples on file for future maintenance and renovation.",
+];
 
 export const services: Service[] = [
   {
@@ -123,16 +130,16 @@ export const services: Service[] = [
     slug: "full-design-and-build",
     title: "Full Design and Build Services",
     headline: "From first sketch to final finish, under one roof.",
-    lede: "Design, construction, finishing and materials, from the first planning conversation through to handover.",
+    lede: "Every project is different, so the approach is shaped around the site and the brief.",
     paragraphs: [
       fullServiceCopy,
-      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. Renderings, design, engineering and plans through construction, finishing and in-house materials stay with one company.",
+      "Every project is different, so we shape our approach around yours. We begin with collaborative design and planning, carry the work through engineering and construction, and finish every surface to the standard a luxury home demands. Because design, construction, finishing and materials all sit inside one company, decisions made at the drawing board carry through to the final coat.",
     ],
     points: [
-      "Collaborative design and planning, tailored to the site and the brief",
+      "Collaborative design and planning, tailored to your site and brief",
       "Engineering and construction, coordinated in-house",
-      "Finishing trades and materials managed with the build",
-      "Design, construction, finishing and materials carried by the company",
+      "Finishing trades and materials managed by the same team",
+      "A single contract covering every stage",
       "Care through handover and beyond",
     ],
     markerKeys: ["design-build-contract"],
@@ -141,19 +148,20 @@ export const services: Service[] = [
     order: 2,
     slug: "rendering-design-engineering-plans",
     title: "Full Rendering, Design, Engineering & Plans",
-    headline: "See the home, and refine it, before the ground is broken.",
-    lede: "3D renderings and visualisations, design development, engineering, and full construction plans and drawings.",
+    headline: "See your home before the first foundation is poured.",
+    lede: "From a concept to a complete, buildable set of plans.",
     paragraphs: [
-      "3D renderings and visualisations show the house before construction starts. Clients use them to see the rooms, the light and the materials, and to refine the design while it can still change.",
-      "Design development, engineering, and the full set of construction plans and drawings are prepared together, so the images and the drawings describe the same house. Those studies are also the basis for a later private marketplace of renders and plans.",
+      "We take your ideas from concept to a complete, buildable set of plans. Our design process starts with 3D renderings and visualisations, so you can walk through spaces, test materials and see how natural light falls across a room before any decisions are fixed. From there we move into design development, refining layouts, finishes and details with you, and then into engineering and full construction plans and drawings.",
+      "Because the company that draws your home also builds and finishes it, the plans are made to be built. Structure, services, materials and finishes are thought through together, so fewer surprises reach the site. Those studies are also the basis for a later private marketplace of renders and plans.",
     ],
     points: [
       "3D renderings and visualisations",
-      "Design development before the ground is broken",
-      "Engineering carried with the design",
+      "Design development: layouts, materials, finishes and details",
+      "Engineering input from the start",
       "Full construction plans and drawings",
+      "Plans available as a standalone service",
     ],
-    markerKeys: ["drawing-certification"],
+    markerKeys: ["rendering-media", "engineering-scope", "drawing-sets", "plans-only", "drawing-certification"],
     related: [{ href: "/marketplace", label: "Renders and plans" }],
   },
   {
@@ -161,15 +169,16 @@ export const services: Service[] = [
     slug: "construction",
     title: "Construction",
     headline: "Built with care, built to last.",
-    lede: "Luxury villas and homes in Antigua and Barbuda, made to be looked after for years.",
+    lede: "Luxury villas and homes in Antigua and Barbuda, built to be looked after for years.",
     paragraphs: [
-      "We build luxury villas and homes with a focus on quality, safety, and houses that are straightforward to maintain. Careful planning, disciplined site management and quality control are how the home you were promised is the home you receive.",
-      "Local coral stone, timber, green roofs and native planting are chosen with the plants and the natural features already on the site, for the island's sun, salt air and seasonal rain.",
+      "We build luxury villas and homes in Antigua and Barbuda with a focus on exceptional quality and safety, and on homes that are easy to maintain for years to come. Careful planning, disciplined site management and quality control at every stage mean the home you were promised is the home you receive.",
+      "Natural stone, timber, concrete and textured finishes are chosen and detailed to suit the island's climate, its sun, salt air and seasonal rain, so your home stays beautiful long after handover.",
     ],
     points: [
       "New-build luxury villas and residences",
+      "Renovations and extensions",
       "Site management and quality control throughout",
-      "Materials detailed for the Caribbean climate",
+      "Infrastructure works",
     ],
     markerKeys: ["renovation-only", "infrastructure"],
   },
@@ -180,28 +189,31 @@ export const services: Service[] = [
     headline: "Engineering that makes the design work.",
     lede: "Civil engineering inside the same company that designs and builds, from the first sketch.",
     paragraphs: [
-      "Good design depends on sound engineering. Structural thinking shapes the project from the start, not after the drawings are finished. We manage the technical side, from structure and materials to buildability and long-term performance, and keep it aligned with the look of the house.",
-      "Energy-conscious design is part of that thinking, so homes stay comfortable in the Caribbean climate.",
+      "Good design depends on sound engineering. Our civil engineering expertise sits inside the same company that designs and builds your home, so structural thinking shapes the project from the first sketch, not after it. We manage the technical side of every project, from structure and materials to buildability and long-term performance, and keep it aligned with the look and feel you want.",
+      "We also bring a focus on energy-conscious design, so homes are comfortable in the Caribbean climate and efficient to run.",
     ],
     points: [
       "Civil and structural engineering input",
+      "Energy-conscious design considerations",
       "Technical management across design and construction",
-      "Experience with concrete and precast elements",
+      "Experience with complex works, including concrete and precast elements",
     ],
-    markerKeys: ["engineering-scope", "energy-service", "drawing-certification"],
+    markerKeys: ["engineering-drawings", "energy-service", "drawing-certification"],
   },
   {
     order: 5,
     slug: "developments",
     title: "Developments",
-    headline: "From a single villa to a beachfront estate.",
-    lede: "Multi-building compounds, guest houses and the main house, carried as one development.",
+    headline: "From a single villa to a complete community.",
+    lede: "The same single-company offering, carried across a larger site.",
     paragraphs: [
-      "Planning and design, engineering, construction, finishing and materials can run across a whole estate. Compounds are drawn into the land, with a fruit forest or an edible landscape as part of the design for each home. For developers and investors, the company keeps a transparent record of progress.",
+      "We bring the same complete, single-company offering to multi-unit and larger-scale projects: planning and design, engineering, construction, finishing and materials, all under one contract. For developers and investors, that means in-house materials, consistent quality across every unit, and a transparent record of progress and spending at every stage.",
     ],
     points: [
-      "Coordinated design, construction and finishing",
-      "A transparent record for owners, developers and investors",
+      "Multi-unit residential and resort-style developments",
+      "Coordinated design, construction and finishing across every unit",
+      "Transparent project records for owners, developers and investors",
+      "Development partnerships",
     ],
     markerKeys: ["development-types", "development-role", "development-projects"],
   },
@@ -209,14 +221,15 @@ export const services: Service[] = [
     order: 6,
     slug: "construction-materials-distribution",
     title: "Construction Materials Distribution",
-    headline: "Materials we trust, available to the build.",
+    headline: "Materials we trust, available to every builder.",
     lede: "Precast concrete for contractors and for the house, planned and delivered with the work.",
-    paragraphs: [materialsIntro.withLines],
+    paragraphs: [materialsIntro.withoutLines],
     points: [
       "Precast concrete for contractors and developers",
       "Decorative concrete for homes, gardens and outdoor living",
       "Materials planning, purchasing and logistics",
-      "Key samples kept for later maintenance",
+      "Showroom visits by appointment",
+      "Distribution of third-party materials",
     ],
     markerKeys: ["product-line-name", "showroom", "third-party-materials"],
   },
@@ -225,10 +238,7 @@ export const services: Service[] = [
 export function serviceParagraphs(service: Service, vividLines: boolean) {
   if (service.slug !== "construction-materials-distribution") return service.paragraphs;
   const lead = vividLines ? materialsIntro.withLines : materialsIntro.withoutLines;
-  return [
-    lead,
-    "Alongside those precast products, we plan, purchase, transport and manage the materials used on our projects, and keep key samples on file for future maintenance.",
-  ];
+  return [lead, ...materialsRest];
 }
 
 export function getService(slug: string) {
@@ -240,17 +250,20 @@ export const finishing = {
   title: "Finishing & Bespoke Surfaces",
   headline: "The final details, done properly.",
   paragraphs: [
-    "Finishing is where a luxury home is won or lost. The finishing work carries a project through the last fine details, coordinating the finishing trades for a consistent result on the day of handover.",
+    "Finishing is where a luxury home is won or lost. Our finishing division carries every project through the last fine details to completion, with every finishing trade in-house for a faster finish and consistent quality on the day of handover.",
   ],
   points: [
-    "Painting for new construction and repaints, with preparation and protection before every coat",
-    "Textured finishes, plastering and textured faux finishes",
-    "Custom stains and pickles, and care for wood finishing",
-    "Bespoke work: murals, wallpaper, artwork and colour matching",
-    "Tiling in custom patterns, and custom woodwork",
-    "Sheetrock installation, repair and finishing",
-    "Doors, windows, cabinets, hardware and the last installations",
-    "Site cleaning, materials management, and care after handover",
+    "Painting: new construction and repaints, with preparation and protection before every coat",
+    "Textured finishes: trowel-on textures, plastering and textured faux finishes",
+    "Staining and pickling: custom stains and pickles mixed in-house, and care for wood finishing",
+    "Bespoke finishes: murals, wallpaper, artwork and colour matching",
+    "Tiling in custom patterns and layouts",
+    "Carpentry: custom woodwork for bespoke spaces",
+    "Sheetrock installation, repair and finishing, up to a level 5 finish",
+    "Installations: doors, windows, cabinets, hardware and furniture, coordinated before handover",
+    "Site maintenance and final construction cleaning",
+    "Materials management, including key samples kept for the future",
+    "Maintenance and ongoing care after handover",
   ],
   markerKeys: ["level-5", "maintenance-plan"],
 };
@@ -259,12 +272,16 @@ export const howWeWork = {
   title: "How we work",
   headline: "Transparent from first estimate to final invoice.",
   lede: "Every invoice, change order, colour schedule and payment in one shared client folder, built for owners who live off-island.",
-  paragraphs: [...transparencyCopy],
+  paragraphs: [
+    "Most of our clients live off-island, so we built our process around trust and visibility.",
+    ...transparencyCopy,
+  ],
   points: [
-    "Proposals customised per project, with labour, materials, scope and product information",
-    "A shared client folder for invoices, change orders, colour schedules, payments and contracts",
-    "Records kept so a later repair can find the same material",
-    "The company stays with the work through handover and beyond",
+    "Detailed estimates, customised per project, with labour, materials, product information, costs by room and surface, and a detailed scope of work",
+    "A shared client folder for invoices, change orders, colour schedules, payment schedules and contracts",
+    "Careful record keeping, so a later repair can find the same material and colour",
+    "Preparation, protection and craftsmanship on every surface",
+    "One contract, every stage: renderings and plans through construction, finishing and in-house materials, through handover and beyond",
   ],
 };
 
@@ -286,7 +303,7 @@ export const team: TeamMember[] = [
     name: "Chris Bento",
     title: "CEO, Wi Paint Inc",
     confirmed: true,
-    bio: "[PLACEHOLDER: bio]",
+    bio: "Leads Wi Paint Inc, Master Painters, a luxury painting and finishing contractor offering all-inclusive painting and finishing services, covering labour and materials for the final fine details of a project, with extensive experience finishing luxury homes and large-scale projects in Antigua and Barbuda.",
     markerKeys: ["chris-headshot", "chris-bio"],
   },
   {
@@ -294,7 +311,7 @@ export const team: TeamMember[] = [
     name: "Marco Spagnolo",
     title: "Co-founder, CEO & Project Manager, VIVID Construction",
     confirmed: false,
-    bio: "[PLACEHOLDER: bio]",
+    bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He manages the technical aspects of each project, and the relationship with clients.",
     markerKeys: ["marco-card", "marco-years", "marco-degree", "marco-headshot"],
   },
   {
@@ -427,8 +444,6 @@ export const stages = [
     body: "Timber, plaster, glass and warm light. The villa over a dark sea.",
   },
 ] as const;
-
-export const posterImage = "/images/portfolio/ty-compton-jumby-bay-03.jpg";
 
 assertNoPricesOrExternalUrls(
   {
