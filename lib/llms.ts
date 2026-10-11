@@ -23,7 +23,7 @@ ${link("/services/construction-materials-distribution", "Construction Materials 
 ${link("/finishing", "Finishing", "Bespoke surfaces.")}
 ${link("/how-we-work", "How we work", "Shared client folder for off-island owners.")}
 ${link("/portfolio", "Partner portfolio", "Named works. No client names.")}
-${link("/about", "About", "One company. Heritage stays in this story.")}
+${link("/about", "About", "Designers, engineers, and builders. Full service, and a transparent record for owners off island.")}
 ${link("/marketplace", "Marketplace", "Unissued plans and renders.")}
 ${link("/pay", "Pay", "Deposit or invoice. Disabled unless PAYMENTS_ENABLED=true.")}
 ${link("/client", "Client", "Placeholder session and per-home slots.")}

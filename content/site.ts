@@ -45,7 +45,7 @@ export const markers: Marker[] = [
   { key: "heritage-1981", kind: "CONFIRM", page: "About", needed: "Wording for the 1981 Italian family construction business, which the brochure says was under a different name." },
   { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
   { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
-  { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "Partner or affiliate company content still awaiting owner materials." },
+  { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "partner/affiliate company content — awaiting owner materials" },
   { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved." },
   { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
   { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
@@ -56,24 +56,29 @@ export const markers: Marker[] = [
   { key: "luigi-card", kind: "CONFIRM", page: "Team", needed: "Confirm Luigi Spagnolo's card for public display." },
   { key: "luigi-years", kind: "CONFIRM", page: "Team", needed: "The 2022 brochure said 17 years. Update before showing a figure." },
   { key: "luigi-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Luigi Spagnolo." },
+  { key: "contact-phone-email", kind: "PLACEHOLDER", page: "Contact", needed: "contact phone/email" },
   { key: "contact-email", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co email. Do not reuse a partner address." },
   { key: "contact-phone", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co phone or WhatsApp. Do not reuse a partner number." },
   { key: "contact-address", kind: "PLACEHOLDER", page: "Contact", needed: "Office or showroom address." },
   { key: "contact-social", kind: "PLACEHOLDER", page: "Contact", needed: "Social links." },
-  { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "Leadership names and titles, if they should be shown as Quantum roles. Team cards use partner-company titles only." },
+  { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "leadership names/titles, if owner wants them shown" },
 ];
 
 export function markersFor(page: string) {
   return markers.filter((marker) => marker.page === page);
 }
 
+export const fullServiceCopy =
+  "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one accountable team handling design, construction, finishing and materials so nothing falls between the gaps.";
+
+export const transparencyCopy = [
+  "Most of our clients are international and living off island during construction. Our goal is full transparency. Throughout each project we keep a shared project folder updated with invoices, material orders, change orders and payments, and close with a full project summary so everything remains organised and visible in one place.",
+  "We strive to offer creative ways for you to stay involved with your build, whether you're on island or halfway across the world.",
+] as const;
+
 export const story = {
-  title: "One company, built from two crafts.",
-  paragraphs: [
-    "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, building luxury villas in Antigua since 2013. Wi Paint brings bespoke luxury finishing. Together we are one accountable team, one contract, and one point of contact, carrying a project from renderings and plans through construction to the final coat.",
-    "The construction knowledge has its roots in Italy, in a family construction business established in 1981, where it built and renovated complex works. In 2013 that knowledge crossed the Atlantic and luxury villas began to rise in Antigua. In January 2020 the work expanded into precast concrete, with an industrial line and a decor line. The finishing practice brought three principles: quality of work, back-end service, and bespoke finishes.",
-    "Today that is one company. Design, engineering, construction and finishing sit under one roof, so nothing falls between the drawing and the last surface.",
-  ],
+  title: "Designers, engineers, and builders.",
+  paragraphs: [company.intro, fullServiceCopy, transparencyCopy.join(" ")],
 };
 
 export const homeIntro = company.intro;
@@ -102,10 +107,10 @@ export const services: Service[] = [
     slug: "full-design-and-build",
     title: "Full Design and Build Services",
     headline: "From first sketch to final finish, under one roof.",
-    lede: "One accountable team, one contract, and one point of contact, from the first planning conversation to handover.",
+    lede: "One accountable team from the first planning conversation through to handover.",
     paragraphs: [
-      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. We bring that into one company. You work with one accountable team, sign one contract, and talk to one point of contact, from the first planning conversation through handover and beyond.",
-      "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one accountable team handling design, construction, finishing and materials so nothing falls between the gaps.",
+      fullServiceCopy,
+      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. We bring that into one company. You work with one accountable team and one point of contact, from the first planning conversation through handover and beyond.",
     ],
     points: [
       "Collaborative design and planning, tailored to the site and the brief",
@@ -215,10 +220,7 @@ export const howWeWork = {
   title: "How we work",
   headline: "Transparent from first estimate to final invoice.",
   lede: "Every invoice, change order, colour schedule and payment in one shared client folder, built for owners who live off-island.",
-  paragraphs: [
-    "Most of our clients are international and living off island during construction. Our goal is full transparency. Throughout each project we keep a shared project folder updated with invoices, material orders, change orders and payments, and close with a full project summary so everything remains organised and visible in one place.",
-    "We strive to offer creative ways for you to stay involved with your build, whether you are on island or halfway across the world.",
-  ],
+  paragraphs: [...transparencyCopy],
   points: [
     "Proposals customised per project, with labour, materials, scope and product information",
     "A shared client folder for invoices, change orders, colour schedules, payments and contracts",

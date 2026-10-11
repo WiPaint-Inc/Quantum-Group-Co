@@ -15,7 +15,7 @@ export default function ContactPage() {
         title="Start your project."
         lede="A public email, phone and address are not published yet. Nothing here is taken from a partner company."
       />
-      <MarkerNotes keys={["contact-email", "contact-phone", "contact-address", "contact-social"]} />
+      <MarkerNotes keys={["contact-phone-email", "contact-email", "contact-phone", "contact-address", "contact-social"]} />
     </main>
   );
 }

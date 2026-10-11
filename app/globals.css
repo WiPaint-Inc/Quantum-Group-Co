@@ -61,9 +61,10 @@ body {
 
 .still-ocean {
   background:
-    radial-gradient(900px 420px at 78% 78%, rgba(224, 160, 96, 0.45), transparent 60%),
-    radial-gradient(700px 500px at 18% 72%, rgba(64, 168, 160, 0.4), transparent 55%),
-    linear-gradient(#071820 0%, #0d3a40 42%, #14524c 70%, #1a3330 100%);
+    radial-gradient(900px 420px at 78% 78%, rgba(176, 112, 58, 0.5), transparent 60%),
+    radial-gradient(640px 360px at 16% 82%, rgba(122, 92, 58, 0.42), transparent 58%),
+    radial-gradient(700px 500px at 48% 68%, rgba(42, 112, 104, 0.32), transparent 55%),
+    linear-gradient(#12110e 0%, #1a302c 40%, #3d4a40 68%, #6b5340 100%);
 }
 
 .still-space {

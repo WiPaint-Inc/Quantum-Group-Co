@@ -34,8 +34,8 @@ function weights(progress: number) {
 
 function Villa({ progressRef }: { progressRef: { current: number } }) {
   const group = useRef<THREE.Group>(null);
-  const concrete = useMemo(() => new THREE.Color("#3c3a36"), []);
-  const plaster = useMemo(() => new THREE.Color("#e6dcc8"), []);
+  const concrete = useMemo(() => new THREE.Color("#6a5c4e"), []);
+  const plaster = useMemo(() => new THREE.Color("#e4d5c0"), []);
   const scratch = useMemo(() => new THREE.Color(), []);
 
   useFrame(() => {
@@ -62,14 +62,14 @@ function Villa({ progressRef }: { progressRef: { current: number } }) {
         <group key={part.position.join("-")} position={part.position}>
           <mesh userData={{ role: "wire", kind: part.kind, engineer: part.kind === "column" }}>
             <boxGeometry args={part.size} />
-            <meshBasicMaterial color={part.kind === "column" ? "#9fd0ea" : "#e6d2a8"} wireframe transparent opacity={1} />
+            <meshBasicMaterial color={part.kind === "column" || part.kind === "roof" ? "#b88858" : "#e4d5c0"} wireframe transparent opacity={1} />
           </mesh>
           <mesh userData={{ role: "solid", kind: part.kind }} castShadow receiveShadow>
             <boxGeometry args={part.size} />
             <meshStandardMaterial
-              color={part.kind === "roof" ? "#8a6840" : part.kind === "pool" ? "#1c6f72" : part.kind === "glass" ? "#d7efe8" : "#e6dcc8"}
-              roughness={part.kind === "glass" || part.kind === "pool" ? 0.12 : 0.78}
-              metalness={part.kind === "roof" ? 0.35 : 0.04}
+              color={part.kind === "roof" ? "#7a5430" : part.kind === "column" ? "#8d6844" : part.kind === "pool" ? "#1a5c58" : part.kind === "glass" ? "#d7efe8" : "#d9cbb6"}
+              roughness={part.kind === "glass" || part.kind === "pool" ? 0.16 : 0.92}
+              metalness={part.kind === "roof" ? 0.12 : 0.02}
               transparent
               opacity={0}
               emissive={part.kind === "glass" ? "#f0d7a4" : "#000000"}
@@ -146,7 +146,7 @@ export default function JourneyScene({
   return (
     <>
       <SkyDome blendRef={progressRef} />
-      <hemisphereLight args={["#d7fff6", "#c6a36a", 0.35]} />
+      <hemisphereLight args={["#f3eadc", "#c6a36a", 0.42]} />
       <ambientLight intensity={0.25} color="#1a140e" />
       <directionalLight position={[6, 8, 4]} intensity={2.2} color="#ffd2a8" castShadow />
       <pointLight position={[-2, 2.2, 2]} intensity={4} color="#e6d2a8" distance={10} />

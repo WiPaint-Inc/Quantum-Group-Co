@@ -57,13 +57,18 @@ export default function HomePage() {
           ))}
         </div>
         <p className="mt-8 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
-        <MarkerNotes keys={["heritage-1981", "heritage-dates", "founding", "partner-materials", "leadership"]} />
-        <Link href="/about" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">Read the story</Link>
+        <MarkerNotes keys={["partner-materials", "leadership"]} />
+        <Link href="/about" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">About the company</Link>
       </section>
 
       <section className="px-6 py-20 md:px-14" aria-labelledby="work-heading">
         <h2 id="work-heading" className="font-serif text-5xl text-sand">{howWeWork.headline}</h2>
         <p className="mt-6 max-w-2xl text-sand/75">{howWeWork.lede}</p>
+        <div className="mt-6 max-w-2xl space-y-5 text-sand/70">
+          {howWeWork.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
         <Link href="/how-we-work" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">How we work</Link>
       </section>
     </main>

@@ -21,7 +21,7 @@ Public pages keep these notes out of production HTML. They render only in develo
 | heritage-1981 | CONFIRM | About | Wording for the 1981 Italian family construction business, which the brochure says was under a different name. |
 | heritage-dates | CONFIRM | About | Approval to keep publishing 1981, 2013, and January 2020. |
 | founding | PLACEHOLDER | About | Quantum Group Co founding date and legal entity, if they should be shown. |
-| partner-materials | PLACEHOLDER | About | Partner or affiliate company content still awaiting owner materials. |
+| partner-materials | PLACEHOLDER | About | partner/affiliate company content — awaiting owner materials |
 | page-16-grouping | CONFIRM | Partner Portfolio | How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved. |
 | chris-headshot | PLACEHOLDER | Team | Headshot for Chris Bento. |
 | chris-bio | PLACEHOLDER | Team | Anything further Chris wants in his bio. |
@@ -32,11 +32,12 @@ Public pages keep these notes out of production HTML. They render only in develo
 | luigi-card | CONFIRM | Team | Confirm Luigi Spagnolo's card for public display. |
 | luigi-years | CONFIRM | Team | The 2022 brochure said 17 years. Update before showing a figure. |
 | luigi-headshot | PLACEHOLDER | Team | Headshot for Luigi Spagnolo. |
+| contact-phone-email | PLACEHOLDER | Contact | contact phone/email |
 | contact-email | PLACEHOLDER | Contact | Quantum Group Co email. Do not reuse a partner address. |
 | contact-phone | PLACEHOLDER | Contact | Quantum Group Co phone or WhatsApp. Do not reuse a partner number. |
 | contact-address | PLACEHOLDER | Contact | Office or showroom address. |
 | contact-social | PLACEHOLDER | Contact | Social links. |
-| leadership | PLACEHOLDER | About | Leadership names and titles, if they should be shown as Quantum roles. Team cards use partner-company titles only. |
+| leadership | PLACEHOLDER | About | leadership names/titles, if owner wants them shown |
 
 ## Payments
 
