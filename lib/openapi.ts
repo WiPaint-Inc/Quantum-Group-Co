@@ -20,6 +20,7 @@ export function buildOpenApi() {
       { name: "Marketplace" },
       { name: "Session" },
       { name: "Agent" },
+      { name: "Payments" },
     ],
     components: {
       securitySchemes: {
@@ -79,6 +80,39 @@ export function buildOpenApi() {
           responses: { "200": { description: "OpenAPI 3.1 document" } },
         },
       },
+      "/api/services": {
+        get: {
+          tags: ["Company"],
+          summary: "The six published services",
+          operationId: "listServices",
+          responses: { "200": { description: "Services. Robotics is omitted unless enabled." } },
+        },
+      },
+      "/api/services/{slug}": {
+        get: {
+          tags: ["Company"],
+          summary: "One service",
+          operationId: "getService",
+          parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" } }],
+          responses: { "200": { description: "Service" }, "404": { description: "Unknown or unpublished" } },
+        },
+      },
+      "/api/portfolio": {
+        get: {
+          tags: ["Estates"],
+          summary: "Partner portfolio",
+          operationId: "listPortfolio",
+          responses: { "200": { description: "Projects without client names" } },
+        },
+      },
+      "/api/team": {
+        get: {
+          tags: ["Company"],
+          summary: "Confirmed team cards",
+          operationId: "listTeam",
+          responses: { "200": { description: "Confirmed members only" } },
+        },
+      },
       "/api/company": {
         get: {
           tags: ["Company"],
@@ -90,7 +124,7 @@ export function buildOpenApi() {
       "/api/estates": {
         get: {
           tags: ["Estates"],
-          summary: "Placeholder signature estates",
+          summary: "Partner portfolio, under the estates path",
           operationId: "listEstates",
           responses: { "200": { description: "Estate collection" } },
         },
@@ -300,6 +334,49 @@ export function buildOpenApi() {
           summary: "Clear the placeholder session",
           operationId: "deleteSession",
           responses: { "200": { description: "Cookie cleared" } },
+        },
+      },
+      "/api/payments": {
+        get: {
+          tags: ["Payments"],
+          summary: "Payment module status",
+          description: "Reports whether invoice payments are enabled. Receiving addresses are omitted.",
+          operationId: "getPaymentStatus",
+          responses: { "200": { description: "Status. Enabled is false unless PAYMENTS_ENABLED=true." } },
+        },
+      },
+      "/api/payments/quote": {
+        get: {
+          tags: ["Payments"],
+          summary: "Live USD quote for ETH or SOL",
+          operationId: "getPaymentQuote",
+          parameters: [{ name: "token", in: "query", required: true, schema: { type: "string", enum: ["ETH", "SOL"] } }],
+          responses: { "200": { description: "Quote" }, "503": { description: "Quote unavailable" } },
+        },
+      },
+      "/api/payments/screen": {
+        post: {
+          tags: ["Payments"],
+          summary: "Validate an invoice or tip and run the sanctions hook",
+          operationId: "screenPayment",
+          responses: { "200": { description: "Settled payment" }, "400": { description: "Invalid payment" }, "403": { description: "Disabled, unconfigured, or blocked" } },
+        },
+      },
+      "/api/payments/qr": {
+        post: {
+          tags: ["Payments"],
+          summary: "Build a payment code for a screened invoice or tip",
+          operationId: "createPaymentQr",
+          responses: { "200": { description: "QR and URI" }, "403": { description: "Sending is blocked" } },
+        },
+      },
+      "/api/payments/log": {
+        post: {
+          tags: ["Payments"],
+          summary: "Record a client-reported transfer",
+          description: "The server does not verify the transfer on chain. chainVerified is false.",
+          operationId: "logPayment",
+          responses: { "200": { description: "Logged" }, "400": { description: "Invalid report" } },
         },
       },
       "/api/auth/agent": {

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clientArea, estates } from "@/content/site";
+import { portfolioProjects } from "@/content/portfolio";
+import { clientArea } from "@/content/site";
 
 type Session = { email: string; note: string };
 
@@ -39,21 +40,22 @@ export function PortalView() {
   return (
     <div>
       <p className="mt-8 text-sand/75">{session ? `Session for ${session.email}. ${session.note}` : "Confirming the placeholder session."}</p>
-      <section className="mt-12" aria-labelledby="homes-heading">
-        <h2 id="homes-heading" className="font-serif text-4xl text-sand">House slots</h2>
+      <section className="mt-12">
+        <h2 className="font-serif text-4xl text-sand">House slots</h2>
         <p className="mt-3 max-w-xl text-sm text-sand/65">{clientArea.extension.summary}</p>
         <ul className="mt-8 divide-y divide-line border-y border-line">
-          {estates.map((estate) => (
-            <li key={estate.slug} className="flex flex-wrap items-baseline justify-between gap-3 py-5">
-              <span className="font-serif text-2xl text-sand">{estate.name}</span>
-              <Link href={`/client/homes/${estate.slug}`} className="text-[0.68rem] tracking-[0.18em] text-gold-2 uppercase">
+          {portfolioProjects.map((project) => (
+            <li key={project.slug} className="flex flex-wrap items-baseline justify-between gap-3 py-5">
+              <span className="font-serif text-2xl text-sand">{project.name}</span>
+              <Link href={`/client/homes/${project.slug}`} className="text-[0.68rem] tracking-[0.18em] text-gold-2 uppercase">
                 Extension point
               </Link>
             </li>
           ))}
         </ul>
       </section>
-      <button type="button" onClick={signOut} className="mt-10 text-[0.68rem] tracking-[0.22em] text-sand/60 uppercase">
+      <Link href="/pay" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">Pay a deposit or invoice</Link>
+      <button type="button" onClick={signOut} className="mt-10 block text-[0.68rem] tracking-[0.22em] text-sand/60 uppercase">
         Sign out
       </button>
     </div>

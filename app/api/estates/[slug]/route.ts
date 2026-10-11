@@ -1,13 +1,17 @@
-import { getEstate, plansForEstate, rendersForEstate } from "@/content/site";
+import { getPortfolioProject } from "@/content/portfolio";
 import { apiError, apiOk } from "@/lib/http";
 
 export async function GET(_request: Request, context: { params: Promise<{ slug: string }> }) {
   const { slug } = await context.params;
-  const estate = getEstate(slug);
-  if (!estate) return apiError("not_found", "No estate matches that slug.", 404);
+  const project = getPortfolioProject(slug);
+  if (!project) return apiError("not_found", "No estate matches that slug.", 404);
   return apiOk({
-    estate,
-    renders: rendersForEstate(estate.slug),
-    plans: plansForEstate(estate.slug),
+    estate: {
+      slug: project.slug,
+      name: project.name,
+      location: project.location,
+      kind: "partner-portfolio",
+      images: project.images.map((image) => ({ src: image.src, caption: image.caption })),
+    },
   });
 }

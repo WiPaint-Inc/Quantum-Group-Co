@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
-  { href: "/estates", label: "Estates" },
-  { href: "/developments", label: "Developments" },
+  { href: "/services", label: "Services" },
+  { href: "/portfolio", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/client", label: "Client" },
@@ -32,12 +32,7 @@ export function Header() {
             );
           })}
         </nav>
-        <button
-          type="button"
-          className="text-[0.68rem] tracking-[0.22em] text-sand uppercase md:hidden"
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-        >
+        <button type="button" className="text-[0.68rem] tracking-[0.22em] text-sand uppercase md:hidden" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
           {open ? "Close" : "Menu"}
         </button>
       </div>

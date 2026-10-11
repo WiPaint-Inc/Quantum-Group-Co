@@ -1,22 +1,23 @@
 import type { MetadataRoute } from "next";
-import { developments, estates } from "@/content/site";
+import { portfolioProjects } from "@/content/portfolio";
+import { services } from "@/content/site";
 import { absoluteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["/", "/estates", "/about", "/developments", "/marketplace", "/client"];
+  const paths = ["/", "/services", "/portfolio", "/about", "/how-we-work", "/finishing", "/marketplace", "/contact", "/client", "/pay"];
   return [
     ...paths.map((path) => ({
       url: absoluteUrl(path),
       changeFrequency: "weekly" as const,
       priority: path === "/" ? 1 : 0.7,
     })),
-    ...estates.map((estate) => ({
-      url: absoluteUrl(`/estates/${estate.slug}`),
+    ...services.map((service) => ({
+      url: absoluteUrl(`/services/${service.slug}`),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...developments.map((item) => ({
-      url: absoluteUrl(`/developments/${item.slug}`),
+    ...portfolioProjects.map((project) => ({
+      url: absoluteUrl(`/portfolio/${project.slug}`),
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),

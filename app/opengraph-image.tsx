@@ -24,10 +24,10 @@ export default function OpenGraphImage() {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", fontSize: 86, lineHeight: 0.9, fontFamily: "Georgia" }}>
-            Houses for the light.
+            One Company. Every Detail.
           </div>
           <div style={{ display: "flex", marginTop: 28, fontSize: 28, color: "#c9c2b4" }}>
-            Quantum Group Co.
+            Quantum Group Co
           </div>
         </div>
       </div>

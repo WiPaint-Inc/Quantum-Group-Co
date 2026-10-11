@@ -1,6 +1,6 @@
-import { developments } from "@/content/site";
+import { getService } from "@/content/site";
 import { apiOk } from "@/lib/http";
 
 export function GET() {
-  return apiOk({ developments });
+  return apiOk({ developments: [getService("developments")] });
 }

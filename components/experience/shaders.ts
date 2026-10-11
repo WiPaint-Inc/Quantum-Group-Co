@@ -24,9 +24,9 @@ export const waterFragment = /* glsl */ `
   void main() {
     vec3 viewDir = normalize(uCamera - vWorld);
     float fres = pow(1.0 - max(dot(vec3(0.0, 1.0, 0.0), viewDir), 0.0), 2.4);
-    vec3 deep = vec3(0.015, 0.16, 0.20);
-    vec3 shallow = vec3(0.22, 0.74, 0.70);
-    vec3 sand = vec3(0.93, 0.84, 0.68);
+    vec3 deep = vec3(0.01, 0.03, 0.05);
+    vec3 shallow = vec3(0.05, 0.16, 0.18);
+    vec3 sand = vec3(0.55, 0.42, 0.24);
     float c1 = sin(vWorld.x * 1.6 + uTime * 0.75) * sin(vWorld.z * 1.35 - uTime * 0.55);
     float c2 = sin((vWorld.x + vWorld.z) * 2.2 + uTime * 0.9);
     float caustic = smoothstep(0.05, 0.85, c1 * 0.5 + c2 * 0.5 + 0.45);

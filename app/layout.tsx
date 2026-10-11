@@ -26,13 +26,13 @@ const display = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${company.name} — Ultra-luxury residences`,
+    default: `${company.name} — Design, engineer, build, finish`,
     template: `%s — ${company.name}`,
   },
   description: company.description,
   applicationName: company.name,
   keywords: [
-    "Quantum Group Co.",
+    "Quantum Group Co",
     "Antigua and Barbuda",
     "ultra-luxury residential",
     "high-end construction",
@@ -42,12 +42,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en",
     siteName: company.name,
-    title: `${company.name} — Ultra-luxury residences`,
+    title: `${company.name} — Design, engineer, build, finish`,
     description: company.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${company.name} — Ultra-luxury residences`,
+    title: `${company.name} — Design, engineer, build, finish`,
     description: company.description,
   },
   robots: { index: true, follow: true },
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </Suspense>
         <noscript>
           <p className="px-6 py-8 text-sm text-sand/80">
-            JavaScript is off. The written pages, JSON-LD, and the agent API remain available. Begin with the estates index.
+            JavaScript is off. The written pages, JSON-LD, and the agent API remain available. Begin with services.
           </p>
         </noscript>
       </body>

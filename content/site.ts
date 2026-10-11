@@ -1,573 +1,422 @@
-/**
- * Single source for public facts.
- * Replace the placeholder estates, developments, renders, and plans in this file.
- * Do not add prices, client names, private project data, or external URLs.
- */
+import { atmosphereImages, getPortfolioProject, portfolioProjects, type PortfolioProject } from "@/content/portfolio";
+import { assertNoPricesOrExternalUrls } from "@/lib/public-copy";
 
-export type Vec3 = [number, number, number];
-
-export type Massing = "pavilion" | "court" | "lantern";
-
-export type Estate = {
-  slug: string;
-  name: string;
-  epithet: string;
-  placeholder: true;
-  status: "placeholder";
-  setting: string;
-  region: "Antigua and Barbuda";
-  summary: string;
-  narrative: string[];
-  finishes: string[];
-  composition: string;
-  massing: Massing;
-  position: Vec3;
-  rotation: number;
-  plinth: [number, number];
-};
-
-export type RenderStudy = {
-  id: string;
-  estateSlug: string;
-  title: string;
-  caption: string;
-  timeOfDay: string;
-  palette: { from: string; to: string };
-};
-
-export type PlanStudy = {
-  id: string;
-  estateSlug: string;
-  title: string;
-  caption: string;
-  sheets: string[];
-};
-
-export type Development = {
-  slug: string;
-  name: string;
-  placeholder: true;
-  status: "placeholder";
-  setting: string;
-  summary: string;
-  narrative: string[];
-  estateSlugs: string[];
-};
-
-export type MarketplaceKind = "plan" | "render";
-export type IssuanceStandard = "nft" | "ordinal";
-
-export type MarketplaceListing = {
-  id: string;
-  title: string;
-  kind: MarketplaceKind;
-  refId: string;
-  summary: string;
-  standards: IssuanceStandard[];
-  status: "teaser";
-  availability: "unissued";
-};
-
-export type SpaceNode = {
-  id: string;
-  title: string;
-  kicker: string;
-  summary: string;
-  href: string;
-  position: Vec3;
-  tint: string;
-};
+export { atmosphereImages, getPortfolioProject, portfolioProjects };
+export type { PortfolioProject };
 
 export const company = {
-  name: "Quantum Group Co.",
+  name: "Quantum Group Co",
   shortName: "Quantum",
   market: "Antigua and Barbuda",
   marketCountryCode: "AG",
-  discipline: "Ultra-luxury residential construction and development",
-  tagline: "Residences composed for the Caribbean light.",
+  tagline: "Design · Engineer · Build · Finish",
+  heroTitle: "One Company. Every Detail.",
+  heroSub:
+    "Design, engineering, construction and finishing, unified under one roof in Antigua and Barbuda.",
+  heroAlt: "From Vision to Handover. One Team.",
   description:
-    "Quantum Group Co. builds ultra-luxury houses in Antigua and Barbuda. The work is high-end residential, made with the finest finishes, and composed around light, shade, and water.",
-  facts: [
-    "Quantum Group Co. is a construction and development company.",
-    "The practice is ultra-luxury, high-end residential.",
-    "Antigua and Barbuda is the key market.",
-    "The work is defined by the finest finishes.",
-    "Published estates and developments are placeholders until the owner replaces this file.",
-    "Commercial terms are not published.",
-    "The marketplace does not mint, open a wallet, or touch a public network.",
-  ],
+    "Quantum Group Co is one company for the design, engineering, construction and finishing of exceptional homes in Antigua and Barbuda.",
+  intro:
+    "We are designers, engineers, and builders who specialize in creating unique properties. Our work centers on organic colours and natural materials: stone, timber, concrete, textured finishes and surfaces chosen for how they perform and age under Antigua's climate and light. Between our partners we bring more than 30 years of combined experience building and finishing projects across Antigua and Barbuda.",
 } as const;
 
-export const about = {
-  kicker: "The practice",
-  title: "Craft, before spectacle.",
-  paragraphs: [
-    "Quantum Group Co. makes houses for people who already know what they want from light. The rooms are few. The finishes are exact. Antigua and Barbuda is the ground the work is drawn for: trade wind, white-sand glare, and a long gold evening.",
-    "We build and we develop. A house here is a construction, not a brochure. Stone, lime, bronze, timber, and glass are specified as a single idea, then carried through to the last joint.",
-    "The estates on this site are studies. They hold a standard of composition until a real list takes their place. They are not client projects, and they are not offered as inventory.",
-  ],
-  principles: [
-    {
-      id: "light",
-      title: "Light",
-      body: "Openings are cut for a particular hour. Glare is refused. The afternoon is a material.",
-    },
-    {
-      id: "water",
-      title: "Water",
-      body: "Courts, channels, and a single pool. Water is kept still so the house can be heard.",
-    },
-    {
-      id: "craft",
-      title: "Finish",
-      body: "The finest finishes, specified once and not substituted. Lime plaster, oiled timber, bronze screens, and stone that takes the hand.",
-    },
-    {
-      id: "quiet",
-      title: "Quiet",
-      body: "Fewer rooms than a house of this ambition usually claims. Service is hidden. The plan is calm.",
-    },
-  ],
-} as const;
-
-export const meridian = {
-  id: "meridian",
-  title: "The Meridian",
-  kicker: "Portal",
-  summary:
-    "Leave the archipelago. The meridian holds the practice, the developments still ahead, and the marketplace of plans and renders.",
-  position: [0, 1.35, -7.2] as Vec3,
+export type Marker = {
+  key: string;
+  kind: "PLACEHOLDER" | "CONFIRM";
+  page: string;
+  needed: string;
 };
 
-export const estates: Estate[] = [
+export const markers: Marker[] = [
+  { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build", needed: "Whether the service is one fixed-scope contract or phased." },
+  { key: "rendering-scope", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Interior, exterior, or both, and whether the work is stills, animation, or walkthroughs." },
+  { key: "engineering-scope", kind: "CONFIRM", page: "Engineering", needed: "In-house engineering scope versus engineers retained per project." },
+  { key: "drawing-sets", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Which drawing sets are included, and who submits for planning approval." },
+  { key: "drawing-certification", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Drawing certification or stamping details. Do not claim sealed drawings until this is answered." },
+  { key: "plans-only", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Whether clients can commission plans without a build contract." },
+  { key: "renovation-only", kind: "CONFIRM", page: "Construction", needed: "Whether renovation-only projects are taken." },
+  { key: "infrastructure", kind: "CONFIRM", page: "Construction", needed: "Whether infrastructure is offered to private clients or only inside developments." },
+  { key: "energy-service", kind: "CONFIRM", page: "Engineering", needed: "Whether energy engineering is a named service." },
+  { key: "development-types", kind: "CONFIRM", page: "Developments", needed: "Types and scale of development the company will take on." },
+  { key: "development-role", kind: "CONFIRM", page: "Developments", needed: "Whether the company acts only as contractor, or also as co-developer or development manager." },
+  { key: "development-projects", kind: "PLACEHOLDER", page: "Developments", needed: "Current or upcoming development projects, if any can be named publicly." },
+  { key: "product-line-name", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Product-line name to use. The VIVID Industrial & Decor wording is behind SHOW_VIVID_PRODUCT_LINES." },
+  { key: "showroom", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Whether there is a showroom, and where." },
+  { key: "third-party-materials", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Whether other brands are distributed, or only the precast lines." },
+  { key: "level-5", kind: "CONFIRM", page: "Finishing", needed: "Whether to keep the level 5 sheetrock wording. It is a finish grade, not a certification." },
+  { key: "maintenance-plan", kind: "CONFIRM", page: "Finishing", needed: "Whether maintenance is a contract or a service plan." },
+  { key: "heritage-1981", kind: "CONFIRM", page: "About", needed: "Wording for the 1981 Italian family construction business, which the brochure says was under a different name." },
+  { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
+  { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
+  { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "Partner or affiliate company content still awaiting owner materials." },
+  { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "Page 16 project grouping for Aquamarine, Bodmer, and Cinnamint Hill." },
+  { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
+  { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
+  { key: "marco-card", kind: "CONFIRM", page: "Team", needed: "Confirm Marco Spagnolo's card for public display." },
+  { key: "marco-years", kind: "CONFIRM", page: "Team", needed: "The 2022 brochure said 15 years. Update before showing a figure." },
+  { key: "marco-degree", kind: "CONFIRM", page: "Team", needed: "Combined wording for the civil engineering degree, energy specialisation, and University of Bologna." },
+  { key: "marco-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Marco Spagnolo." },
+  { key: "luigi-card", kind: "CONFIRM", page: "Team", needed: "Confirm Luigi Spagnolo's card for public display." },
+  { key: "luigi-years", kind: "CONFIRM", page: "Team", needed: "The 2022 brochure said 17 years. Update before showing a figure." },
+  { key: "luigi-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Luigi Spagnolo." },
+  { key: "contact-email", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co email. Do not reuse a partner address." },
+  { key: "contact-phone", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co phone or WhatsApp. Do not reuse a partner number." },
+  { key: "contact-address", kind: "PLACEHOLDER", page: "Contact", needed: "Office or showroom address." },
+  { key: "contact-social", kind: "PLACEHOLDER", page: "Contact", needed: "Social links." },
+  { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "Leadership names and titles, if they should be shown as Quantum roles. Team cards use partner-company titles only." },
+];
+
+export function markersFor(page: string) {
+  return markers.filter((marker) => marker.page === page);
+}
+
+export const story = {
+  title: "One company, built from two crafts.",
+  paragraphs: [
+    "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, building luxury villas in Antigua since 2013. Wi Paint brings bespoke luxury finishing. Together we are one accountable team, one contract, and one point of contact, carrying a project from renderings and plans through construction to the final coat.",
+    "The construction knowledge has its roots in Italy, in a family construction business established in 1981, where it built and renovated complex works. In 2013 that knowledge crossed the Atlantic and luxury villas began to rise in Antigua. In January 2020 the work expanded into precast concrete, with an industrial line and a decor line. The finishing practice brought three principles: quality of work, back-end service, and bespoke finishes.",
+    "Today that is one company. Design, engineering, construction and finishing sit under one roof, so nothing falls between the drawing and the last surface.",
+  ],
+};
+
+export const homeIntro = company.intro;
+
+export type Service = {
+  order: number;
+  slug: string;
+  title: string;
+  headline: string;
+  lede: string;
+  paragraphs: string[];
+  points: string[];
+  markerKeys: string[];
+};
+
+const materialsIntro = {
+  withLines:
+    "Through the VIVID Industrial & Decor product lines, we produce and supply precast concrete products for builders and private clients. The industrial line is made to make a contractor's work simpler and faster. The decor line is bricks, pavers, planters and pots, benches, and other pieces for interiors, exteriors, gardens and floors.",
+  withoutLines:
+    "We produce and supply precast concrete products for builders and private clients. One line is made to make a contractor's work simpler and faster. The other is bricks, pavers, planters and pots, benches, and other pieces for interiors, exteriors, gardens and floors.",
+};
+
+export const services: Service[] = [
   {
-    slug: "atelier-residence",
-    name: "The Atelier Residence",
-    epithet: "A long room for the afternoon.",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A leeward shore study",
-    region: "Antigua and Barbuda",
-    summary:
-      "A low house of one deep roof, set back from a pale beach. The principal room runs the length of the view.",
-    narrative: [
-      "The Atelier Residence is a placeholder study for a leeward shore. It is not a client house. The plan is a single bar, lifted just clear of the sand, with a bronze screen along the west and a court of still water on the lee side.",
-      "Finishes are few and carried through: lime plaster, a limestone floor, and timber ceilings left visible. Shade is made by the roof, not by ornament.",
+    order: 1,
+    slug: "full-design-and-build",
+    title: "Full Design and Build Services",
+    headline: "From first sketch to final finish, under one roof.",
+    lede: "One accountable team, one contract, and one point of contact, from the first planning conversation to handover.",
+    paragraphs: [
+      "Most luxury builds involve a designer, an engineer, a builder, a finishing contractor and a supplier, each with their own contract. We bring that into one company. You work with one accountable team, sign one contract, and talk to one point of contact, from the first planning conversation through handover and beyond.",
+      "On every project we help design from start to finish. When clients need it, we can also procure everything from foundation through to handover. A complete, coordinated full-service package is what we specialise in: one accountable team handling design, construction, finishing and materials so nothing falls between the gaps.",
     ],
-    finishes: ["Lime plaster", "Limestone floors", "Bronze screens", "Visible timber ceilings"],
-    composition: "One bar, one court, one deep roof.",
-    massing: "pavilion",
-    position: [-7.4, 0, -0.2],
-    rotation: 0.45,
-    plinth: [2.5, 1.25],
+    points: [
+      "Collaborative design and planning, tailored to the site and the brief",
+      "Engineering and construction, coordinated in-house",
+      "Finishing trades and materials managed by the same team",
+      "One contract and one point of contact throughout",
+      "Care through handover and beyond",
+    ],
+    markerKeys: ["design-build-contract"],
   },
   {
-    slug: "white-pavilion",
-    name: "The White Pavilion",
-    epithet: "Rooms held in a single shade.",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A pale shore study",
-    region: "Antigua and Barbuda",
-    summary:
-      "A sequence of white rooms under one roof, arranged so the glare never enters whole.",
-    narrative: [
-      "The White Pavilion is a placeholder. It studies how a house on open sand can stay dim at noon without turning its back on the water.",
-      "Walls are thick. Openings are tall and narrow, then suddenly a full bay. The finish is plaster, stone, and a bronze edge at every threshold.",
+    order: 2,
+    slug: "rendering-design-engineering-plans",
+    title: "Full Rendering, Design, Engineering & Plans",
+    headline: "See the home before the first foundation is poured.",
+    lede: "3D renderings and visualisations, design development, engineering, and full construction plans and drawings.",
+    paragraphs: [
+      "We take an idea from concept to a buildable set of plans. The process starts with 3D renderings and visualisations, so spaces, materials and daylight can be tested before decisions are fixed. From there the work moves into design development, then engineering and full construction plans and drawings.",
+      "Because the same team that draws the home also builds and finishes it, the plans are made to be built. Structure, services, materials and finishes are thought through together.",
     ],
-    finishes: ["Thick lime plaster", "Honed stone", "Bronze thresholds", "Linen shade"],
-    composition: "A run of rooms, a shaded gallery, a short pool.",
-    massing: "pavilion",
-    position: [-2.5, 0, 1.8],
-    rotation: -0.25,
-    plinth: [2.2, 1.45],
+    points: [
+      "3D renderings and visualisations",
+      "Design development of layouts, materials, finishes and details",
+      "Engineering input from the start",
+      "Full construction plans and drawings",
+      "A natural pair to the future marketplace of plans and renders",
+    ],
+    markerKeys: ["rendering-scope", "engineering-scope", "drawing-sets", "drawing-certification", "plans-only"],
   },
   {
-    slug: "lantern-house",
-    name: "The Lantern House",
-    epithet: "One room for the evening.",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A windward rise study",
-    region: "Antigua and Barbuda",
-    summary:
-      "A compact house with a single upper room that takes the last gold of the day.",
-    narrative: [
-      "The Lantern House is a placeholder for a windward rise. The lower floor is closed and cool. Above it, one room is glazed to the west and lined in timber.",
-      "It is a study in restraint: two levels, a short stair, and a finish list that could be read aloud.",
+    order: 3,
+    slug: "construction",
+    title: "Construction",
+    headline: "Built with care, built to last.",
+    lede: "Luxury villas and homes in Antigua and Barbuda, made to be looked after for years.",
+    paragraphs: [
+      "We build luxury villas and homes with a focus on quality, safety, and houses that are straightforward to maintain. Careful planning, disciplined site management and quality control are how the home you were promised is the home you receive.",
+      "Natural stone, timber, concrete and textured finishes are chosen for the island's sun, salt air and seasonal rain.",
     ],
-    finishes: ["Oiled timber", "Limewash", "Bronze hardware", "Clear glass"],
-    composition: "A closed base and a single glowing room.",
-    massing: "lantern",
-    position: [2.1, 0, -1.9],
-    rotation: 0.2,
-    plinth: [1.7, 1.7],
+    points: [
+      "New-build luxury villas and residences",
+      "Site management and quality control throughout",
+      "Materials detailed for the Caribbean climate",
+    ],
+    markerKeys: ["renovation-only", "infrastructure"],
   },
   {
-    slug: "quiet-court",
-    name: "The Quiet Court",
-    epithet: "Four wings and a pool.",
-    placeholder: true,
-    status: "placeholder",
-    setting: "An inland garden study",
-    region: "Antigua and Barbuda",
-    summary:
-      "Four short wings around a court of water. The garden is the view. The horizon is implied.",
-    narrative: [
-      "The Quiet Court is a placeholder for an inland site, where the luxury is shade and the sound of water rather than a panorama.",
-      "Each wing is one room. The court is stone. Planting is kept outside the walls so the interior stays quiet.",
+    order: 4,
+    slug: "engineering",
+    title: "Engineering",
+    headline: "Engineering that makes the design work.",
+    lede: "Civil engineering inside the same team that designs and builds, from the first sketch.",
+    paragraphs: [
+      "Good design depends on sound engineering. Structural thinking shapes the project from the start, not after the drawings are finished. We manage the technical side, from structure and materials to buildability and long-term performance, and keep it aligned with the look of the house.",
+      "Energy-conscious design is part of that thinking, so homes stay comfortable in the Caribbean climate.",
     ],
-    finishes: ["Stone court", "Lime plaster", "Dark timber", "Bronze rain chains"],
-    composition: "Four wings, one still pool, no grand stair.",
-    massing: "court",
-    position: [6.6, 0, 0.7],
-    rotation: -0.4,
-    plinth: [2.15, 2.15],
+    points: [
+      "Civil and structural engineering input",
+      "Technical management across design and construction",
+      "Experience with concrete and precast elements",
+    ],
+    markerKeys: ["engineering-scope", "energy-service", "drawing-certification"],
   },
   {
-    slug: "harbour-study",
-    name: "The Harbour Study",
-    epithet: "Few openings. Exact joinery.",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A harbour-edge study",
-    region: "Antigua and Barbuda",
-    summary:
-      "A waterfront house of measured openings and joinery cut to the millimetre. A study, not a berth.",
-    narrative: [
-      "The Harbour Study is a placeholder for a quiet edge of working water. It does not name a harbour. The house is a long plinth with a single gallery and a room for looking, not for display.",
-      "Joinery is the finish. Panels, shutters, and a bronze screen are drawn as one set.",
+    order: 5,
+    slug: "developments",
+    title: "Developments",
+    headline: "From a single villa to a complete community.",
+    lede: "The same one-team approach, carried across multi-unit and larger work.",
+    paragraphs: [
+      "Planning and design, engineering, construction, finishing and materials can be coordinated by one accountable team. For developers and investors, that means a single point of responsibility and a transparent record of progress.",
     ],
-    finishes: ["Fitted joinery", "Shutters", "Bronze screen", "Dark stone"],
-    composition: "A long plinth, a gallery, a looking room.",
-    massing: "pavilion",
-    position: [3.4, 0, 3.6],
-    rotation: 0.85,
-    plinth: [2.6, 1.15],
+    points: [
+      "Coordinated design, construction and finishing",
+      "A transparent record for owners, developers and investors",
+    ],
+    markerKeys: ["development-types", "development-role", "development-projects"],
+  },
+  {
+    order: 6,
+    slug: "construction-materials-distribution",
+    title: "Construction Materials Distribution",
+    headline: "Materials we trust, available to the build.",
+    lede: "Precast concrete for contractors and for the house, planned and delivered with the work.",
+    paragraphs: [materialsIntro.withoutLines],
+    points: [
+      "Precast concrete for contractors and developers",
+      "Decorative concrete for homes, gardens and outdoor living",
+      "Materials planning, purchasing and logistics",
+      "Key samples kept for later maintenance",
+    ],
+    markerKeys: ["product-line-name", "showroom", "third-party-materials"],
   },
 ];
 
-export const renders: RenderStudy[] = [
+export function serviceParagraphs(service: Service, vividLines: boolean) {
+  if (service.slug !== "construction-materials-distribution" || !vividLines) return service.paragraphs;
+  return [materialsIntro.withLines, "Alongside those precast products, we plan, purchase, transport and manage the materials used on our projects, and keep key samples on file for future maintenance."];
+}
+
+export function getService(slug: string) {
+  return services.find((service) => service.slug === slug) ?? null;
+}
+
+export const finishing = {
+  slug: "finishing",
+  title: "Finishing & Bespoke Surfaces",
+  headline: "The final details, done properly.",
+  paragraphs: [
+    "Finishing is where a luxury home is won or lost. The finishing team carries a project through the last fine details, coordinating the finishing trades for a consistent result on the day of handover.",
+  ],
+  points: [
+    "Painting for new construction and repaints, with preparation and protection before every coat",
+    "Textured finishes, plastering and textured faux finishes",
+    "Custom stains and pickles, and care for wood finishing",
+    "Bespoke work: murals, wallpaper, artwork and colour matching",
+    "Tiling in custom patterns, and custom woodwork",
+    "Sheetrock installation, repair and finishing",
+    "Doors, windows, cabinets, hardware and the last installations",
+    "Site cleaning, materials management, and care after handover",
+  ],
+  markerKeys: ["level-5", "maintenance-plan"],
+};
+
+export const howWeWork = {
+  title: "How we work",
+  headline: "Transparent from first estimate to final invoice.",
+  lede: "Every invoice, change order, colour schedule and payment in one shared client folder, built for owners who live off-island.",
+  paragraphs: [
+    "Most of our clients are international and living off island during construction. Our goal is full transparency. Throughout each project we keep a shared project folder updated with invoices, material orders, change orders and payments, and close with a full project summary so everything remains organised and visible in one place.",
+    "We strive to offer creative ways for you to stay involved with your build, whether you are on island or halfway across the world.",
+  ],
+  points: [
+    "Proposals customised per project, with labour, materials, scope and product information",
+    "A shared client folder for invoices, change orders, colour schedules, payments and contracts",
+    "Records kept so a later repair can find the same material",
+    "One accountable team through handover and beyond",
+  ],
+};
+
+export const portfolioIntro =
+  "Selected work by our partners includes luxury homes at Jumby Bay, Barbuda, Mill Reef and Willikies, among them Delphis, Ty Compton and Lazy Lizard at Jumby Bay; Casitas, Barbuda; Aquamarine and Bodmer at Mill Reef; and Cinnamint Hill, Willikies.";
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  title: string;
+  confirmed: boolean;
+  bio: string;
+  markerKeys: string[];
+};
+
+export const team: TeamMember[] = [
   {
-    id: "render-atelier-dusk",
-    estateSlug: "atelier-residence",
-    title: "Dusk, west screen",
-    caption: "The bronze screen against the last light. A study plate, not a photograph of a built house.",
-    timeOfDay: "Dusk",
-    palette: { from: "#12343c", to: "#e0b07a" },
+    id: "chris-bento",
+    name: "Chris Bento",
+    title: "CEO, Wi Paint Inc",
+    confirmed: true,
+    bio: "Leads Wi Paint Inc, Master Painters, a luxury painting and finishing contractor. The practice covers labour and materials for the final fine details of a project, with extensive experience finishing luxury homes and large-scale projects in Antigua and Barbuda.",
+    markerKeys: ["chris-headshot", "chris-bio"],
   },
   {
-    id: "render-pavilion-noon",
-    estateSlug: "white-pavilion",
-    title: "Noon, shaded gallery",
-    caption: "White rooms kept dim while the shore glare stays outside.",
-    timeOfDay: "Noon",
-    palette: { from: "#f4efe6", to: "#8fd4cb" },
+    id: "marco-spagnolo",
+    name: "Marco Spagnolo",
+    title: "Co-founder, CEO & Project Manager, VIVID Construction",
+    confirmed: false,
+    bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He manages technical aspects of each project, and the relationship with clients.",
+    markerKeys: ["marco-card", "marco-years", "marco-degree", "marco-headshot"],
   },
   {
-    id: "render-lantern-evening",
-    estateSlug: "lantern-house",
-    title: "Evening, upper room",
-    caption: "The lantern room taking the gold hour. A drawn study.",
-    timeOfDay: "Evening",
-    palette: { from: "#1a120c", to: "#e6c48a" },
-  },
-  {
-    id: "render-court-morning",
-    estateSlug: "quiet-court",
-    title: "Morning, the court",
-    caption: "Still water and four short wings. Shade arrives before the guests.",
-    timeOfDay: "Morning",
-    palette: { from: "#0e2428", to: "#d7c4a2" },
-  },
-  {
-    id: "render-harbour-overcast",
-    estateSlug: "harbour-study",
-    title: "Overcast, the gallery",
-    caption: "Joinery and a narrow view to working water. No vessel is shown.",
-    timeOfDay: "Overcast",
-    palette: { from: "#243038", to: "#c9c2b4" },
+    id: "luigi-spagnolo",
+    name: "Luigi Spagnolo",
+    title: "Co-founder, President & Production Director, VIVID Construction",
+    confirmed: false,
+    bio: "Runs operations and sees that the work meets the standard set for it.",
+    markerKeys: ["luigi-card", "luigi-years", "luigi-headshot"],
   },
 ];
 
-export const plans: PlanStudy[] = [
-  {
-    id: "plan-atelier-01",
-    estateSlug: "atelier-residence",
-    title: "Atelier plan set",
-    caption: "Plan, section, and a west elevation. A measured study, unissued.",
-    sheets: ["Plan", "Long section", "West elevation"],
-  },
-  {
-    id: "plan-pavilion-01",
-    estateSlug: "white-pavilion",
-    title: "Pavilion plan set",
-    caption: "The sequence of rooms and the shaded gallery.",
-    sheets: ["Plan", "Cross section", "Bay detail"],
-  },
-  {
-    id: "plan-lantern-01",
-    estateSlug: "lantern-house",
-    title: "Lantern plan set",
-    caption: "Lower plan, upper plan, and the short stair.",
-    sheets: ["Lower plan", "Upper plan", "Stair section"],
-  },
-  {
-    id: "plan-court-01",
-    estateSlug: "quiet-court",
-    title: "Court plan set",
-    caption: "Four wings and the stone court between them.",
-    sheets: ["Plan", "Court section", "Wall detail"],
-  },
-  {
-    id: "plan-harbour-01",
-    estateSlug: "harbour-study",
-    title: "Harbour plan set",
-    caption: "Gallery, looking room, and the joinery elevation.",
-    sheets: ["Plan", "Gallery elevation", "Joinery section"],
-  },
-];
-
-export const developments: Development[] = [
-  {
-    slug: "leeward-sequence",
-    name: "The Leeward Sequence",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A studied leeward shore",
-    summary:
-      "A short line of houses sharing one idea of roof, screen, and court. A development study, not a released site.",
-    narrative: [
-      "The Leeward Sequence is a placeholder for a future shore development. It imagines a few houses, not a resort, each with its own court and a shared discipline of finish.",
-      "Nothing here is a named client project. The study exists so the standard can be discussed before land and lists are real.",
-    ],
-    estateSlugs: ["atelier-residence", "white-pavilion"],
-  },
-  {
-    slug: "ridge-collection",
-    name: "The Ridge Collection",
-    placeholder: true,
-    status: "placeholder",
-    setting: "A windward ridge study",
-    summary:
-      "Elevated houses in the trade wind. Fewer, higher, and closed to the noon.",
-    narrative: [
-      "The Ridge Collection is a placeholder development for higher ground. Houses sit apart. The finish is timber, limewash, and glass cut small against the wind.",
-      "It is a study of siting, not a map of parcels.",
-    ],
-    estateSlugs: ["lantern-house"],
-  },
-  {
-    slug: "harbour-quiet",
-    name: "Harbour Quiet",
-    placeholder: true,
-    status: "placeholder",
-    setting: "An unnamed harbour edge",
-    summary:
-      "A small ensemble at the water, concerned with joinery and a civil relationship to working boats.",
-    narrative: [
-      "Harbour Quiet is a placeholder. It does not identify a port. The idea is a few houses that do not perform wealth toward the water.",
-      "The associated estate study is The Harbour Study, together with the inland Quiet Court as a counterpoint.",
-    ],
-    estateSlugs: ["harbour-study", "quiet-court"],
-  },
-];
-
-export const marketplaceListings: MarketplaceListing[] = [
-  {
-    id: "listing-plan-atelier",
-    title: "Atelier plan set",
-    kind: "plan",
-    refId: "plan-atelier-01",
-    summary:
-      "A future issuance of the Atelier plan set, contemplated as an NFT or a Bitcoin Ordinal for a private buyer. Nothing is issued.",
-    standards: ["nft", "ordinal"],
-    status: "teaser",
-    availability: "unissued",
-  },
-  {
-    id: "listing-plan-court",
-    title: "Court plan set",
-    kind: "plan",
-    refId: "plan-court-01",
-    summary:
-      "The Quiet Court drawings, held for a later private issuance. Unissued.",
-    standards: ["ordinal", "nft"],
-    status: "teaser",
-    availability: "unissued",
-  },
-  {
-    id: "listing-render-lantern",
-    title: "Lantern evening plate",
-    kind: "render",
-    refId: "render-lantern-evening",
-    summary:
-      "The evening plate of the Lantern House, a render study reserved for a future issuance. Unissued.",
-    standards: ["nft", "ordinal"],
-    status: "teaser",
-    availability: "unissued",
-  },
-  {
-    id: "listing-render-atelier",
-    title: "Atelier dusk plate",
-    kind: "render",
-    refId: "render-atelier-dusk",
-    summary:
-      "The dusk plate of the Atelier Residence. A teaser only. No token and no ordinal exists.",
-    standards: ["ordinal"],
-    status: "teaser",
-    availability: "unissued",
-  },
-];
-
-export const spaceNodes: SpaceNode[] = [
-  {
-    id: "vision",
-    title: "Vision",
-    kicker: "The practice",
-    summary:
-      "What the company is for: ultra-luxury houses in Antigua and Barbuda, built with the finest finishes.",
-    href: "/about",
-    position: [-4.4, 1.15, 0.2],
-    tint: "#e6d2a8",
-  },
-  {
-    id: "future",
-    title: "The Future",
-    kicker: "Developments",
-    summary:
-      "Placeholder developments. A leeward sequence, a ridge collection, and a quiet harbour edge.",
-    href: "/developments",
-    position: [-1.3, 2.1, -1.4],
-    tint: "#9fd0ea",
-  },
-  {
-    id: "marketplace",
-    title: "Marketplace",
-    kicker: "Plans and renders",
-    summary:
-      "A private issuance, later, of plans and renders as NFTs or Bitcoin Ordinals. The door is a waitlist. Minting is not live.",
-    href: "/marketplace",
-    position: [2.2, 1.25, 0.4],
-    tint: "#8fd4cb",
-  },
-  {
-    id: "craft",
-    title: "Craft",
-    kicker: "Finishes",
-    summary:
-      "Lime, stone, bronze, timber. The standard the placeholder houses are trying to hold.",
-    href: "/about#craft",
-    position: [4.6, 2.0, -1.1],
-    tint: "#f4efe6",
-  },
-];
+export const robotics = {
+  slug: "robotics",
+  title: "Robotics",
+  headline: "A later chapter for machines on the site.",
+  paragraphs: [
+    "This page is reserved for how AI and robotics may assist construction, layout and finishing. It is not offered as a service today.",
+    "No system is named, and no partnership is claimed.",
+  ],
+};
 
 export const clientArea = {
-  kicker: "Private atelier",
-  title: "A room for the houses, when they are real.",
-  summary:
-    "The client area is a shell. Sign-in creates a placeholder session in this browser. It is not an identity provider, and it does not open a house.",
+  kicker: "Client folder",
+  title: "One place for the life of the build.",
+  summary: howWeWork.lede,
   extension: {
     id: "residence-os",
     title: "Residence applications",
     status: "unmounted" as const,
     mountPath: "/client/homes/[slug]",
-    summary:
-      "Each future house can receive its own application in this slot. Phase 1 renders the slot only. No per-home app is mounted.",
+    summary: "A future per-home application can mount here. Phase 1 renders the slot only.",
   },
 };
 
-export const realms = {
-  ocean: {
-    id: "ocean" as const,
-    label: "Archipelago",
-    kicker: "Antigua and Barbuda",
-    title: "Houses for the light.",
-    lede: "Ultra-luxury residences, composed with the finest finishes. Select a study on the water.",
+export const marketplaceListings = [
+  {
+    id: "listing-plan-study",
+    title: "Construction plan set",
+    kind: "plan" as const,
+    refId: "plan-study-01",
+    summary: "A future private issuance of a plan set, contemplated as an NFT or a Bitcoin Ordinal. Nothing is issued.",
+    standards: ["nft", "ordinal"] as const,
+    status: "teaser" as const,
+    availability: "unissued" as const,
   },
-  space: {
-    id: "space" as const,
-    label: "Meridian",
-    kicker: "Vision, future, marketplace",
-    title: "The longer field.",
-    lede: "The practice, the developments ahead, and a marketplace of plans and renders that is not yet open.",
+  {
+    id: "listing-render-study",
+    title: "Render plate",
+    kind: "render" as const,
+    refId: "render-study-01",
+    summary: "A future private issuance of a render plate. Nothing is issued. No wallet and no network.",
+    standards: ["nft", "ordinal"] as const,
+    status: "teaser" as const,
+    availability: "unissued" as const,
   },
-};
+];
 
-const commercialTerm =
-  /\$\s?\d|\bprices?\b|\bpricing\b|\busd\b|\bxcd\b|\beur\b|€|£\s?\d/i;
+export type MarketplaceListing = (typeof marketplaceListings)[number];
 
-function assertPublishable(value: unknown) {
-  const blob = JSON.stringify(value);
-  if (commercialTerm.test(blob)) {
-    throw new Error("Public content must not include prices or commercial terms.");
-  }
-  if (/https?:\/\//i.test(blob)) {
-    throw new Error("Public content must not include external URLs.");
-  }
-}
+export type IssuanceStandard = "nft" | "ordinal";
 
-assertPublishable({
-  company,
-  about,
-  meridian,
-  estates,
-  renders,
-  plans,
-  developments,
-  marketplaceListings,
-  spaceNodes,
-  clientArea,
-  realms,
-});
+export const plans = [
+  {
+    id: "plan-study-01",
+    title: "Plan study",
+    caption: "An unissued set of construction drawings, held for a later private issuance.",
+    sheets: ["Plans", "Sections", "Elevations"],
+  },
+];
 
-export function getEstate(slug: string) {
-  return estates.find((estate) => estate.slug === slug) ?? null;
-}
+export const renders = [
+  {
+    id: "render-study-01",
+    title: "Render study",
+    caption: "An unissued visualisation, paired with the rendering service. Not a photograph of a specific commission.",
+    palette: { from: "#14110e", to: "#c6a36a" },
+  },
+];
 
-export function getDevelopment(slug: string) {
-  return developments.find((item) => item.slug === slug) ?? null;
-}
-
-export function getRender(id: string) {
-  return renders.find((item) => item.id === id) ?? null;
+export function getListing(id: string) {
+  return marketplaceListings.find((item) => item.id === id) ?? null;
 }
 
 export function getPlan(id: string) {
   return plans.find((item) => item.id === id) ?? null;
 }
 
-export function getListing(id: string) {
-  return marketplaceListings.find((item) => item.id === id) ?? null;
+export function getRender(id: string) {
+  return renders.find((item) => item.id === id) ?? null;
 }
 
-export function rendersForEstate(slug: string) {
-  return renders.filter((item) => item.estateSlug === slug);
-}
+export const stages = [
+  {
+    id: "design",
+    kicker: "Design",
+    title: "The first drawing.",
+    body: "Renderings and a concept, before the ground is touched.",
+  },
+  {
+    id: "engineer",
+    kicker: "Engineer",
+    title: "The lines that hold.",
+    body: "Plans and structure, drawn so the house can be built.",
+  },
+  {
+    id: "build",
+    kicker: "Build",
+    title: "Stone, concrete, mass.",
+    body: "The house becomes solid. The climate is already in the specification.",
+  },
+  {
+    id: "finish",
+    kicker: "Finish",
+    title: "The last surface.",
+    body: "Timber, plaster, glass and warm light. The villa over a dark sea.",
+  },
+] as const;
 
-export function plansForEstate(slug: string) {
-  return plans.filter((item) => item.estateSlug === slug);
-}
+export const posterImage = "/images/portfolio/ty-compton-jumby-bay-03.jpg";
 
-export type FocusTarget = {
-  id: string;
-  realm: "ocean" | "space";
-  position: Vec3;
-  title: string;
-};
-
-export function focusTarget(id: string): FocusTarget | null {
-  const estate = getEstate(id);
-  if (estate) {
-    return { id: estate.slug, realm: "ocean", position: estate.position, title: estate.name };
-  }
-  if (id === meridian.id) {
-    return { id: meridian.id, realm: "ocean", position: meridian.position, title: meridian.title };
-  }
-  const node = spaceNodes.find((item) => item.id === id);
-  if (node) {
-    return { id: node.id, realm: "space", position: node.position, title: node.title };
-  }
-  return null;
-}
+assertNoPricesOrExternalUrls(
+  {
+    company,
+    markers,
+    story,
+    homeIntro,
+    services,
+    finishing,
+    howWeWork,
+    portfolioIntro,
+    team,
+    robotics,
+    clientArea,
+    marketplaceListings,
+    plans,
+    renders,
+    stages,
+    portfolioProjects,
+    atmosphereImages,
+    publishedServices: services.map((service) => serviceParagraphs(service, true)),
+  },
+  "content",
+);

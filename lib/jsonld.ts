@@ -1,4 +1,5 @@
-import { company, developments, estates, type Estate } from "@/content/site";
+import { company, services } from "@/content/site";
+import { portfolioProjects } from "@/content/portfolio";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
 
 export function organizationJsonLd() {
@@ -8,70 +9,40 @@ export function organizationJsonLd() {
     name: company.name,
     description: company.description,
     url: getSiteUrl(),
-    areaServed: {
-      "@type": "Country",
-      name: company.market,
-    },
-    knowsAbout: [
-      "Ultra-luxury residential construction",
-      "High-end residential development",
-      "Antigua and Barbuda",
-    ],
+    slogan: company.tagline,
+    areaServed: { "@type": "Country", name: company.market },
+    knowsAbout: services.map((service) => service.title),
   };
 }
 
-export function estateJsonLd(estate: Estate) {
+export function servicesJsonLd() {
   return {
     "@context": "https://schema.org",
-    "@type": ["RealEstateListing", "Place", "Residence"],
-    name: estate.name,
-    description: `${estate.summary} Placeholder study. Commercial terms are not published.`,
-    url: absoluteUrl(`/estates/${estate.slug}`),
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: company.marketCountryCode,
-      addressRegion: estate.region,
-    },
-    additionalProperty: estate.finishes.map((finish) => ({
-      "@type": "PropertyValue",
-      name: "Finish",
-      value: finish,
+    "@type": "ItemList",
+    name: "Services",
+    itemListElement: services.map((service) => ({
+      "@type": "ListItem",
+      position: service.order,
+      url: absoluteUrl(`/services/${service.slug}`),
+      name: service.title,
     })),
   };
 }
 
-export function estatesItemListJsonLd() {
+export function portfolioJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Signature estates",
-    itemListElement: estates.map((estate, index) => ({
+    name: "Partner portfolio",
+    itemListElement: portfolioProjects.map((project, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: absoluteUrl(`/estates/${estate.slug}`),
-      item: estateJsonLd(estate),
-    })),
-  };
-}
-
-export function developmentsJsonLd() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "Development studies",
-    itemListElement: developments.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      url: absoluteUrl(`/developments/${item.slug}`),
+      url: absoluteUrl(`/portfolio/${project.slug}`),
       item: {
         "@type": "Place",
-        name: item.name,
-        description: item.summary,
-        address: {
-          "@type": "PostalAddress",
-          addressCountry: company.marketCountryCode,
-          addressRegion: company.market,
-        },
+        name: project.name,
+        description: `${project.name}, ${project.location}. Partner portfolio work.`,
+        address: { "@type": "PostalAddress", addressCountry: "AG", addressLocality: project.location },
       },
     })),
   };

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { MarkerNotes } from "@/components/site/MarkerNote";
 import { PageIntro } from "@/components/site/PageIntro";
-import { about, company } from "@/content/site";
+import { company, story, team } from "@/content/site";
+import { showInternalNotes } from "@/lib/flags";
 
 export const metadata: Metadata = {
   title: "About",
@@ -8,40 +10,32 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const visibleTeam = team.filter((member) => member.confirmed || showInternalNotes());
+
   return (
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
-      <PageIntro kicker={about.kicker} title={about.title} lede={about.paragraphs[0]} />
-      <div className="mt-10 max-w-2xl space-y-6 text-base leading-relaxed text-sand/75">
-        {about.paragraphs.slice(1).map((paragraph) => (
+      <PageIntro kicker="About" title={story.title} lede={story.paragraphs[0]} />
+      <div className="mt-8 max-w-2xl space-y-5 text-sand/75">
+        {story.paragraphs.slice(1).map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
-      <dl className="mt-16 max-w-xl space-y-3 text-sm">
-        <div className="grid grid-cols-[8rem_1fr] gap-4 border-t border-line py-3">
-          <dt className="kicker">Market</dt>
-          <dd>{company.market}</dd>
-        </div>
-        <div className="grid grid-cols-[8rem_1fr] gap-4 border-t border-line py-3">
-          <dt className="kicker">Practice</dt>
-          <dd>{company.discipline}</dd>
-        </div>
-      </dl>
-      <section className="mt-20" aria-labelledby="principles-heading">
-        <h2 id="principles-heading" className="font-serif text-4xl text-sand">The standard</h2>
-        <ol className="mt-10 grid gap-10 md:grid-cols-2">
-          {about.principles.map((principle) => (
-            <li key={principle.id} id={principle.id} className="border-t border-line pt-6">
-              <h3 className="font-serif text-3xl text-sand">{principle.title}</h3>
-              <p className="mt-3 text-sand/70">{principle.body}</p>
+      <p className="mt-8 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
+      <MarkerNotes keys={["heritage-1981", "heritage-dates", "founding", "partner-materials", "leadership"]} />
+
+      <section className="mt-20" aria-labelledby="team-heading">
+        <h2 id="team-heading" className="font-serif text-4xl text-sand">Team</h2>
+        <p className="mt-3 max-w-xl text-sm text-sand/60">Titles are partner-company titles. Nobody is given a Quantum Group Co title here.</p>
+        <ul className="mt-8 grid gap-6 md:grid-cols-3">
+          {visibleTeam.map((member) => (
+            <li key={member.id} className="border-t border-line pt-5">
+              <div className="mb-4 aspect-[4/5] border border-line bg-white/5" aria-hidden="true" />
+              {!member.confirmed ? <p className="kicker">To confirm</p> : null}
+              <h3 className="mt-2 font-serif text-3xl text-sand">{member.name}</h3>
+              <p className="mt-2 text-sm text-gold-2">{member.title}</p>
+              <p className="mt-3 text-sm text-sand/70">{member.bio}</p>
+              <MarkerNotes keys={member.markerKeys} />
             </li>
-          ))}
-        </ol>
-      </section>
-      <section className="mt-20 max-w-2xl" aria-labelledby="facts-heading">
-        <h2 id="facts-heading" className="font-serif text-4xl text-sand">Facts an agent can read</h2>
-        <ul className="mt-6 space-y-3 text-sand/75">
-          {company.facts.map((fact) => (
-            <li key={fact} className="border-t border-line py-3">{fact}</li>
           ))}
         </ul>
       </section>
