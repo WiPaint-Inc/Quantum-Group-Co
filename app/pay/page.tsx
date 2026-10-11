@@ -16,7 +16,7 @@ export default function PayPage() {
   return (
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
       <p className="kicker">{company.name}</p>
-      <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[0.92] text-sand sm:text-7xl">Pay an invoice.</h1>
+      <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[0.92] text-sand sm:text-7xl">Pay deposit / invoice</h1>
       <p className="mt-6 max-w-2xl text-lg text-sand/80">Deposits and invoices only. This page does not list a price for a house.</p>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-sand/70">{copy.nonCustodial}</p>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-sand/60">{copy.antigua}</p>
@@ -33,13 +33,17 @@ async function PayDesk() {
   const shared = sharedProfileAddresses(env).length > 0;
   const publish = env.paymentsEnabled && !shared;
   const config: PayPanelConfig = {
+    payeeName: env.payeeName,
     enabled: env.paymentsEnabled,
+    configured: profileConfigured(env, "quantum") && !shared,
     sanctions: env.sanctionsWebhookUrl ? "webhook" : "passthrough",
     walletConnect: reownReady(env.reownProjectId),
     projectId: reownReady(env.reownProjectId) ? env.reownProjectId : "",
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://quantum-group.example",
     solanaRpcUrl: env.solanaRpcUrl,
     sharedAddresses: shared,
+    presets: [...env.presetAmountsUsd],
+    fiat: env.fiat,
     addresses: {
       quantum: publish && profileConfigured(env, "quantum") ? env.profiles.quantum : null,
       tip: publish && profileConfigured(env, "tip") ? env.profiles.tip : null,

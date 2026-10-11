@@ -71,7 +71,7 @@ export function gateProfile(env: PayEnv, mode: PayMode): { ok: true } | { ok: fa
   }
   const profileId = profileForMode(mode);
   if (!profileConfigured(env, profileId)) {
-    return { ok: false, message: "Receiving addresses for this payment are still placeholders." };
+    return { ok: false, message: "Payments not configured" };
   }
   return { ok: true };
 }
@@ -91,9 +91,9 @@ export function settlePayment(draft: PaymentDraft, env: PayEnv, quote: Quote | n
   if (!amountUsd) return { ok: false, message: "Enter the invoice amount in US dollars." };
 
   let invoiceNumber: string | null = null;
-  if (mode === "invoice") {
+  if (draft.invoiceNumber.trim()) {
     invoiceNumber = parseInvoiceNumber(draft.invoiceNumber);
-    if (!invoiceNumber) return { ok: false, message: "An invoice number is required." };
+    if (!invoiceNumber) return { ok: false, message: "Use letters and numbers for the invoice or memo." };
   }
 
   const stable = token === "USDC" || token === "USDT";

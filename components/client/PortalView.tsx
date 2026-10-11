@@ -54,7 +54,7 @@ export function PortalView() {
           ))}
         </ul>
       </section>
-      <Link href="/pay" className="mt-8 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">Pay a deposit or invoice</Link>
+      <Link href="/pay" className="mt-8 inline-block border border-gold px-4 py-3 text-[0.68rem] tracking-[0.2em] text-sand uppercase">Pay deposit / invoice</Link>
       <button type="button" onClick={signOut} className="mt-10 block text-[0.68rem] tracking-[0.22em] text-sand/60 uppercase">
         Sign out
       </button>

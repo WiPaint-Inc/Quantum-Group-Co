@@ -6,7 +6,13 @@ export const chainMeta: Record<ChainId, { label: string; chainId: number | null;
   solana: { label: "Solana", chainId: null, nativeSymbol: "SOL", explorerTx: "https://solscan.io/tx/" },
 };
 
-/** Public mainnet contracts and mints. These are not receiving addresses and not secrets. */
+/**
+ * Official token contracts and mints. These are not receiving addresses and not secrets.
+ * USDC: Circle, https://developers.circle.com/stablecoins/usdc-contract-addresses
+ * USDT on Ethereum and Solana: Tether, https://tether.to/en/supported-protocols/
+ * USDT on Base: Tether's supported-protocols page does not list Base. The address below is the
+ * Base canonical bridge of Ethereum USDT. BaseScan labels it bridged and says Tether does not issue it.
+ */
 export const tokenContracts: Record<Exclude<ChainId, "solana">, Record<"USDC" | "USDT", { address: `0x${string}`; decimals: number }>> = {
   ethereum: {
     USDC: { address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", decimals: 6 },
@@ -45,6 +51,6 @@ export const erc20TransferAbi = [
       { name: "to", type: "address" },
       { name: "amount", type: "uint256" },
     ],
-    outputs: [{ name: "", type: "bool" }],
+    outputs: [],
   },
 ] as const;

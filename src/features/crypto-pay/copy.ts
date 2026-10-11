@@ -1,6 +1,6 @@
 export const copy = {
   disabled: "Payments are not yet enabled.",
-  unconfigured: "Payments are not configured. Receiving addresses are still placeholders.",
+  unconfigured: "Payments not configured",
   shared: "Invoice and tip profiles share a receiving address. Sending stays blocked until each profile has its own addresses.",
   invoiceHelp:
     "Enter the invoice number exactly as it appears on your invoice. The amount is that invoice in US dollars. USDC and USDT are treated as one US dollar each. ETH and SOL amounts are estimates from a live quote and are not a locked rate.",

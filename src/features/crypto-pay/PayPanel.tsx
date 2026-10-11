@@ -10,13 +10,17 @@ import type { WalletResult } from "./WalletPay";
 const WalletPay = dynamic(() => import("./WalletPay").then((mod) => mod.WalletPay), { ssr: false });
 
 export type PayPanelConfig = {
+  payeeName: string;
   enabled: boolean;
+  configured: boolean;
   sanctions: "webhook" | "passthrough";
   walletConnect: boolean;
   projectId: string;
   siteUrl: string;
   solanaRpcUrl: string;
   sharedAddresses: boolean;
+  presets: number[];
+  fiat: { stripe: string | null; coinbase: string | null };
   addresses: {
     quantum: Record<ChainId, string> | null;
     tip: Record<ChainId, string> | null;
@@ -43,7 +47,7 @@ export function PayPanel({ config }: { config: PayPanelConfig }) {
   const tokenChoices = useMemo(() => tokens.filter((item) => tokenAllowed(chain, item)), [chain]);
   const activeToken = tokenChoices.includes(token) ? token : tokenChoices[0];
   const profileReady = config.addresses[mode === "invoice" ? "quantum" : "tip"] !== null;
-  const canPrepare = config.enabled && !config.sharedAddresses && profileReady;
+  const canPrepare = config.enabled && config.configured && !config.sharedAddresses && profileReady;
 
   async function screen(): Promise<{ ok: true; payment: SettledPayment } | { ok: false; message: string }> {
     const response = await fetch("/api/payments/screen", {
@@ -104,13 +108,13 @@ export function PayPanel({ config }: { config: PayPanelConfig }) {
       body: JSON.stringify({ ...qr.payment, fromAddress: result.from, txHash: result.hash, status: "confirmed" }),
     });
     setReceipt(`${chainMeta[qr.payment.chain].explorerTx}${result.hash}`);
-    setMessage("The wallet reported a confirmed transfer. Quantum Group Co does not hold the funds.");
+    setMessage(`The wallet reported a confirmed transfer. ${config.payeeName} does not hold the funds.`);
   }
 
   return (
     <form onSubmit={(event) => void prepare(event)} className="mt-10 max-w-3xl">
       {!config.enabled ? <p className="border border-gold/70 px-4 py-3 text-sand">{copy.disabled}</p> : null}
-      {config.enabled && !profileReady ? <p className="mt-4 border border-gold/70 px-4 py-3 text-sand">{copy.unconfigured}</p> : null}
+      {!config.configured || !profileReady ? <p className="mt-4 border border-gold/70 px-4 py-3 text-sand">{copy.unconfigured}</p> : null}
       {config.sharedAddresses ? <p className="mt-4 border border-gold/70 px-4 py-3 text-sand">{copy.shared}</p> : null}
 
       <fieldset className="mt-8">
@@ -139,20 +143,30 @@ export function PayPanel({ config }: { config: PayPanelConfig }) {
             {tokenChoices.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
-        <label className="block text-sm text-sand/70">
-          Amount in US dollars
-          <input className="mt-2 w-full border border-line bg-ink px-3 py-3 text-sand" inputMode="decimal" value={amountUsd} onChange={(event) => { setAmountUsd(event.target.value); setQr(null); }} required />
+        <fieldset className="block text-sm text-sand/70 md:col-span-2">
+          <legend>Amount in US dollars</legend>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {config.presets.map((amount) => (
+              <button
+                key={amount}
+                type="button"
+                className={amountUsd === String(amount) ? "border border-gold px-3 py-2 text-sand" : "border border-line px-3 py-2 text-sand/70"}
+                onClick={() => { setAmountUsd(String(amount)); setQr(null); }}
+              >
+                {amount}
+              </button>
+            ))}
+          </div>
+          <input className="mt-3 w-full border border-line bg-ink px-3 py-3 text-sand" inputMode="decimal" placeholder="Custom amount" value={amountUsd} onChange={(event) => { setAmountUsd(event.target.value); setQr(null); }} required />
+        </fieldset>
+        <label className="block text-sm text-sand/70 md:col-span-2">
+          Invoice number or memo, optional
+          <input className="mt-2 w-full border border-line bg-ink px-3 py-3 text-sand" value={invoiceNumber} onChange={(event) => { setInvoiceNumber(event.target.value); setQr(null); }} />
         </label>
-        {mode === "invoice" ? (
-          <label className="block text-sm text-sand/70">
-            Invoice number
-            <input className="mt-2 w-full border border-line bg-ink px-3 py-3 text-sand" value={invoiceNumber} onChange={(event) => { setInvoiceNumber(event.target.value); setQr(null); }} required />
-          </label>
-        ) : null}
       </div>
 
       <button type="submit" className="mt-6 border border-gold px-4 py-3 text-[0.68rem] tracking-[0.18em] text-sand uppercase disabled:opacity-40" disabled={!canPrepare || busy}>
-        {busy ? "Preparing" : "Show payment code"}
+        {busy ? "Preparing" : canPrepare ? "Show payment code" : "Connect & Pay"}
       </button>
       <p className="mt-4 text-sm text-sand/60">{copy.sendWarning}</p>
       {message ? <p className="mt-4 text-sm text-sand" role="status">{message}</p> : null}
@@ -184,6 +198,15 @@ export function PayPanel({ config }: { config: PayPanelConfig }) {
         </div>
       ) : null}
       {receipt ? <p className="mt-4 break-all text-sm"><a className="text-gold-2" href={receipt}>View the transfer</a></p> : null}
+      <div className="mt-10 border-t border-line pt-6 text-sm text-sand/65">
+        <p>Card checkout is a hosted link only. This page does not collect card numbers or identity documents.</p>
+        {config.fiat.stripe || config.fiat.coinbase ? (
+          <p className="mt-3 flex flex-wrap gap-4">
+            {config.fiat.stripe ? <a className="text-gold-2" href={config.fiat.stripe}>Stripe payment link</a> : null}
+            {config.fiat.coinbase ? <a className="text-gold-2" href={config.fiat.coinbase}>Coinbase Commerce</a> : null}
+          </p>
+        ) : <p className="mt-3">Card checkout is not configured.</p>}
+      </div>
     </form>
   );
 }

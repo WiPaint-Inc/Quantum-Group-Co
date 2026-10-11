@@ -11,10 +11,13 @@ export type PayMode = (typeof modes)[number];
 export type ProfileAddresses = Record<ChainId, string>;
 
 export type PayEnv = {
+  payeeName: string;
   paymentsEnabled: boolean;
   reownProjectId: string;
   solanaRpcUrl: string;
   sanctionsWebhookUrl: string;
+  presetAmountsUsd: readonly number[];
+  fiat: { stripe: string | null; coinbase: string | null };
   profiles: Record<ProfileId, ProfileAddresses>;
 };
 

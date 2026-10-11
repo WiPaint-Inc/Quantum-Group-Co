@@ -8,10 +8,13 @@ import { estimateNativeAmount, isPlaceholderAddress, isValidAddress, parseInvoic
 import type { PayEnv } from "./types";
 
 const ready: PayEnv = {
+  payeeName: "Quantum Group Co",
   paymentsEnabled: true,
   reownProjectId: "",
   solanaRpcUrl: "https://api.mainnet-beta.solana.com",
   sanctionsWebhookUrl: "",
+  presetAmountsUsd: [1000, 5000, 10000],
+  fiat: { stripe: null, coinbase: null },
   profiles: {
     quantum: {
       base: "0x1111111111111111111111111111111111111111",
@@ -29,17 +32,20 @@ const ready: PayEnv = {
 test("defaults stay off and placeholder", () => {
   const env = readPayEnv({} as NodeJS.ProcessEnv);
   assert.equal(env.paymentsEnabled, false);
+  assert.equal(env.profiles.quantum.base, "0xYOUR_BASE_ADDRESS");
   assert.equal(isPlaceholderAddress(env.profiles.quantum.base), true);
   assert.equal(isValidAddress("base", env.profiles.quantum.base), false);
 });
 
-test("invoice payments require a number and refuse a shared profile", () => {
+test("an invoice memo is optional and a shared profile is refused", () => {
   assert.equal(parseInvoiceNumber("A-104"), "A-104");
   assert.equal(parseInvoiceNumber("x"), null);
   assert.equal(parseUsdAmount("2500"), "2500.00");
   assert.equal(parseUsdAmount("$2500"), null);
-  const blocked = settlePayment({ mode: "invoice", chain: "base", token: "USDC", amountUsd: "10", invoiceNumber: "" }, ready, null);
-  assert.equal(blocked.ok, false);
+  const open = settlePayment({ mode: "invoice", chain: "base", token: "USDC", amountUsd: "10", invoiceNumber: "" }, ready, null);
+  assert.equal(open.ok, true);
+  const memo = settlePayment({ mode: "invoice", chain: "base", token: "USDC", amountUsd: "10", invoiceNumber: "x" }, ready, null);
+  assert.equal(memo.ok, false);
   const shared = structuredClone(ready);
   shared.profiles.tip.base = shared.profiles.quantum.base;
   assert.equal(sharedProfileAddresses(shared).length, 1);

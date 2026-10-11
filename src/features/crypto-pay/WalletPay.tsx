@@ -66,7 +66,7 @@ export function WalletPay({
         Connect wallet
       </button>
       <button type="button" className="border border-gold px-4 py-3 text-[0.68rem] tracking-[0.18em] text-sand uppercase disabled:opacity-40" disabled={!canSend || busy} onClick={() => void send()}>
-        {busy ? "Waiting for wallet" : "Send from wallet"}
+        {busy ? "Waiting for wallet" : "Connect & Pay"}
       </button>
       <p className="w-full text-sm text-sand/55">
         {evm.address ? `EVM ${evm.address}` : "No EVM wallet connected."}

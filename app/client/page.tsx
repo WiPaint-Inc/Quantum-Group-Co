@@ -15,7 +15,7 @@ export default function ClientPage() {
       <PageIntro kicker={clientArea.kicker} title={clientArea.title} lede={howWeWork.paragraphs[0]} />
       <p className="mt-6 max-w-2xl text-sand/70">{howWeWork.paragraphs[1]}</p>
       <p className="mt-8">
-        <Link href="/pay" className="text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">Pay a deposit or invoice</Link>
+        <Link href="/pay" className="inline-block border border-gold px-4 py-3 text-[0.68rem] tracking-[0.22em] text-sand uppercase">Pay deposit / invoice</Link>
       </p>
       <section className="mt-16 max-w-2xl border-t border-line pt-8">
         <h2 className="font-serif text-3xl text-sand">{clientArea.extension.title}</h2>

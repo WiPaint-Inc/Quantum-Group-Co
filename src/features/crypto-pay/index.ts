@@ -1,5 +1,5 @@
 export { copy } from "./copy";
-export { addressesArePlaceholders, readPayEnv, reownReady } from "./config";
+export { addressesArePlaceholders, payeeName, presetAmountsUsd, readPayEnv, receivingAddresses, reownReady } from "./crypto-pay.config";
 export { ConsolePaymentLogger } from "./logger";
 export { quoteToken } from "./quotes";
 export { passthroughScreener, screenerFromEnv } from "./sanctions";

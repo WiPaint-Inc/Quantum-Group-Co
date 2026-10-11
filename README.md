@@ -50,10 +50,13 @@ Team cards with `confirmed: false` stay off the public team API.
 The portable module is [`src/features/crypto-pay`](src/features/crypto-pay). It supports Base, Ethereum, and Solana, and the tokens USDC, USDT, ETH, and SOL.
 
 - `PAYMENTS_ENABLED` defaults to false. The pay page shows “Payments are not yet enabled.” and will not build a payment code.
-- Receiving addresses that still contain a placeholder are refused.
+- Placeholder receiving addresses, including `0xYOUR_BASE_ADDRESS`, show “Payments not configured” and refuse to send.
 - The invoice profile and the tip profile must use different addresses.
-- An invoice number is required for an invoice payment. USDC and USDT follow that USD amount one for one. ETH and SOL amounts are estimates from a live quote.
-- Wallet connection uses Reown AppKit with wagmi, viem, and the Solana adapter. It stays hidden until `NEXT_PUBLIC_REOWN_PROJECT_ID` is a 32-character id. Scanning a code or copying an address does not need it.
+- An invoice number or memo is optional. USDC and USDT follow the US dollar amount one for one. ETH and SOL amounts are estimates from a live quote.
+- Wallet connection uses Reown AppKit with wagmi, viem, and the Solana adapter. Leave `NEXT_PUBLIC_REOWN_PROJECT_ID` unset and the panel keeps QR and a copied address only.
+- Card checkout is off unless `PAY_FIAT_ENABLED=true` and a Stripe Payment Link or Coinbase Commerce URL is set. No secret keys.
+
+The module’s own notes, including the Antigua compliance note and what the card links need, are in [`src/features/crypto-pay/README.md`](src/features/crypto-pay/README.md).
 - `SANCTIONS_WEBHOOK_URL` is the screening hook. With it empty, the hook allows the payment and says that no list was queried.
 - `POST /api/payments/log` records a client-reported transfer. It does not verify the chain.
 
