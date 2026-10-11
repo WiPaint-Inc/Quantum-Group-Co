@@ -11,10 +11,11 @@ export const company = {
   marketCountryCode: "AG",
   tagline: "Design · Engineer · Build · Finish",
   heroTitle: "One Company. Every Detail.",
-  heroSub: "Design, engineering, construction and finishing, unified under one roof in Antigua and Barbuda.",
-  heroAlt: "From Vision to Handover. One Team.",
+  heroSub:
+    "Renderings, design, engineering and plans, construction, finishing and materials, all under one company in Antigua and Barbuda.",
+  heroAlts: ["Design. Engineer. Build. Finish.", "The Future of Luxury Building in Antigua."],
   description:
-    "Quantum Group Co is one company for the design, engineering, construction and finishing of exceptional homes in Antigua and Barbuda.",
+    "Renderings, design, engineering and plans, construction, finishing and in-house materials, under one company. Quantum Group Co designs, engineers, builds and finishes exceptional homes in Antigua and Barbuda.",
   intro:
     "We are designers, engineers, and builders who specialize in creating unique properties. Our work centers on organic colours and natural materials: stone, timber, concrete, textured finishes and surfaces chosen for how they perform and age under Antigua's climate and light. Between our partners we bring more than 30 years of combined experience building and finishing projects across Antigua and Barbuda.",
 } as const;
@@ -86,8 +87,8 @@ export const transparencyCopy = [
 ] as const;
 
 export const story = {
-  title: "One company.",
-  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, from an Italian family construction business established in 1981, and luxury villas in Antigua since 2013. Precast lines followed in January 2020. Wi Paint brings bespoke luxury finishing, shaped by three principles: quality of work, back-end service, and bespoke finishes. Together we are one accountable team, one contract, and one point of contact, carrying your project from renderings and plans through construction to the final coat.",
+  title: "One company, built on two crafts.",
+  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, from an Italian family construction business established in 1981, and luxury villas in Antigua since 2013. Precast lines followed in January 2020. Wi Paint brings bespoke luxury finishing, shaped by three principles: quality of work, back-end service, and bespoke finishes. Together, that heritage makes possible a single contract covering every stage, from renderings and plans through construction to the final coat, with materials supplied in-house and full transparency for owners who live off-island.",
 };
 
 export const homeIntro = company.intro;
@@ -138,7 +139,7 @@ export const services: Service[] = [
     points: [
       "Collaborative design and planning, tailored to your site and brief",
       "Engineering and construction, coordinated in-house",
-      "Finishing trades and materials managed by the same team",
+      "Finishing trades and materials managed in-house",
       "A single contract covering every stage",
       "Care through handover and beyond",
     ],

@@ -147,6 +147,7 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
           <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.9] text-sand sm:text-7xl md:text-8xl">{company.heroTitle}</h1>
           <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
           <p className="mt-6 text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
+          <p className="mt-3 text-sm text-sand/60">{company.heroAlts[1]}</p>
         </div>
         <p className="pointer-events-none absolute top-1/2 right-6 left-6 -translate-y-1/2 text-center font-serif text-6xl text-sand md:text-8xl" style={{ opacity: stageTitle }}>
           {stage.label}

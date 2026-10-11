@@ -7,7 +7,7 @@ export function buildLlmsTxt(): string {
 
   return `# Quantum Group Co
 
-> One company for renderings, design, engineering, construction and finishing in Antigua and Barbuda.
+> Renderings, design, engineering and plans, construction, finishing and in-house materials, under one company in Antigua and Barbuda.
 
 Quantum Group Co publishes no commercial schedule for its houses. The marketplace does not mint. Payments, when enabled, are non-custodial and go wallet to wallet.
 
