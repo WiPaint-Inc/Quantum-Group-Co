@@ -53,21 +53,32 @@ export const skyVertex = /* glsl */ `
 
 export const skyFragment = /* glsl */ `
   uniform float uBlend;
+  uniform float uDay;
   in vec3 vWorld;
   out vec4 fragColor;
   void main() {
     vec3 dir = normalize(vWorld);
     float h = clamp(dir.y * 0.5 + 0.5, 0.0, 1.0);
+    vec3 dayHorizon = vec3(0.93, 0.84, 0.70);
+    vec3 dayZenith = vec3(0.42, 0.62, 0.78);
+    vec3 dayCol = mix(dayHorizon, dayZenith, smoothstep(0.0, 0.72, h));
     vec3 sunset = vec3(0.82, 0.48, 0.26);
     vec3 tide = vec3(0.20, 0.36, 0.32);
     vec3 zenith = vec3(0.05, 0.09, 0.12);
-    vec3 col = mix(sunset, tide, smoothstep(0.02, 0.42, h));
-    col = mix(col, zenith, smoothstep(0.28, 0.95, h));
-    vec3 sunDir = normalize(vec3(0.62, 0.16, -0.42));
+    vec3 duskCol = mix(sunset, tide, smoothstep(0.02, 0.42, h));
+    duskCol = mix(duskCol, zenith, smoothstep(0.28, 0.95, h));
+    vec3 nightHorizon = vec3(0.08, 0.05, 0.07);
+    vec3 nightZenith = vec3(0.01, 0.015, 0.04);
+    vec3 nightCol = mix(nightHorizon, nightZenith, smoothstep(0.05, 0.8, h));
+    float dusk = smoothstep(0.15, 0.48, uDay);
+    float night = smoothstep(0.55, 0.92, uDay);
+    vec3 col = mix(dayCol, duskCol, dusk);
+    col = mix(col, nightCol, night);
+    vec3 sunDir = normalize(mix(vec3(0.2, 0.72, 0.2), vec3(0.72, 0.05, -0.42), clamp(uDay, 0.0, 1.0)));
     float sun = pow(max(dot(dir, sunDir), 0.0), 220.0);
     float glow = pow(max(dot(dir, sunDir), 0.0), 7.0);
-    col += vec3(1.0, 0.86, 0.62) * sun;
-    col += vec3(0.78, 0.42, 0.18) * glow * 0.46;
+    col += vec3(1.0, 0.9, 0.7) * sun * (1.0 - night);
+    col += vec3(0.78, 0.42, 0.18) * glow * 0.4 * dusk * (1.0 - night);
     vec3 voidCol = vec3(0.015, 0.02, 0.045);
     col = mix(col, voidCol, uBlend);
     fragColor = vec4(col, 1.0);

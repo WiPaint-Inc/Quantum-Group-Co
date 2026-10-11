@@ -490,3 +490,13 @@ export function atmosphereWhere(prefix: "finish-detail" | "partner-portfolio") {
 export function getPortfolioProject(slug: string) {
   return portfolioProjects.find((project) => project.slug === slug) ?? null;
 }
+
+/**
+ * glTF slots. Leave a project out until a compressed model exists.
+ * Public URL, for example "/models/delphis-jumby-bay/scene.glb".
+ */
+export const projectModels: Record<string, string> = {};
+
+export function projectModel(slug: string) {
+  return projectModels[slug];
+}

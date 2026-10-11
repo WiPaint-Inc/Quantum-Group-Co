@@ -32,7 +32,6 @@ Public pages keep these notes out of production HTML. They render only in develo
 | page-16-grouping | CONFIRM | Partner Portfolio | page-16 project grouping |
 | chris-headshot | PLACEHOLDER | Team | Headshot for Chris Bento. |
 | chris-bio | PLACEHOLDER | Team | Anything further Chris wants in his bio. |
-| marco-years | CONFIRM | Team | 15 years is as stated in the 2022 brochure. Update before showing a figure. |
 | marco-degree | CONFIRM | Team | Combined wording for the civil engineering degree, energy specialisation, and University of Bologna. |
 | marco-headshot | PLACEHOLDER | Team | Headshot for Marco Spagnolo. |
 | contact-phone-email | PLACEHOLDER | Contact | contact phone/email |

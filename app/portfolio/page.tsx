@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { PageIntro } from "@/components/site/PageIntro";
 import { portfolioProjects } from "@/content/portfolio";
 import { portfolioIntro } from "@/content/site";
+
+const PortfolioPlaces = dynamic(
+  () => import("@/components/experience/PortfolioPlaces").then((mod) => mod.PortfolioPlaces),
+  { ssr: false },
+);
 
 export const metadata: Metadata = {
   title: "Partner Portfolio",
@@ -13,7 +19,17 @@ export const metadata: Metadata = {
 
 export default function PortfolioPage() {
   return (
-    <main id="content" className="px-6 pt-32 pb-24 md:px-14">
+    <main id="content">
+      <PortfolioPlaces
+        places={portfolioProjects.map((project) => ({
+          slug: project.slug,
+          name: project.name,
+          location: project.location,
+          caption: project.caption,
+          images: project.images.slice(0, 3),
+        }))}
+      />
+      <div className="px-6 pt-32 pb-24 md:px-14">
       <PageIntro kicker="Partner Portfolio" title="Work already standing." lede={portfolioIntro} />
       <MarkerNotes keys={["page-16-grouping"]} />
       <ol className="mt-16 grid gap-10 md:grid-cols-2">
@@ -41,6 +57,7 @@ export default function PortfolioPage() {
           );
         })}
       </ol>
+      </div>
     </main>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
+import { Cursor } from "@/components/experience/Cursor";
+import { SmoothScroll } from "@/components/experience/SmoothScroll";
 import { Footer } from "@/components/site/Footer";
 import { Header, HeaderFallback } from "@/components/site/Header";
 import { JsonLd } from "@/components/site/JsonLd";
@@ -64,6 +66,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-dvh bg-ink font-sans text-sand">
+        <SmoothScroll />
+        <Cursor />
         <JsonLd data={organizationJsonLd()} />
         <a
           href="#content"

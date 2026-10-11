@@ -1,6 +1,6 @@
 # Quantum Group Co
 
-Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice in Antigua and Barbuda. The public site is a gold-on-black sequence: a mega-estate aerial, a blueprint line drawing, then the ocean photograph giving way to night.
+Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice in Antigua and Barbuda. The home page is a cinematic 3D journey. Photographs of the partners' work support it, inside the editorial pages and as stand-ins inside each portfolio scene.
 
 There are no house prices. The partner portfolio names works, not clients. Payments, when enabled, are non-custodial and off by default.
 
@@ -25,9 +25,36 @@ npm start
 
 ## Experience
 
-The home page opens on a full-bleed photograph when `DRAFT_CONTENT=true`. Gold site-plan lines trace across Design, Engineer, Build, and Finish, then fade. The frame then moves from the ocean photograph into night. With the flag off, those photographs are replaced by neutral plates. The sequence is images and SVG, so it runs on a phone.
+Scroll is the timeline. One canvas follows an estate from an empty site through vision, blueprint, structure, finish, and evening. Lighting moves from morning through dusk to night. A stage counter and a timeline of buttons mark the place in that journey. The canvas is its own chunk. Phones use a simpler scene: lower resolution, a coarser water mesh, fewer stars, and no shadows. `prefers-reduced-motion` skips the canvas and keeps the dusk photograph plus the written pages. Sound stays off until a visitor turns it on.
 
-`models/demo-villa/` holds unused glTF files. The site does not load them.
+Lenis smooths wheel scrolling and stays in step with the camera. A gold ring follows a fine pointer and eases toward links. It does not replace the system cursor.
+
+Each service is a short procedural scene:
+
+- Engineering: an exploded structure, load-path lines, rebar, and a precast beam.
+- Rendering and plans: sheets lift and a volume extrudes from them.
+- Construction: massing rises out of the site.
+- Finishing: a light sweeps plaster, stone, and timber.
+- Materials: precast pavers tile a courtyard.
+- Developments: the camera pulls back from one villa to an estate of them.
+
+The partner portfolio is a flight from project to project. Scroll or choose a name. Opening a project shows a `ProjectScene`: the owner's photographs as floating planes, ready for a model.
+
+## Models
+
+To replace a project's photographs with a model:
+
+1. Export glTF binary and compress it. Prefer meshopt. This site decodes meshopt. It does not load a Draco decoder or a KTX2 transcoder. Use WebP or JPEG textures inside the file until a transcoder is added. Keep each model under 8 MB, and under 4 MB when you can. 1K or 2K textures are enough at this camera distance.
+2. Save it as `public/models/<project-slug>/scene.glb`.
+3. Register the public path in `projectModels` in [`content/portfolio.ts`](content/portfolio.ts):
+
+```ts
+export const projectModels: Record<string, string> = {
+  "delphis-jumby-bay": "/models/delphis-jumby-bay/scene.glb",
+};
+```
+
+A Gaussian splat can use that same slot later. Today `model` is a glTF URL. `models/demo-villa/` is an old demo and is not loaded.
 
 ## Edit the public copy
 
@@ -93,7 +120,7 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 
 - Next.js App Router and TypeScript. Pages are server-rendered from `content/site.ts`.
 - Tailwind for the editorial UI.
-- React Three Fiber and Three.js for the sequence. The canvas is a client-only dynamic import.
+- React Three Fiber and Three.js for the home journey, the service vignettes, and the portfolio scenes. Each canvas is a client-only dynamic import. Lenis drives smooth scrolling.
 - Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the agent routes answer only when `AGENT_API_ENABLED=true`. `proxy.ts` gates the client portal and adds CORS on `/api`.
 - JSON-LD on the key pages. Sitemap, robots, Open Graph image, and semantic HTML are included.
 - `src/features/crypto-pay` is self-contained apart from the Next.js routes that call it.

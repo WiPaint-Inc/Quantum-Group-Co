@@ -56,7 +56,6 @@ export const markers: Marker[] = [
   { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "page-16 project grouping" },
   { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
   { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
-  { key: "marco-years", kind: "CONFIRM", page: "Team", needed: "15 years is as stated in the 2022 brochure. Update before showing a figure." },
   { key: "marco-degree", kind: "CONFIRM", page: "Team", needed: "Combined wording for the civil engineering degree, energy specialisation, and University of Bologna." },
   { key: "marco-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Marco Spagnolo." },
   { key: "contact-phone-email", kind: "PLACEHOLDER", page: "Contact", needed: "contact phone/email" },
@@ -307,8 +306,8 @@ export const team: TeamMember[] = [
     name: "Marco Spagnolo",
     title: "Co-founder, CEO & Project Manager, VIVID Construction",
     confirmed: true,
-    bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He manages the technical aspects of each project, and the relationship with clients.",
-    markerKeys: ["marco-years", "marco-degree", "marco-headshot"],
+    bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He has 19 years of experience as a construction project manager. He manages the technical aspects of each project, and the relationship with clients.",
+    markerKeys: ["marco-degree", "marco-headshot"],
   },
 ];
 

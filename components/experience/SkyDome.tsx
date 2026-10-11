@@ -8,9 +8,11 @@ import { skyFragment, skyVertex } from "@/components/experience/shaders";
 export function SkyDome({
   realm = "ocean",
   blendRef,
+  dayRef,
 }: {
   realm?: "ocean" | "space";
   blendRef?: { current: number };
+  dayRef?: { current: number };
 }) {
   const blend = useRef(realm === "space" ? 1 : 0);
   const material = useMemo(
@@ -19,7 +21,7 @@ export function SkyDome({
         glslVersion: THREE.GLSL3,
         side: THREE.BackSide,
         depthWrite: false,
-        uniforms: { uBlend: { value: blend.current } },
+        uniforms: { uBlend: { value: blend.current }, uDay: { value: 0.2 } },
         vertexShader: skyVertex,
         fragmentShader: skyFragment,
       }),
@@ -32,6 +34,7 @@ export function SkyDome({
     const target = blendRef ? blendRef.current : realm === "space" ? 1 : 0;
     blend.current += (target - blend.current) * (1 - Math.exp(-1.4 * dt));
     material.uniforms.uBlend.value = blend.current;
+    if (dayRef) material.uniforms.uDay.value = dayRef.current;
   });
 
   return (

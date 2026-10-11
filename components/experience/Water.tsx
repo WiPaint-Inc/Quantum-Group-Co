@@ -8,9 +8,11 @@ import { waterFragment, waterVertex } from "@/components/experience/shaders";
 export function Water({
   reducedMotion,
   onClear,
+  segments = 48,
 }: {
   reducedMotion: boolean;
   onClear: () => void;
+  segments?: number;
 }) {
   const { camera } = useThree();
   const material = useMemo(
@@ -45,7 +47,7 @@ export function Water({
         onClear();
       }}
     >
-      <planeGeometry args={[96, 96, 72, 72]} />
+      <planeGeometry args={[80, 80, segments, segments]} />
     </mesh>
   );
 }
