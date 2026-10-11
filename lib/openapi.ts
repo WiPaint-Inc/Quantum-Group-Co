@@ -4,7 +4,7 @@ export function buildOpenApi() {
   return {
     openapi: "3.1.0",
     info: {
-      title: "Quantum Group Co. Agent API",
+      title: "Quantum Group Co Agent API",
       version: "0.1.0",
       description:
         "Phase 1 contract for AI agents. Public facts match the human site and content/site.ts. Estates are placeholders. Commercial terms are omitted. Minting is a stub: no wallet and no mainnet.",
@@ -83,9 +83,9 @@ export function buildOpenApi() {
       "/api/services": {
         get: {
           tags: ["Company"],
-          summary: "The six published services",
+          summary: "The five published services",
           operationId: "listServices",
-          responses: { "200": { description: "Services. Robotics is omitted unless enabled." } },
+          responses: { "200": { description: "Full Design and Build Services, Construction, Engineering, Developments, and Construction Materials Distribution." } },
         },
       },
       "/api/services/{slug}": {

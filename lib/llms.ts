@@ -1,3 +1,4 @@
+import { roboticsEnabled } from "@/lib/flags";
 import { absoluteUrl } from "@/lib/site";
 
 export function buildLlmsTxt(): string {
@@ -8,18 +9,17 @@ export function buildLlmsTxt(): string {
 
 > One company for design, engineering, construction and finishing in Antigua and Barbuda. Agents are the primary readers of record.
 
-Quantum Group Co publishes no commercial schedule for its houses. The partner portfolio names works, not clients. The marketplace does not mint. Payments, when enabled, are non-custodial and go wallet to wallet. Robotics is unpublished unless the server flag is on.
+Quantum Group Co publishes no commercial schedule for its houses. The marketplace does not mint. Payments, when enabled, are non-custodial and go wallet to wallet.
 
 ## Pages
 
-${link("/", "Home", "Hero, four-stage sequence, services, and story.")}
-${link("/services", "Services", "Six services, in order.")}
+${link("/", "Home", "Hero, ocean-to-space sequence, five service chapters, and story.")}
+${link("/services", "Services", "Five services, in order.")}
 ${link("/services/full-design-and-build", "Full Design and Build Services", "One team from sketch to handover.")}
-${link("/services/rendering-design-engineering-plans", "Rendering, design, engineering and plans", "Visualisation and drawings.")}
 ${link("/services/construction", "Construction", "Villas and homes.")}
 ${link("/services/engineering", "Engineering", "Civil and structural input.")}
 ${link("/services/developments", "Developments", "Larger work, same team.")}
-${link("/services/construction-materials-distribution", "Materials", "Precast and project materials.")}
+${link("/services/construction-materials-distribution", "Construction Materials Distribution", "Precast and project materials.")}${roboticsEnabled() ? `\n${link("/services/robotics", "Robotics", "AI and robotics in construction. No product names.")}` : ""}
 ${link("/finishing", "Finishing", "Bespoke surfaces.")}
 ${link("/how-we-work", "How we work", "Shared client folder for off-island owners.")}
 ${link("/portfolio", "Partner portfolio", "Named works. No client names.")}
@@ -32,7 +32,7 @@ ${link("/client", "Client", "Placeholder session and per-home slots.")}
 
 ${link("/api/openapi.json", "OpenAPI", "Contract.")}
 ${link("/api/company", "Company", "Name, story, and how the work is run.")}
-${link("/api/services", "Services", "The six services. Robotics is absent unless enabled.")}
+${link("/api/services", "Services", "The five services, in order.")}
 ${link("/api/portfolio", "Portfolio", "Partner works and public captions.")}
 ${link("/api/estates", "Estates", "Same portfolio, kept for the Phase 1 path.")}
 ${link("/api/team", "Team", "Confirmed cards only.")}

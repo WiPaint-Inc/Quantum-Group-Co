@@ -14,7 +14,7 @@ export default function ServicesPage() {
       <PageIntro
         kicker="Services"
         title="One team, from the sketch to the last surface."
-        lede="Six services, in the order the work actually happens. Rendering and plans sit beside the build, not in another office."
+        lede="Five services, in this order. Full design and build, construction, engineering, developments, and materials."
       />
       <ol className="mt-16 divide-y divide-line border-y border-line">
         {services.map((service) => (

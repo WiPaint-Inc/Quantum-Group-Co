@@ -3,9 +3,10 @@
 import { Canvas } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { posterImage, stages } from "@/content/site";
+import { posterImage, services } from "@/content/site";
 
 const JourneyScene = dynamic(() => import("@/components/journey/JourneyScene"), { ssr: false });
 
@@ -47,7 +48,7 @@ export function Journey() {
       const total = node.offsetHeight - window.innerHeight;
       const next = total <= 0 ? 0 : Math.min(1, Math.max(0, -rect.top / total));
       progressRef.current = next;
-      const index = Math.min(stages.length - 1, Math.floor(next * stages.length));
+      const index = Math.min(services.length - 1, Math.floor(next * services.length));
       setStage((current) => (current === index ? current : index));
     };
     const onScroll = () => {
@@ -79,11 +80,14 @@ export function Journey() {
           </div>
         </div>
         <ol>
-          {stages.map((item) => (
-            <li key={item.id} className="border-t border-line px-6 py-16 md:px-14">
-              <p className="kicker">{item.kicker}</p>
-              <h2 className="mt-3 font-serif text-5xl text-sand">{item.title}</h2>
-              <p className="mt-4 max-w-lg text-sand/70">{item.body}</p>
+          {services.map((service) => (
+            <li key={service.slug} className="border-t border-line px-6 py-16 md:px-14">
+              <p className="kicker">0{service.order}</p>
+              <h2 className="mt-3 font-serif text-5xl text-sand">{service.title}</h2>
+              <p className="mt-4 max-w-lg text-sand/70">{service.lede}</p>
+              <Link href={`/services/${service.slug}`} className="mt-6 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
+                Open the service
+              </Link>
             </li>
           ))}
         </ol>
@@ -91,7 +95,7 @@ export function Journey() {
     );
   }
 
-  const current = stages[stage];
+  const current = services[stage];
 
   return (
     <div ref={track} className="relative h-[420vh]">
@@ -106,16 +110,28 @@ export function Journey() {
         >
           <JourneyScene
             progressRef={progressRef}
-            onProject={(slug) => router.push(`/portfolio/${slug}`)}
+            onService={(slug) => router.push(`/services/${slug}`)}
           />
         </Canvas>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/75 via-transparent to-transparent" />
+        <nav className="absolute top-28 right-8 z-10 flex w-72 flex-col gap-3 border border-line bg-ink/70 p-5" aria-label="Service chapters">
+          <p className="text-[0.62rem] tracking-[0.22em] text-gold-2 uppercase">Chapters</p>
+          {services.map((service, index) => (
+            <Link
+              key={service.slug}
+              href={`/services/${service.slug}`}
+              className={index === stage ? "text-[0.68rem] tracking-[0.14em] text-sand uppercase" : "text-[0.68rem] tracking-[0.14em] text-sand/50 uppercase"}
+            >
+              0{service.order} {service.title}
+            </Link>
+          ))}
+        </nav>
         <div className="pointer-events-none absolute right-6 bottom-8 left-6 md:left-12 md:max-w-xl">
-          <p className="kicker">{current.kicker}</p>
+          <p className="kicker">0{current.order}</p>
           <h2 className="mt-3 font-serif text-5xl text-sand md:text-7xl">{current.title}</h2>
-          <p className="mt-4 max-w-md text-sand/75">{current.body}</p>
+          <p className="mt-4 max-w-md text-sand/75">{current.lede}</p>
           <p className="sr-only">
-            {stages.map((item) => `${item.kicker}. ${item.title}. ${item.body}`).join(" ")}
+            {services.map((service) => `${service.order}. ${service.title}. ${service.lede}`).join(" ")}
           </p>
         </div>
         <button

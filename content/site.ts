@@ -28,12 +28,9 @@ export type Marker = {
 };
 
 export const markers: Marker[] = [
-  { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build", needed: "Whether the service is one fixed-scope contract or phased." },
-  { key: "rendering-scope", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Interior, exterior, or both, and whether the work is stills, animation, or walkthroughs." },
+  { key: "design-build-contract", kind: "CONFIRM", page: "Full Design and Build Services", needed: "Whether the service is one fixed-scope contract or phased." },
   { key: "engineering-scope", kind: "CONFIRM", page: "Engineering", needed: "In-house engineering scope versus engineers retained per project." },
-  { key: "drawing-sets", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Which drawing sets are included, and who submits for planning approval." },
-  { key: "drawing-certification", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Drawing certification or stamping details. Do not claim sealed drawings until this is answered." },
-  { key: "plans-only", kind: "CONFIRM", page: "Rendering, Design, Engineering & Plans", needed: "Whether clients can commission plans without a build contract." },
+  { key: "drawing-certification", kind: "CONFIRM", page: "Engineering", needed: "Drawing certification or stamping details. Do not claim sealed drawings until this is answered." },
   { key: "renovation-only", kind: "CONFIRM", page: "Construction", needed: "Whether renovation-only projects are taken." },
   { key: "infrastructure", kind: "CONFIRM", page: "Construction", needed: "Whether infrastructure is offered to private clients or only inside developments." },
   { key: "energy-service", kind: "CONFIRM", page: "Engineering", needed: "Whether energy engineering is a named service." },
@@ -49,7 +46,7 @@ export const markers: Marker[] = [
   { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
   { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
   { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "Partner or affiliate company content still awaiting owner materials." },
-  { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "Page 16 project grouping for Aquamarine, Bodmer, and Cinnamint Hill." },
+  { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved." },
   { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
   { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
   { key: "marco-card", kind: "CONFIRM", page: "Team", needed: "Confirm Marco Spagnolo's card for public display." },
@@ -121,25 +118,6 @@ export const services: Service[] = [
   },
   {
     order: 2,
-    slug: "rendering-design-engineering-plans",
-    title: "Full Rendering, Design, Engineering & Plans",
-    headline: "See the home before the first foundation is poured.",
-    lede: "3D renderings and visualisations, design development, engineering, and full construction plans and drawings.",
-    paragraphs: [
-      "We take an idea from concept to a buildable set of plans. The process starts with 3D renderings and visualisations, so spaces, materials and daylight can be tested before decisions are fixed. From there the work moves into design development, then engineering and full construction plans and drawings.",
-      "Because the same team that draws the home also builds and finishes it, the plans are made to be built. Structure, services, materials and finishes are thought through together.",
-    ],
-    points: [
-      "3D renderings and visualisations",
-      "Design development of layouts, materials, finishes and details",
-      "Engineering input from the start",
-      "Full construction plans and drawings",
-      "A natural pair to the future marketplace of plans and renders",
-    ],
-    markerKeys: ["rendering-scope", "engineering-scope", "drawing-sets", "drawing-certification", "plans-only"],
-  },
-  {
-    order: 3,
     slug: "construction",
     title: "Construction",
     headline: "Built with care, built to last.",
@@ -156,7 +134,7 @@ export const services: Service[] = [
     markerKeys: ["renovation-only", "infrastructure"],
   },
   {
-    order: 4,
+    order: 3,
     slug: "engineering",
     title: "Engineering",
     headline: "Engineering that makes the design work.",
@@ -173,7 +151,7 @@ export const services: Service[] = [
     markerKeys: ["engineering-scope", "energy-service", "drawing-certification"],
   },
   {
-    order: 5,
+    order: 4,
     slug: "developments",
     title: "Developments",
     headline: "From a single villa to a complete community.",
@@ -188,7 +166,7 @@ export const services: Service[] = [
     markerKeys: ["development-types", "development-role", "development-projects"],
   },
   {
-    order: 6,
+    order: 5,
     slug: "construction-materials-distribution",
     title: "Construction Materials Distribution",
     headline: "Materials we trust, available to the build.",
@@ -294,7 +272,7 @@ export const robotics = {
   headline: "A later chapter for machines on the site.",
   paragraphs: [
     "This page is reserved for how AI and robotics may assist construction, layout and finishing. It is not offered as a service today.",
-    "No system is named, and no partnership is claimed.",
+    "Any future note would stay general. No machine, maker, or supplier is named here.",
   ],
 };
 
@@ -351,7 +329,7 @@ export const renders = [
   {
     id: "render-study-01",
     title: "Render study",
-    caption: "An unissued visualisation, paired with the rendering service. Not a photograph of a specific commission.",
+    caption: "An unissued visualisation. Not a photograph of a specific commission.",
     palette: { from: "#14110e", to: "#c6a36a" },
   },
 ];

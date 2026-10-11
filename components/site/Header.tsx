@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { company } from "@/content/site";
 
 const links = [
   { href: "/services", label: "Services" },
@@ -20,7 +21,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="flex items-center justify-between px-6 py-5 md:px-12">
         <Link href="/" className="font-serif text-lg tracking-[0.18em] text-sand uppercase" onClick={() => setOpen(false)}>
-          Quantum
+          {company.name}
         </Link>
         <nav className="hidden items-center gap-7 text-[0.68rem] tracking-[0.22em] text-sand/70 uppercase md:flex" aria-label="Primary">
           {links.map((link) => {
@@ -56,7 +57,7 @@ export function Header() {
 export function HeaderFallback() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-6 py-5 md:px-12">
-      <span className="font-serif text-lg tracking-[0.18em] text-sand uppercase">Quantum</span>
+      <span className="font-serif text-lg tracking-[0.18em] text-sand uppercase">{company.name}</span>
     </header>
   );
 }

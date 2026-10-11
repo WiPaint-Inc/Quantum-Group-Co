@@ -6,7 +6,7 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { SkyDome } from "@/components/experience/SkyDome";
 import { Water } from "@/components/experience/Water";
-import { portfolioProjects } from "@/content/portfolio";
+import { services } from "@/content/site";
 
 const PARTS: Array<{ position: [number, number, number]; size: [number, number, number]; kind: "mass" | "roof" | "glass" | "pool" | "column" }> = [
   { position: [0, 0.42, 0], size: [2.6, 0.52, 1.15], kind: "mass" },
@@ -82,35 +82,31 @@ function Villa({ progressRef }: { progressRef: { current: number } }) {
   );
 }
 
-function Satellites({
-  progressRef,
-  onProject,
-}: {
-  progressRef: { current: number };
-  onProject: (slug: string) => void;
-}) {
+function ServiceNodes({ onOpen }: { onOpen: (slug: string) => void }) {
   const group = useRef<THREE.Group>(null);
-  useFrame(() => {
-    const finish = weights(progressRef.current).finish;
-    if (group.current) {
-      group.current.visible = finish > 0.35;
-      const scale = 0.4 + finish * 0.6;
-      group.current.scale.setScalar(scale);
-    }
+  useFrame(({ clock }) => {
+    const time = clock.elapsedTime;
+    group.current?.children.forEach((child, index) => {
+      const base = child.userData.baseY as number;
+      child.position.y = base + Math.sin(time * 0.7 + index * 0.85) * 0.1;
+    });
   });
 
   return (
     <group ref={group}>
-      {portfolioProjects.map((project, index) => {
-        const angle = -1.15 + index * 0.38;
-        const position: [number, number, number] = [Math.sin(angle) * 5.4, 0.15, Math.cos(angle) * 3.1 - 2.4];
+      {services.map((service, index) => {
+        const spread = Math.max(services.length - 1, 1);
+        const angle = -0.9 + (index / spread) * 1.8;
+        const y = 2.05 + (index % 2) * 0.7;
+        const position: [number, number, number] = [Math.sin(angle) * 3.3, y, Math.cos(angle) * 1.4];
         return (
           <mesh
-            key={project.slug}
+            key={service.slug}
             position={position}
+            userData={{ baseY: y }}
             onClick={(event) => {
               event.stopPropagation();
-              onProject(project.slug);
+              onOpen(service.slug);
             }}
             onPointerOver={(event) => {
               event.stopPropagation();
@@ -120,8 +116,8 @@ function Satellites({
               document.body.style.cursor = "";
             }}
           >
-            <boxGeometry args={[0.7, 0.22, 0.4]} />
-            <meshStandardMaterial color="#e6dcc8" roughness={0.7} />
+            <sphereGeometry args={[0.16, 24, 24]} />
+            <meshStandardMaterial color="#f3e6c8" emissive="#e6d2a8" emissiveIntensity={1.4} roughness={0.2} />
           </mesh>
         );
       })}
@@ -131,16 +127,16 @@ function Satellites({
 
 export default function JourneyScene({
   progressRef,
-  onProject,
+  onService,
 }: {
   progressRef: { current: number };
-  onProject: (slug: string) => void;
+  onService: (slug: string) => void;
 }) {
-  const sea = useRef<THREE.Group>(null);
+  const stars = useRef<THREE.Group>(null);
   useFrame(({ camera }) => {
     const progress = progressRef.current;
     const finish = weights(progress).finish;
-    if (sea.current) sea.current.visible = finish > 0.2;
+    if (stars.current) stars.current.visible = progress > 0.62;
     const y = 2.4 + (1 - finish) * 0.8;
     const z = 7.2 - finish * 0.6;
     camera.position.lerp(new THREE.Vector3(0.4, y, z), 0.08);
@@ -154,12 +150,12 @@ export default function JourneyScene({
       <ambientLight intensity={0.25} color="#1a140e" />
       <directionalLight position={[6, 8, 4]} intensity={2.2} color="#ffd2a8" castShadow />
       <pointLight position={[-2, 2.2, 2]} intensity={4} color="#e6d2a8" distance={10} />
-      <group ref={sea}>
-        <Water reducedMotion={false} onClear={() => undefined} />
-        <Stars radius={50} depth={20} count={900} factor={2} fade saturation={0} speed={0.2} />
+      <Water reducedMotion={false} onClear={() => undefined} />
+      <group ref={stars}>
+        <Stars radius={50} depth={20} count={1200} factor={2.4} fade saturation={0} speed={0.15} />
       </group>
       <Villa progressRef={progressRef} />
-      <Satellites progressRef={progressRef} onProject={onProject} />
+      <ServiceNodes onOpen={onService} />
     </>
   );
 }

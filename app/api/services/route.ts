@@ -7,6 +7,6 @@ export function GET() {
     services,
     finishing,
     howWeWork,
-    robotics: roboticsEnabled() ? { slug: "robotics", href: "/services/robotics" } : null,
+    ...(roboticsEnabled() ? { robotics: { slug: "robotics", href: "/services/robotics" } } : {}),
   });
 }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { portfolioProjects } from "@/content/portfolio";
 import { services } from "@/content/site";
+import { roboticsEnabled } from "@/lib/flags";
 import { absoluteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -16,6 +17,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
+    ...(roboticsEnabled()
+      ? [{ url: absoluteUrl("/services/robotics"), changeFrequency: "monthly" as const, priority: 0.4 }]
+      : []),
     ...portfolioProjects.map((project) => ({
       url: absoluteUrl(`/portfolio/${project.slug}`),
       changeFrequency: "monthly" as const,

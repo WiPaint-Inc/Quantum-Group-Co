@@ -4,7 +4,7 @@ import { PageIntro } from "@/components/site/PageIntro";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Quantum Group Co. Published details are not ready yet.",
+  description: "Contact Quantum Group Co — published contact details are not ready yet.",
 };
 
 export default function ContactPage() {

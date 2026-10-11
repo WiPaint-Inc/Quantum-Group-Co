@@ -38,11 +38,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         ))}
       </ul>
       <MarkerNotes keys={service.markerKeys} />
-      {service.slug === "rendering-design-engineering-plans" ? (
-        <Link href="/marketplace" className="mt-10 inline-block text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">
-          Marketplace teaser
-        </Link>
-      ) : null}
       <div className="mt-12">
         <Link href="/services" className="text-[0.68rem] tracking-[0.2em] text-sand/60 uppercase">All services</Link>
       </div>

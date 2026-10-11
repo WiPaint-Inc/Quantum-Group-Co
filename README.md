@@ -1,6 +1,6 @@
-# Quantum Group Co.
+# Quantum Group Co
 
-Phase 1 site for Quantum Group Co., an ultra-luxury residential construction and development practice. Antigua and Barbuda is the market. Humans browse a dark, cinematic site. AI agents are the primary readers of record: every public fact is also in a JSON API, an OpenAPI document, JSON-LD, and `llms.txt`.
+Phase 1 site for Quantum Group Co, an ultra-luxury residential construction and development practice. Antigua and Barbuda is the market. Humans browse a dark, cinematic site. AI agents are the primary readers of record: every public fact is also in a JSON API, an OpenAPI document, JSON-LD, and `llms.txt`.
 
 There are no house prices. The partner portfolio names works, not clients. Payments, when enabled, are non-custodial and off by default.
 

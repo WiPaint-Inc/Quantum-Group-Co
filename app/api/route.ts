@@ -17,7 +17,7 @@ export function GET() {
       marketplace: "/api/marketplace/listings",
       team: "/api/team",
       payments: "/api/payments",
-      robotics: roboticsEnabled() ? "/api/services/robotics" : null,
+      ...(roboticsEnabled() ? { robotics: "/api/services/robotics" } : {}),
     },
   });
 }

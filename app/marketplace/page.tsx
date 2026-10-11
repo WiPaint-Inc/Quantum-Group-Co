@@ -6,7 +6,7 @@ import { marketplaceListings } from "@/content/site";
 export const metadata: Metadata = {
   title: "Marketplace",
   description:
-    "A teaser for a later private issuance of Quantum Group Co. plans and renders as NFTs or Bitcoin Ordinals. Nothing is minted.",
+    "A teaser for a later private issuance of Quantum Group Co plans and renders as NFTs or Bitcoin Ordinals. Nothing is minted.",
 };
 
 export default function MarketplacePage() {

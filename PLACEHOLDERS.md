@@ -4,12 +4,9 @@ Public pages keep these notes out of production HTML. They render only in develo
 
 | Key | Kind | Page | Needed |
 | --- | --- | --- | --- |
-| design-build-contract | CONFIRM | Full Design and Build | Whether the service is one fixed-scope contract or phased. |
-| rendering-scope | CONFIRM | Rendering, Design, Engineering & Plans | Interior, exterior, or both, and whether the work is stills, animation, or walkthroughs. |
+| design-build-contract | CONFIRM | Full Design and Build Services | Whether the service is one fixed-scope contract or phased. |
 | engineering-scope | CONFIRM | Engineering | In-house engineering scope versus engineers retained per project. |
-| drawing-sets | CONFIRM | Rendering, Design, Engineering & Plans | Which drawing sets are included, and who submits for planning approval. |
-| drawing-certification | CONFIRM | Rendering, Design, Engineering & Plans | Drawing certification or stamping details. Do not claim sealed drawings until this is answered. |
-| plans-only | CONFIRM | Rendering, Design, Engineering & Plans | Whether clients can commission plans without a build contract. |
+| drawing-certification | CONFIRM | Engineering | Drawing certification or stamping details. Do not claim sealed drawings until this is answered. |
 | renovation-only | CONFIRM | Construction | Whether renovation-only projects are taken. |
 | infrastructure | CONFIRM | Construction | Whether infrastructure is offered to private clients or only inside developments. |
 | energy-service | CONFIRM | Engineering | Whether energy engineering is a named service. |
@@ -25,7 +22,7 @@ Public pages keep these notes out of production HTML. They render only in develo
 | heritage-dates | CONFIRM | About | Approval to keep publishing 1981, 2013, and January 2020. |
 | founding | PLACEHOLDER | About | Quantum Group Co founding date and legal entity, if they should be shown. |
 | partner-materials | PLACEHOLDER | About | Partner or affiliate company content still awaiting owner materials. |
-| page-16-grouping | CONFIRM | Partner Portfolio | Page 16 project grouping for Aquamarine, Bodmer, and Cinnamint Hill. |
+| page-16-grouping | CONFIRM | Partner Portfolio | How the remaining gallery pages should be grouped. Do not publish a project name until a public caption is approved. |
 | chris-headshot | PLACEHOLDER | Team | Headshot for Chris Bento. |
 | chris-bio | PLACEHOLDER | Team | Anything further Chris wants in his bio. |
 | marco-card | CONFIRM | Team | Confirm Marco Spagnolo's card for public display. |
