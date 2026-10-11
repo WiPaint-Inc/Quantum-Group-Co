@@ -3,9 +3,9 @@ import { MarkerNotes } from "@/components/site/MarkerNote";
 import { buildLive } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
 
-export function BuildLive({ draft }: { draft: boolean }) {
+export function BuildLive({ draft, nested = false }: { draft: boolean; nested?: boolean }) {
   return (
-    <section id="your-build-live" className="border-t border-line px-6 py-24 md:px-14" aria-labelledby="build-live-heading">
+    <section id="your-build-live" className={nested ? "py-16" : "border-t border-line px-6 py-24 md:px-14"} aria-labelledby="build-live-heading">
       <p className="kicker">{buildLive.kicker}</p>
       <h2 id="build-live-heading" className="mt-4 max-w-3xl font-serif text-5xl text-sand md:text-6xl">{buildLive.title}</h2>
       <p className="mt-6 max-w-2xl text-lg text-sand/75">{buildLive.lede}</p>

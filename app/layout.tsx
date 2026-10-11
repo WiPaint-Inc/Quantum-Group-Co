@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </Suspense>
         <noscript>
           <p className="px-6 py-8 text-sm text-sand/80">
-            JavaScript is off. The written pages, JSON-LD, and the agent API remain available. Begin with services.
+            JavaScript is off. The written pages remain available. Begin with services.
           </p>
         </noscript>
       </body>

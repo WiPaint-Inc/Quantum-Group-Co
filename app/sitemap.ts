@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
 import { portfolioProjects } from "@/content/portfolio";
 import { services } from "@/content/site";
-import { roboticsEnabled } from "@/lib/flags";
+import { paymentsEnabled, roboticsEnabled } from "@/lib/flags";
 import { absoluteUrl } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["/", "/services", "/portfolio", "/about", "/how-we-work", "/finishing", "/marketplace", "/contact", "/client", "/pay"];
+  const paths = ["/", "/services", "/portfolio", "/about", "/how-we-work", "/finishing", "/marketplace", "/contact", "/client", ...(paymentsEnabled() ? ["/pay"] : [])];
   return [
     ...paths.map((path) => ({
       url: absoluteUrl(path),

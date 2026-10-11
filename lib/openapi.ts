@@ -7,7 +7,7 @@ export function buildOpenApi() {
       title: "Quantum Group Co Agent API",
       version: "0.1.0",
       description:
-        "Phase 1 contract for AI agents. Public facts match the human site and content/site.ts. Estates are placeholders. Commercial terms are omitted. Minting is a stub: no wallet and no mainnet.",
+        "Phase 1 contract. Public facts match the site and content/site.ts. Estates are placeholders. Commercial terms are omitted. Minting is a stub: no wallet and no mainnet.",
     },
     servers: [{ url: absoluteUrl("") }],
     tags: [

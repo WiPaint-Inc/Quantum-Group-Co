@@ -1,7 +1,10 @@
+import { notFound } from "next/navigation";
 import { checkAgentKey } from "@/lib/agent-auth";
+import { agentApiEnabled } from "@/lib/flags";
 import { apiError, apiOk } from "@/lib/http";
 
 export function POST(request: Request) {
+  if (!agentApiEnabled()) notFound();
   const result = checkAgentKey(request);
   if (result.status === "unconfigured") {
     return apiError("unconfigured", "AGENT_API_KEY is not set on the server.", 503);

@@ -1,7 +1,9 @@
+import { notFound } from "next/navigation";
+import { roboticsEnabled, agentApiEnabled } from "@/lib/flags";
 import { apiOk } from "@/lib/http";
-import { roboticsEnabled } from "@/lib/flags";
 
 export function GET() {
+  if (!agentApiEnabled()) notFound();
   return apiOk({
     name: "Quantum Group Co Agent API",
     openapi: "/api/openapi.json",

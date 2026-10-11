@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { company } from "@/content/site";
+import { paymentsEnabled } from "@/lib/flags";
 import { PayPanel, type PayPanelConfig } from "@/src/features/crypto-pay/PayPanel";
 import { copy } from "@/src/features/crypto-pay/copy";
 import { readPayEnv, reownReady } from "@/src/features/crypto-pay/config";
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function PayPage() {
+  if (!paymentsEnabled()) notFound();
   return (
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
       <p className="kicker">{company.name}</p>
