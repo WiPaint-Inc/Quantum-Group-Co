@@ -11,9 +11,10 @@ export type PortfolioProject = {
   slug: string;
   name: string;
   location: string;
+  caption: string;
   images: PortfolioImage[];
 };
-export const portfolioProjects: PortfolioProject[] = [
+const portfolioRecords: Omit<PortfolioProject, "caption">[] = [
   {
     "slug": "delphis-jumby-bay",
     "name": "Delphis",
@@ -474,6 +475,11 @@ export const atmosphereImages: PortfolioImage[] = [
     "page": 11
   }
 ];
+export const portfolioProjects: PortfolioProject[] = portfolioRecords.map((project) => ({
+  ...project,
+  caption: "[PLACEHOLDER: public caption]",
+}));
+
 export function getPortfolioProject(slug: string) {
   return portfolioProjects.find((project) => project.slug === slug) ?? null;
 }

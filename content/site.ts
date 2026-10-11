@@ -42,6 +42,11 @@ export const markers: Marker[] = [
   { key: "third-party-materials", kind: "CONFIRM", page: "Construction Materials Distribution", needed: "Whether other brands are distributed, or only the precast lines." },
   { key: "level-5", kind: "CONFIRM", page: "Finishing", needed: "Whether to keep the level 5 sheetrock wording. It is a finish grade, not a certification." },
   { key: "maintenance-plan", kind: "CONFIRM", page: "Finishing", needed: "Whether maintenance is a contract or a service plan." },
+  { key: "heritage-finishing", kind: "PLACEHOLDER", page: "About", needed: "finishing heritage. No dates until the final copy arrives." },
+  { key: "heritage-construction", kind: "PLACEHOLDER", page: "About", needed: "construction heritage. No dates until the final copy arrives." },
+  { key: "heritage-join", kind: "PLACEHOLDER", page: "About", needed: "how the two practices became one company. No date until the final copy arrives." },
+  { key: "portfolio-captions", kind: "PLACEHOLDER", page: "Partner Portfolio", needed: "public caption for each partner project. Do not add a client or company name." },
+  { key: "portfolio-images", kind: "PLACEHOLDER", page: "Partner Portfolio", needed: "final gallery images. Current plates stay until replacements arrive." },
   { key: "heritage-1981", kind: "CONFIRM", page: "About", needed: "Wording for the 1981 Italian family construction business, which the brochure says was under a different name." },
   { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
   { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
@@ -78,8 +83,24 @@ export const transparencyCopy = [
 ] as const;
 
 export const story = {
-  title: "Designers, engineers, and builders.",
-  paragraphs: [company.intro, fullServiceCopy, transparencyCopy.join(" ")],
+  title: "Two halves. One company.",
+  partnership:
+    "Quantum Group Co is a partnership between the founders of Wi Paint Inc (luxury painting and finishing, Master Painters) and the founder of VIVID Construction (construction, engineering, precast concrete).",
+  halves: [
+    {
+      id: "finishing",
+      kicker: "Finishing",
+      name: "Wi Paint Inc",
+      body: "[PLACEHOLDER: finishing heritage. No dates until the final copy arrives.]",
+    },
+    {
+      id: "construction",
+      kicker: "Construction",
+      name: "VIVID Construction",
+      body: "[PLACEHOLDER: construction heritage. No dates until the final copy arrives.]",
+    },
+  ],
+  join: "[PLACEHOLDER: how the two practices became one company. No date until the final copy arrives.]",
 };
 
 export const homeIntro = company.intro;
@@ -97,7 +118,7 @@ export type Service = {
 
 const materialsIntro = {
   withLines:
-    "Through the VIVID Industrial & Decor product lines, we produce and supply precast concrete products for builders and private clients. The industrial line is made to make a contractor's work simpler and faster. The decor line is bricks, pavers, planters and pots, benches, and other pieces for interiors, exteriors, gardens and floors.",
+    "Through the VIVID Industrial & Decor lines, we produce and supply precast concrete: bricks, pavers, pots, benches, and industrial precast.",
   withoutLines:
     "We produce and supply precast concrete products for builders and private clients. One line is made to make a contractor's work simpler and faster. The other is bricks, pavers, planters and pots, benches, and other pieces for interiors, exteriors, gardens and floors.",
 };
@@ -193,7 +214,7 @@ export const services: Service[] = [
     title: "Construction Materials Distribution",
     headline: "Materials we trust, available to the build.",
     lede: "Precast concrete for contractors and for the house, planned and delivered with the work.",
-    paragraphs: [materialsIntro.withoutLines],
+    paragraphs: [materialsIntro.withLines],
     points: [
       "Precast concrete for contractors and developers",
       "Decorative concrete for homes, gardens and outdoor living",
@@ -205,8 +226,12 @@ export const services: Service[] = [
 ];
 
 export function serviceParagraphs(service: Service, vividLines: boolean) {
-  if (service.slug !== "construction-materials-distribution" || !vividLines) return service.paragraphs;
-  return [materialsIntro.withLines, "Alongside those precast products, we plan, purchase, transport and manage the materials used on our projects, and keep key samples on file for future maintenance."];
+  if (service.slug !== "construction-materials-distribution") return service.paragraphs;
+  const lead = vividLines ? materialsIntro.withLines : materialsIntro.withoutLines;
+  return [
+    lead,
+    "Alongside those precast products, we plan, purchase, transport and manage the materials used on our projects, and keep key samples on file for future maintenance.",
+  ];
 }
 
 export function getService(slug: string) {
@@ -264,7 +289,7 @@ export const team: TeamMember[] = [
     name: "Chris Bento",
     title: "CEO, Wi Paint Inc",
     confirmed: true,
-    bio: "Leads Wi Paint Inc, Master Painters, a luxury painting and finishing contractor. The practice covers labour and materials for the final fine details of a project, with extensive experience finishing luxury homes and large-scale projects in Antigua and Barbuda.",
+    bio: "[PLACEHOLDER: bio]",
     markerKeys: ["chris-headshot", "chris-bio"],
   },
   {
@@ -272,7 +297,7 @@ export const team: TeamMember[] = [
     name: "Marco Spagnolo",
     title: "Co-founder, CEO & Project Manager, VIVID Construction",
     confirmed: false,
-    bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He manages technical aspects of each project, and the relationship with clients.",
+    bio: "[PLACEHOLDER: bio]",
     markerKeys: ["marco-card", "marco-years", "marco-degree", "marco-headshot"],
   },
   {
@@ -280,7 +305,7 @@ export const team: TeamMember[] = [
     name: "Luigi Spagnolo",
     title: "Co-founder, President & Production Director, VIVID Construction",
     confirmed: false,
-    bio: "Runs operations and sees that the work meets the standard set for it.",
+    bio: "[PLACEHOLDER: bio]",
     markerKeys: ["luigi-card", "luigi-years", "luigi-headshot"],
   },
 ];

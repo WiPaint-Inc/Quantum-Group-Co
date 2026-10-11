@@ -1,9 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ConceptFigure } from "@/components/site/ConceptFigure";
 import { company } from "@/content/site";
 import { conceptShots } from "@/lib/concept";
+
+export type SceneVilla = { slug: string; name: string; location: string };
 
 const PLAN = [
   { d: "M380 220 H1220", from: 0.04, to: 0.12 },
@@ -51,7 +54,7 @@ function fade(progress: number, start: number, end: number) {
   return clamp01((progress - start) / (end - start));
 }
 
-export function Journey({ draft }: { draft: boolean }) {
+export function Journey({ draft, villas = [] }: { draft: boolean; villas?: SceneVilla[] }) {
   const reduced = useSyncExternalStore(subscribe, prefersReducedMotion, () => false);
   const progressRef = useRef(0);
   const track = useRef<HTMLDivElement>(null);
@@ -89,8 +92,10 @@ export function Journey({ draft }: { draft: boolean }) {
   const ocean = fade(shown, 0.62, 0.76) * (1 - fade(shown, 0.84, 0.98));
   const space = fade(shown, 0.8, 0.98);
   const copy = 1 - fade(shown, 0.3, 0.48);
+  const join = fade(shown, 0.5, 0.58) * (1 - fade(shown, 0.66, 0.74));
+  const villaLinks = fade(shown, 0.74, 0.86);
   const stage = [...STAGES].reverse().find((item) => shown >= item.at)?.label ?? "Design";
-  const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : "estate";
+  const scene = space > 0.65 ? "space" : ocean > estate ? "ocean" : join > 0.4 ? "story" : "estate";
 
   return (
     <div ref={track} className="relative h-[340vh]" data-scene={scene}>
@@ -138,6 +143,31 @@ export function Journey({ draft }: { draft: boolean }) {
         <p className="absolute top-28 right-6 text-[0.68rem] tracking-[0.28em] text-gold-2 uppercase md:right-12" style={{ opacity: blueprint }}>
           {stage}
         </p>
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6" style={{ opacity: join }}>
+          <div className="grid w-full max-w-4xl gap-4 md:grid-cols-2">
+            <p className="border border-gold/50 bg-ink/70 px-6 py-10 text-center">
+              <span className="block font-serif text-4xl text-sand">Finishing</span>
+              <span className="mt-3 block text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">Wi Paint Inc</span>
+            </p>
+            <p className="border border-gold/50 bg-ink/70 px-6 py-10 text-center">
+              <span className="block font-serif text-4xl text-sand">Construction</span>
+              <span className="mt-3 block text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">VIVID Construction</span>
+            </p>
+          </div>
+          <p className="absolute text-[0.72rem] tracking-[0.28em] text-gold-2 uppercase">{company.tagline}</p>
+        </div>
+        <nav
+          aria-label="Partner portfolio"
+          className="absolute right-4 bottom-6 left-4 z-10 flex gap-2 overflow-x-auto md:right-10 md:left-10"
+          style={{ opacity: villaLinks, pointerEvents: villaLinks > 0.4 ? "auto" : "none" }}
+        >
+          {villas.map((villa) => (
+            <Link key={villa.slug} href={`/portfolio/${villa.slug}`} className="min-w-36 border border-gold/40 bg-ink/75 px-3 py-3 text-sand">
+              <span className="block font-serif text-lg leading-none">{villa.name}</span>
+              <span className="mt-2 block text-[0.6rem] tracking-[0.16em] text-gold-2 uppercase">{villa.location}</span>
+            </Link>
+          ))}
+        </nav>
       </div>
     </div>
   );

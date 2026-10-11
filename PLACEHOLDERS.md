@@ -18,6 +18,11 @@ Public pages keep these notes out of production HTML. They render only in develo
 | third-party-materials | CONFIRM | Construction Materials Distribution | Whether other brands are distributed, or only the precast lines. |
 | level-5 | CONFIRM | Finishing | Whether to keep the level 5 sheetrock wording. It is a finish grade, not a certification. |
 | maintenance-plan | CONFIRM | Finishing | Whether maintenance is a contract or a service plan. |
+| heritage-finishing | PLACEHOLDER | About | finishing heritage. No dates until the final copy arrives. |
+| heritage-construction | PLACEHOLDER | About | construction heritage. No dates until the final copy arrives. |
+| heritage-join | PLACEHOLDER | About | how the two practices became one company. No date until the final copy arrives. |
+| portfolio-captions | PLACEHOLDER | Partner Portfolio | public caption for each partner project. Do not add a client or company name. |
+| portfolio-images | PLACEHOLDER | Partner Portfolio | final gallery images. Current plates stay until replacements arrive. |
 | heritage-1981 | CONFIRM | About | Wording for the 1981 Italian family construction business, which the brochure says was under a different name. |
 | heritage-dates | CONFIRM | About | Approval to keep publishing 1981, 2013, and January 2020. |
 | founding | PLACEHOLDER | About | Quantum Group Co founding date and legal entity, if they should be shown. |

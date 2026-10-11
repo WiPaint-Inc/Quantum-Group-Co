@@ -7,7 +7,7 @@ import { company } from "@/content/site";
 
 const links = [
   { href: "/services", label: "Services" },
-  { href: "/portfolio", label: "Work" },
+  { href: "/portfolio", label: "Partner Portfolio" },
   { href: "/about", label: "About" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/client", label: "Client" },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { Gallery } from "@/components/portfolio/Gallery";
 import { getPortfolioProject, portfolioProjects } from "@/content/portfolio";
 
@@ -15,15 +16,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: project.name, description: `${project.name}, ${project.location}. Partner portfolio.` };
 }
 
-export default async function PortfolioProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function PortfolioProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense fallback={<main id="content" className="px-6 pt-32 pb-24 md:px-14"><p className="kicker">Partner Portfolio</p></main>}>
+      <ProjectBody params={params} />
+    </Suspense>
+  );
+}
+
+async function ProjectBody({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = getPortfolioProject(slug);
   if (!project) notFound();
 
   return (
     <main id="content" className="px-6 pt-32 pb-24 md:px-14">
-      <p className="kicker">Partner portfolio · {project.location}</p>
+      <p className="kicker">Partner Portfolio · {project.location}</p>
       <h1 className="mt-4 font-serif text-6xl text-sand">{project.name}</h1>
+      <p className="mt-6 max-w-2xl text-sand/70">{project.caption}</p>
       <div className="mt-12">
         <Gallery images={project.images} />
       </div>

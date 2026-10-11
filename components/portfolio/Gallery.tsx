@@ -5,23 +5,26 @@ import { useEffect, useState } from "react";
 import type { PortfolioImage } from "@/content/portfolio";
 
 export function Gallery({ images }: { images: PortfolioImage[] }) {
-  const [open, setOpen] = useState<PortfolioImage | null>(null);
+  const [index, setIndex] = useState<number | null>(null);
+  const open = index === null ? null : images[index] ?? null;
 
   useEffect(() => {
-    if (!open) return;
+    if (index === null) return;
     function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(null);
+      if (event.key === "Escape") setIndex(null);
+      if (event.key === "ArrowRight") setIndex((current) => (current === null ? current : (current + 1) % images.length));
+      if (event.key === "ArrowLeft") setIndex((current) => (current === null ? current : (current - 1 + images.length) % images.length));
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [images.length, index]);
 
   return (
     <>
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image) => (
           <li key={image.src}>
-            <button type="button" className="block w-full text-left" onClick={() => setOpen(image)}>
+            <button type="button" className="block w-full text-left" onClick={() => setIndex(images.indexOf(image))}>
               <span className="relative block aspect-[4/3] overflow-hidden border border-line">
                 <Image src={image.src} alt={image.caption} fill className="object-cover" sizes="(min-width: 1024px) 30vw, 100vw" />
               </span>
@@ -31,13 +34,22 @@ export function Gallery({ images }: { images: PortfolioImage[] }) {
         ))}
       </ul>
       {open ? (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/92 p-6" role="dialog" aria-modal="true" aria-label={open.caption}>
-          <button type="button" className="absolute top-6 right-6 text-[0.68rem] tracking-[0.2em] text-sand uppercase" onClick={() => setOpen(null)}>
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/94 p-6" role="dialog" aria-modal="true" aria-label={open.caption} onClick={() => setIndex(null)}>
+          <button type="button" className="absolute top-6 right-6 text-[0.68rem] tracking-[0.2em] text-sand uppercase" onClick={() => setIndex(null)}>
             Close
           </button>
-          <figure className="max-h-[85dvh] max-w-5xl">
+          <button type="button" className="absolute top-1/2 left-4 -translate-y-1/2 text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase" onClick={(event) => { event.stopPropagation(); setIndex((current) => (current === null ? current : (current - 1 + images.length) % images.length)); }}>
+            Prev
+          </button>
+          <button type="button" className="absolute top-1/2 right-4 -translate-y-1/2 text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase" onClick={(event) => { event.stopPropagation(); setIndex((current) => (current === null ? current : (current + 1) % images.length)); }}>
+            Next
+          </button>
+          <figure className="max-h-[85dvh] max-w-5xl border border-gold/40 p-3" onClick={(event) => event.stopPropagation()}>
             <Image src={open.src} alt={open.caption} width={open.width} height={open.height} className="max-h-[75dvh] w-auto object-contain" />
-            <figcaption className="mt-4 text-sm text-sand/75">{open.caption}</figcaption>
+            <figcaption className="mt-4 flex items-baseline justify-between gap-4 text-sm text-sand/75">
+              <span>{open.caption}</span>
+              <span className="text-[0.62rem] tracking-[0.18em] text-gold-2 uppercase">{index! + 1} / {images.length}</span>
+            </figcaption>
           </figure>
         </div>
       ) : null}
