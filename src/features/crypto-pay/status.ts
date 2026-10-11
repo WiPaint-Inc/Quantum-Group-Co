@@ -6,15 +6,15 @@ export function paymentStatus(env: PayEnv) {
   return {
     enabled: env.paymentsEnabled,
     custody: "non-custodial" as const,
-    stablesPeggedToUsd: true,
-    sanctions: env.sanctionsWebhookUrl ? ("webhook" as const) : ("passthrough" as const),
+    forwarding: "none" as const,
+    stablesCreditedOneToOne: true,
+    sanctions: env.sanctionsApiUrl ? ("configured" as const) : ("passthrough" as const),
+    paymentLog: env.paymentLogWebhookUrl ? ("webhook" as const) : ("console" as const),
     walletConnect: reownReady(env.reownProjectId),
     chains: ["base", "ethereum", "solana"] as const,
     tokens: ["USDC", "USDT", "ETH", "SOL"] as const,
-    profiles: {
-      quantum: profileConfigured(env, "quantum"),
-      tip: profileConfigured(env, "tip"),
-    },
+    profile: "quantum" as const,
+    configured: profileConfigured(env, "quantum"),
     sharedAddresses: sharedProfileAddresses(env).length > 0,
   };
 }

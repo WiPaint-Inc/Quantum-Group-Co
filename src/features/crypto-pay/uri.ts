@@ -4,11 +4,11 @@ import { toBaseUnits } from "./validate";
 
 export function buildPaymentUri(payment: SettledPayment): string {
   const amount = toBaseUnits(payment.tokenAmount, payment.decimals);
-  const memo = payment.invoiceNumber ? `Invoice ${payment.invoiceNumber}` : "Voluntary tip";
+  const memo = payment.invoiceNumber ? `Invoice ${payment.invoiceNumber}` : "Thank-you payment";
   if (payment.chain === "solana") {
     const params = new URLSearchParams({
       amount: payment.tokenAmount,
-      label: "Quantum Group Co",
+      label: payment.businessName,
       message: memo,
     });
     if (payment.token === "USDC" || payment.token === "USDT") params.set("spl-token", solanaMints[payment.token]);

@@ -1,1 +1,9 @@
-export { addressesArePlaceholders, payeeName, presetAmountsUsd, readPayEnv, receivingAddresses, reownReady } from "./crypto-pay.config";
+export {
+  addressesArePlaceholders,
+  anonymousTipCapUsdDefault,
+  paymentsEnabledDefault,
+  presetAmountsUsd,
+  profileDefaults,
+  readPayEnv,
+  reownReady,
+} from "./crypto-pay.config";

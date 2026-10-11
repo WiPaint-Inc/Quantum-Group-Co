@@ -1,28 +1,38 @@
-import type { PayEnv, ProfileAddresses } from "./types";
+import type { BusinessProfile, PayEnv, ProfileId } from "./types";
 import { isPlaceholderAddress } from "./validate";
 
 /**
- * Public receiving addresses. Replace the placeholders before enabling payments.
- * Env values override these so a second site can change addresses without editing code.
- * Invoice and tip profiles must not share an address.
+ * Named receiving profiles. Each profile has its own addresses.
+ * Never copy an address from one profile onto the other.
+ * Replace the placeholders before turning payments on.
  */
-export const receivingAddresses: Record<"invoice" | "tip", ProfileAddresses> = {
-  invoice: {
-    base: "0xYOUR_BASE_ADDRESS",
-    ethereum: "0xYOUR_ETHEREUM_ADDRESS",
-    solana: "YOUR_SOLANA_ADDRESS",
+export const profileDefaults: Record<ProfileId, BusinessProfile> = {
+  quantum: {
+    businessName: "Quantum Group Co",
+    addresses: {
+      base: "0xYOUR_BASE_ADDRESS",
+      ethereum: "0xYOUR_ETHEREUM_ADDRESS",
+      solana: "YOUR_SOLANA_ADDRESS",
+    },
   },
-  tip: {
-    base: "0xYOUR_TIP_BASE_ADDRESS",
-    ethereum: "0xYOUR_TIP_ETHEREUM_ADDRESS",
-    solana: "YOUR_TIP_SOLANA_ADDRESS",
+  botSite: {
+    businessName: "Bot Site",
+    addresses: {
+      base: "0xYOUR_BOT_BASE_ADDRESS",
+      ethereum: "0xYOUR_BOT_ETHEREUM_ADDRESS",
+      solana: "YOUR_BOT_SOLANA_ADDRESS",
+    },
   },
 };
 
+/** Master switch used when PAYMENTS_ENABLED is unset. */
+export const paymentsEnabledDefault = false;
+
+/** Used when ANONYMOUS_TIP_CAP_USD is unset. Amounts above this need a name and email. */
+export const anonymousTipCapUsdDefault = 1000;
+
 /** Amounts a payer can select. They are not a price list for a house. */
 export const presetAmountsUsd = [1000, 5000, 10000] as const;
-
-export const payeeName = "Quantum Group Co";
 
 const STRIPE_HOSTS = new Set(["buy.stripe.com"]);
 const COINBASE_HOSTS = new Set(["commerce.coinbase.com"]);
@@ -46,30 +56,61 @@ function hostedLink(value: string, hosts: Set<string>): string | null {
   }
 }
 
+function readPaymentsEnabled(env: NodeJS.ProcessEnv): boolean {
+  const raw = env.PAYMENTS_ENABLED;
+  if (raw === undefined || raw.trim() === "") return paymentsEnabledDefault;
+  return raw.trim() === "true";
+}
+
+function readTipCap(env: NodeJS.ProcessEnv): number {
+  const raw = env.ANONYMOUS_TIP_CAP_USD?.trim();
+  if (!raw) return anonymousTipCapUsdDefault;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) return anonymousTipCapUsdDefault;
+  return value;
+}
+
+function readProfile(env: NodeJS.ProcessEnv, profileId: ProfileId, keys: Record<"base" | "ethereum" | "solana" | "businessName", string[]>): BusinessProfile {
+  const defaults = profileDefaults[profileId];
+  const businessName = readAddress(env, keys.businessName, defaults.businessName);
+  return {
+    businessName,
+    addresses: {
+      base: readAddress(env, keys.base, defaults.addresses.base),
+      ethereum: readAddress(env, keys.ethereum, defaults.addresses.ethereum),
+      solana: readAddress(env, keys.solana, defaults.addresses.solana),
+    },
+  };
+}
+
 export function readPayEnv(env: NodeJS.ProcessEnv = process.env): PayEnv {
   const fiatEnabled = env.PAY_FIAT_ENABLED === "true";
   return {
-    payeeName,
-    paymentsEnabled: env.PAYMENTS_ENABLED === "true",
+    paymentsEnabled: readPaymentsEnabled(env),
     reownProjectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID?.trim() ?? "",
     solanaRpcUrl: env.PAY_SOLANA_RPC_URL?.trim() || "https://api.mainnet-beta.solana.com",
-    sanctionsWebhookUrl: env.SANCTIONS_WEBHOOK_URL?.trim() ?? "",
+    sanctionsApiUrl: env.SANCTIONS_API_URL?.trim() ?? "",
+    sanctionsApiKey: env.SANCTIONS_API_KEY?.trim() ?? "",
+    paymentLogWebhookUrl: env.PAYMENT_LOG_WEBHOOK_URL?.trim() ?? "",
+    anonymousTipCapUsd: readTipCap(env),
     presetAmountsUsd,
     fiat: {
       stripe: fiatEnabled ? hostedLink(env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK?.trim() ?? "", STRIPE_HOSTS) : null,
       coinbase: fiatEnabled ? hostedLink(env.NEXT_PUBLIC_COINBASE_COMMERCE_URL?.trim() ?? "", COINBASE_HOSTS) : null,
     },
     profiles: {
-      quantum: {
-        base: readAddress(env, ["PAY_BASE_ADDRESS", "PAY_QUANTUM_BASE_ADDRESS"], receivingAddresses.invoice.base),
-        ethereum: readAddress(env, ["PAY_ETHEREUM_ADDRESS", "PAY_QUANTUM_ETHEREUM_ADDRESS"], receivingAddresses.invoice.ethereum),
-        solana: readAddress(env, ["PAY_SOLANA_ADDRESS", "PAY_QUANTUM_SOLANA_ADDRESS"], receivingAddresses.invoice.solana),
-      },
-      tip: {
-        base: readAddress(env, ["PAY_TIP_BASE_ADDRESS"], receivingAddresses.tip.base),
-        ethereum: readAddress(env, ["PAY_TIP_ETHEREUM_ADDRESS"], receivingAddresses.tip.ethereum),
-        solana: readAddress(env, ["PAY_TIP_SOLANA_ADDRESS"], receivingAddresses.tip.solana),
-      },
+      quantum: readProfile(env, "quantum", {
+        businessName: ["PAY_QUANTUM_BUSINESS_NAME"],
+        base: ["PAY_QUANTUM_BASE_ADDRESS", "PAY_BASE_ADDRESS"],
+        ethereum: ["PAY_QUANTUM_ETHEREUM_ADDRESS", "PAY_ETHEREUM_ADDRESS"],
+        solana: ["PAY_QUANTUM_SOLANA_ADDRESS", "PAY_SOLANA_ADDRESS"],
+      }),
+      botSite: readProfile(env, "botSite", {
+        businessName: ["PAY_BOT_BUSINESS_NAME"],
+        base: ["PAY_BOT_BASE_ADDRESS"],
+        ethereum: ["PAY_BOT_ETHEREUM_ADDRESS"],
+        solana: ["PAY_BOT_SOLANA_ADDRESS"],
+      }),
     },
   };
 }
@@ -79,5 +120,5 @@ export function reownReady(projectId: string): boolean {
 }
 
 export function addressesArePlaceholders(env: PayEnv): boolean {
-  return Object.values(env.profiles).some((profile) => Object.values(profile).some((address) => isPlaceholderAddress(address)));
+  return Object.values(env.profiles).some((profile) => Object.values(profile.addresses).some((address) => isPlaceholderAddress(address)));
 }

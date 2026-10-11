@@ -1,52 +1,67 @@
-import type { SanctionsDecision, SanctionsInput, SanctionsScreener } from "./types";
+import type { ChainId, SanctionsDecision, SanctionsScreener } from "./types";
 
+/**
+ * Optional chain-analytics hook. The default allows every address.
+ *
+ * Set SANCTIONS_API_URL to an HTTPS endpoint. The server POSTs
+ * `{ "address", "chain" }` and treats `{ "allowed": false }` or `{ "blocked": true }`
+ * as a refusal. SANCTIONS_API_KEY, when set, is sent as a Bearer token on the
+ * server only. Both variables are unset by default. Do not commit a key.
+ */
 export const passthroughScreener: SanctionsScreener = {
-  async screen(): Promise<SanctionsDecision> {
-    return {
-      allowed: true,
-      reason: "No sanctions provider is configured. No list was queried.",
-    };
+  async screenAddress(): Promise<SanctionsDecision> {
+    return { allowed: true };
   },
 };
 
-export function screenerFromEnv(webhookUrl: string): SanctionsScreener {
-  if (!webhookUrl) return passthroughScreener;
+export function screenerFromEnv(apiUrl: string, apiKey = "", fetchImpl: typeof fetch = fetch): SanctionsScreener {
+  const trimmed = apiUrl.trim();
+  if (!trimmed) return passthroughScreener;
   let endpoint: URL;
   try {
-    endpoint = new URL(webhookUrl);
+    endpoint = new URL(trimmed);
   } catch {
-    return {
-      async screen(): Promise<SanctionsDecision> {
-        return { allowed: false, reason: "The sanctions webhook URL is not valid." };
-      },
-    };
+    return closedScreener;
   }
-  if (endpoint.protocol !== "https:") {
-    return {
-      async screen(): Promise<SanctionsDecision> {
-        return { allowed: false, reason: "The sanctions webhook must use HTTPS." };
-      },
-    };
-  }
+  if (endpoint.protocol !== "https:") return closedScreener;
   return {
-    async screen(input: SanctionsInput): Promise<SanctionsDecision> {
+    async screenAddress(address: string, chain: ChainId): Promise<SanctionsDecision> {
       try {
-        const response = await fetch(endpoint, {
+        const headers: Record<string, string> = { "content-type": "application/json" };
+        if (apiKey.trim()) headers.authorization = `Bearer ${apiKey.trim()}`;
+        const response = await fetchImpl(endpoint, {
           method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(input),
+          headers,
+          body: JSON.stringify({ address, chain }),
           signal: AbortSignal.timeout(4000),
           redirect: "error",
         });
-        if (!response.ok) return { allowed: false, reason: "Sanctions screening did not accept the payment." };
-        const body = (await response.json()) as { allowed?: unknown; reason?: unknown };
-        if (body.allowed === true) {
-          return { allowed: true, reason: typeof body.reason === "string" ? body.reason : "Screening webhook allowed the payment." };
-        }
-        return { allowed: false, reason: typeof body.reason === "string" ? body.reason : "Screening webhook blocked the payment." };
+        if (!response.ok) return { allowed: false };
+        const body = (await response.json()) as { allowed?: unknown; blocked?: unknown };
+        if (body.allowed === false || body.blocked === true) return { allowed: false };
+        if (body.allowed === true) return { allowed: true };
+        return { allowed: false };
       } catch {
-        return { allowed: false, reason: "Sanctions screening could not be reached." };
+        return { allowed: false };
       }
     },
   };
+}
+
+const closedScreener: SanctionsScreener = {
+  async screenAddress(): Promise<SanctionsDecision> {
+    return { allowed: false };
+  },
+};
+
+export async function screenPaymentAddresses(
+  screener: SanctionsScreener,
+  chain: ChainId,
+  toAddress: string,
+  fromAddress: string | null,
+): Promise<SanctionsDecision> {
+  const destination = await screener.screenAddress(toAddress, chain);
+  if (!destination.allowed) return destination;
+  if (!fromAddress) return { allowed: true };
+  return screener.screenAddress(fromAddress, chain);
 }

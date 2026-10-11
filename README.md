@@ -49,18 +49,19 @@ Team cards with `confirmed: false` stay off the public team API.
 
 The portable module is [`src/features/crypto-pay`](src/features/crypto-pay). It supports Base, Ethereum, and Solana, and the tokens USDC, USDT, ETH, and SOL.
 
-- `PAYMENTS_ENABLED` defaults to false. The pay page shows “Payments are not yet enabled.” and will not build a payment code.
-- Placeholder receiving addresses, including `0xYOUR_BASE_ADDRESS`, show “Payments not configured” and refuse to send.
-- The invoice profile and the tip profile must use different addresses.
-- An invoice number or memo is optional. USDC and USDT follow the US dollar amount one for one. ETH and SOL amounts are estimates from a live quote.
-- Wallet connection uses Reown AppKit with wagmi, viem, and the Solana adapter. Leave `NEXT_PUBLIC_REOWN_PROJECT_ID` unset and the panel keeps QR and a copied address only.
+- `PAYMENTS_ENABLED` defaults to false. The pay page still shows the full panel, with the banner “Payments not yet enabled”, and the pay button does not send.
+- Placeholder receiving addresses, including `0xYOUR_BASE_ADDRESS`, show “Payments not configured”. Sending requires both the master switch and a real address.
+- This site uses the `quantum` profile. `botSite` has its own addresses. A shared address fails validation. There is no fallback between profiles.
+- An invoice number is required. USDC and USDT are credited 1:1 with the US dollar amount. ETH and SOL amounts are estimates from a live quote, and stablecoins are recommended.
+- Wallet connection uses Reown AppKit with wagmi, viem, and the Solana adapter. Leave `NEXT_PUBLIC_REOWN_PROJECT_ID` unset and the panel keeps QR and a copied address only. Swaps stay off.
 - Card checkout is off unless `PAY_FIAT_ENABLED=true` and a Stripe Payment Link or Coinbase Commerce URL is set. No secret keys.
 
-The module’s own notes, including the Antigua compliance note and what the card links need, are in [`src/features/crypto-pay/README.md`](src/features/crypto-pay/README.md).
-- `SANCTIONS_WEBHOOK_URL` is the screening hook. With it empty, the hook allows the payment and says that no list was queried.
-- `POST /api/payments/log` records a client-reported transfer. It does not verify the chain.
+The module’s own notes, including the compliance controls and what the card links need, are in [`src/features/crypto-pay/README.md`](src/features/crypto-pay/README.md). Antigua counsel must sign off before `PAYMENTS_ENABLED` is turned on.
 
-The site never holds keys or funds. A tip does not pay an invoice.
+- `SANCTIONS_API_URL` and `SANCTIONS_API_KEY` are the address-screen hook. With the URL empty, the hook allows the payment. A blocked result refuses it.
+- `POST /api/payments/log` records a confirmed transfer and, when `PAYMENT_LOG_WEBHOOK_URL` is set, forwards that record. Otherwise it writes the server console. It does not verify the chain.
+
+The site never holds keys or funds, and it does not convert, swap, or forward them. Payments go wallet to wallet. Tip mode exists in the module for another host and is not shown on this site.
 
 ## Agent API
 
@@ -82,8 +83,9 @@ The site never holds keys or funds. A tip does not pay an invoice.
 | POST | `/api/marketplace/mint` | Stub. Body `{ listingId, standard }` where standard is `nft` or `ordinal`. Always `minted: false`. |
 | GET | `/api/payments` | Public status. Addresses are omitted. |
 | GET | `/api/payments/quote?token=ETH` | Public market quote for settlement. `token` is `ETH` or `SOL`. |
-| POST | `/api/payments/screen` and `/api/payments/qr` | Refused while payments are disabled. |
-| POST | `/api/payments/log` | Client-reported transfer. Not chain verification. |
+| POST | `/api/payments/screen` | Send gate. Refused while payments are disabled, unconfigured, or blocked by the address screen. |
+| POST | `/api/payments/qr` | Payment code for a real address and an invoice number. Display does not require the master switch. |
+| POST | `/api/payments/log` | Confirmed transfer. Console, or `PAYMENT_LOG_WEBHOOK_URL` when set. Not chain verification. |
 | GET, POST, DELETE | `/api/session` | Human placeholder cookie. POST body `{ email }`. |
 | POST | `/api/auth/agent` | Header `X-Quantum-Agent-Key`, compared with `AGENT_API_KEY`. |
 
@@ -115,7 +117,7 @@ The pay page reads `PAYMENTS_ENABLED` on each request. A static export would fre
 ## Phase 2
 
 - Real client authentication with an identity provider, replacing the unsigned cookie.
-- A sanctions provider on `SANCTIONS_WEBHOOK_URL`, real receiving addresses, and `PAYMENTS_ENABLED=true`.
+- A sanctions provider on `SANCTIONS_API_URL`, real receiving addresses, counsel sign-off, and `PAYMENTS_ENABLED=true`.
 - Chain verification of payment logs, still without holding keys in the repo.
 - Actual NFT or Bitcoin Ordinal issuance for plan sets and render plates, aimed at private buyers.
 - Per-home applications mounted at `/client/homes/[slug]`. The slot and its contract are already there. Nothing is mounted.

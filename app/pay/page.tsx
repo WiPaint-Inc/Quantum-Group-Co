@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { company } from "@/content/site";
 import { PayPanel, type PayPanelConfig } from "@/src/features/crypto-pay/PayPanel";
 import { copy } from "@/src/features/crypto-pay/copy";
 import { readPayEnv, reownReady } from "@/src/features/crypto-pay/config";
 import { profileConfigured, sharedProfileAddresses } from "@/src/features/crypto-pay/validate";
-import { company } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Pay",
-  description: "Pay a Quantum Group Co invoice from your own wallet, or leave a voluntary tip. Payments are disabled until the company turns them on.",
+  description: "Pay a Quantum Group Co invoice from your own wallet. Payments stay off until the company turns them on.",
 };
 
 export default function PayPage() {
@@ -31,28 +31,27 @@ async function PayDesk() {
   await connection();
   const env = readPayEnv();
   const shared = sharedProfileAddresses(env).length > 0;
-  const publish = env.paymentsEnabled && !shared;
+  const quantum = env.profiles.quantum;
   const config: PayPanelConfig = {
-    payeeName: env.payeeName,
+    businessName: quantum.businessName,
+    profileId: "quantum",
+    modes: ["invoice"],
     enabled: env.paymentsEnabled,
-    configured: profileConfigured(env, "quantum") && !shared,
-    sanctions: env.sanctionsWebhookUrl ? "webhook" : "passthrough",
+    configured: profileConfigured(env, "quantum"),
+    sharedAddresses: shared,
+    sanctions: env.sanctionsApiUrl ? "configured" : "passthrough",
     walletConnect: reownReady(env.reownProjectId),
     projectId: reownReady(env.reownProjectId) ? env.reownProjectId : "",
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://quantum-group.example",
     solanaRpcUrl: env.solanaRpcUrl,
-    sharedAddresses: shared,
     presets: [...env.presetAmountsUsd],
+    anonymousTipCapUsd: env.anonymousTipCapUsd,
     fiat: env.fiat,
-    addresses: {
-      quantum: publish && profileConfigured(env, "quantum") ? env.profiles.quantum : null,
-      tip: publish && profileConfigured(env, "tip") ? env.profiles.tip : null,
-    },
   };
 
   return (
     <>
-      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-sand/60">{config.sanctions === "webhook" ? copy.sanctionsWebhook : copy.sanctionsPassthrough}</p>
+      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-sand/60">{config.sanctions === "configured" ? copy.sanctionsConfigured : copy.sanctionsPassthrough}</p>
       <PayPanel config={config} />
     </>
   );

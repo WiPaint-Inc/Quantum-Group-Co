@@ -43,6 +43,6 @@ ${link("/api/auth/agent", "Agent auth", "Header X-Quantum-Agent-Key against AGEN
 
 ## Payments
 
-PAYMENTS_ENABLED defaults off. Receiving addresses stay placeholders until replaced, and invoice and tip profiles must use different addresses. USDC and USDT follow the invoice one for one. ETH and SOL amounts are estimates. The sanctions hook is SANCTIONS_WEBHOOK_URL. The site never holds keys or funds. Logs are client-reported and are not chain verification.
+PAYMENTS_ENABLED defaults off. This site takes invoice payments on the quantum profile only, and the invoice number is required. A second profile keeps its own addresses and must not share one. USDC and USDT are credited one for one with the US dollar amount. ETH and SOL amounts are estimates. Address screening uses SANCTIONS_API_URL when set. The site never holds keys or funds and does not convert, swap, or forward them. Confirmed payments are logged to the server console, or to PAYMENT_LOG_WEBHOOK_URL when that URL is set. The log is not chain verification.
 `;
 }

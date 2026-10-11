@@ -1,16 +1,32 @@
 export const copy = {
-  disabled: "Payments are not yet enabled.",
+  disabled: "Payments not yet enabled",
   unconfigured: "Payments not configured",
-  shared: "Invoice and tip profiles share a receiving address. Sending stays blocked until each profile has its own addresses.",
+  shared: "Each business profile needs its own receiving addresses.",
   invoiceHelp:
-    "Enter the invoice number exactly as it appears on your invoice. The amount is that invoice in US dollars. USDC and USDT are treated as one US dollar each. ETH and SOL amounts are estimates from a live quote and are not a locked rate.",
-  tip:
-    "A tip is voluntary. It does not pay an invoice, buy goods or services, or represent equity. It is not a tax receipt. Tips use a separate receiving profile from invoice payments. Send a tip only if you mean to, and only after you have checked the network, the token, and the address.",
-  sendWarning: "You are sending digital assets from your own wallet. Quantum Group Co cannot reverse a transfer.",
+    "Enter the invoice number from the invoice. Amounts are in US dollars. USDC and USDT are credited 1:1. ETH and SOL amounts are estimates from a public price, and stablecoins are recommended.",
+  invoiceRequired: "Enter the invoice number.",
+  completion:
+    "Payment is complete only when the full USD amount, net of network fees, is confirmed on-chain. Wrong-chain or wrong-address payments are at the payer's risk.",
+  blocked: "This payment cannot be completed.",
+  stableCredit: "USDC and USDT are credited 1:1 with the US dollar amount.",
+  stablecoinRecommendation: "Stablecoins are recommended. The figure shown for ETH or SOL is an estimate.",
+  estimateLabel: "Estimate",
+  contactRequired: "Enter a name and email before sending this amount.",
+  payerAddressRequired: "Connect a wallet on the selected network.",
+  sendWarning: "You send from your own wallet. The site does not hold, convert, swap, or forward funds.",
+  nonCustodial:
+    "Non-custodial. The site never holds keys or funds. A payment goes from the payer wallet to the published receiving address. Nothing is converted, swapped, or forwarded.",
   antigua:
-    "Quantum Group Co may accept digital assets only as payment of a stated invoice for its own construction and related services in Antigua and Barbuda, or, separately, as a voluntary tip. The company does not offer digital-asset custody, exchange, or investment services, and it does not hold a payer's keys or funds. A transfer goes from the payer's wallet to a published receiving address. Network fees are paid by the payer. Transfers are generally irreversible. Confirm the invoice, the amount, the network, the token, and the address before you send. This page is not legal, tax, or investment advice. Digital-asset activity can fall under the laws of Antigua and Barbuda, including the Digital Assets Business Act, and under the laws of the payer's own jurisdiction.",
-  nonCustodial: "Non-custodial. The site never holds keys or funds. Nothing is sent until you confirm it in your own wallet.",
+    "Digital-asset activity can fall under the laws of Antigua and Barbuda, including the Digital Assets Business Act, and under the laws of the payer's own jurisdiction. This page is not legal or tax advice. Antigua counsel must sign off before PAYMENTS_ENABLED is turned on.",
   walletMissing: "Wallet connection is unavailable until a Reown project id is set. You can still pay by scanning the code or copying the address.",
-  sanctionsPassthrough: "Sanctions screening is not connected. The default hook allows the payment and records that no list was queried. Connect a screening webhook before you enable payments.",
-  sanctionsWebhook: "A sanctions screening webhook is configured. A payment is refused when that hook does not allow it.",
+  sanctionsPassthrough:
+    "Address screening is not connected. The default hook allows a payment. Connect a screening service before payments are turned on.",
+  sanctionsConfigured: "Address screening is configured. A payment is refused when that hook does not allow it.",
+  profileRequired: "Choose a payment profile.",
+  modeRequired: "Choose a payment mode.",
 } as const;
+
+/** Mandated tip text. The business name is inserted from config. Do not paraphrase. */
+export function tipDisclaimer(businessName: string): string {
+  return `Tip / Thank-you payment. Optional, non-refundable payment made voluntarily in appreciation of services provided by ${businessName}. A tip is a payment for services, not a donation or charitable gift, not a purchase of any token, share or interest, and carries no right to profits, returns, governance or future services. No tax receipt is issued.`;
+}

@@ -8,7 +8,7 @@ import type { Config } from "wagmi";
 
 let config: Config | null = null;
 
-export function ensurePayAppKit(projectId: string, siteUrl: string): Config {
+export function ensurePayAppKit(projectId: string, siteUrl: string, businessName: string): Config {
   if (config) return config;
   const wagmi = new WagmiAdapter({
     projectId,
@@ -21,8 +21,8 @@ export function ensurePayAppKit(projectId: string, siteUrl: string): Config {
     networks: [base, mainnet, solana],
     defaultNetwork: base,
     metadata: {
-      name: "Quantum Group Co",
-      description: "Invoice and tip payments",
+      name: businessName,
+      description: "Wallet to wallet payment",
       url: siteUrl,
       icons: [`${siteUrl}/icon`],
     },

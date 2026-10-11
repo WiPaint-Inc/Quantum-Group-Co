@@ -17,19 +17,23 @@ export type WalletResult = { ok: true; hash: string; from: string } | { ok: fals
 export function WalletPay({
   projectId,
   siteUrl,
+  businessName,
   solanaRpcUrl,
   canSend,
+  notice,
   onAuthorize,
   onResult,
 }: {
   projectId: string;
   siteUrl: string;
+  businessName: string;
   solanaRpcUrl: string;
   canSend: boolean;
-  onAuthorize: () => Promise<{ ok: true; payment: SettledPayment } | { ok: false; message: string }>;
+  notice: string;
+  onAuthorize: (from: { evm?: string; solana?: string }) => Promise<{ ok: true; payment: SettledPayment } | { ok: false; message: string }>;
   onResult: (result: WalletResult) => void;
 }) {
-  const config = ensurePayAppKit(projectId, siteUrl);
+  const config = ensurePayAppKit(projectId, siteUrl, businessName);
   const { open } = useAppKit();
   const evm = useAppKitAccount({ namespace: "eip155" });
   const sol = useAppKitAccount({ namespace: "solana" });
@@ -43,7 +47,7 @@ export function WalletPay({
     if (!canSend || busy) return;
     setBusy(true);
     try {
-      const authorized = await onAuthorize();
+      const authorized = await onAuthorize({ evm: evm.address, solana: sol.address });
       if (!authorized.ok) {
         onResult(authorized);
         return;
@@ -62,11 +66,12 @@ export function WalletPay({
 
   return (
     <div className="mt-6 flex flex-wrap gap-4">
-      <button type="button" className="border border-line px-4 py-3 text-[0.68rem] tracking-[0.18em] text-sand uppercase" onClick={() => void open()}>
-        Connect wallet
-      </button>
+      <p className="w-full text-sm leading-relaxed text-sand">{notice}</p>
       <button type="button" className="border border-gold px-4 py-3 text-[0.68rem] tracking-[0.18em] text-sand uppercase disabled:opacity-40" disabled={!canSend || busy} onClick={() => void send()}>
         {busy ? "Waiting for wallet" : "Connect & Pay"}
+      </button>
+      <button type="button" className="border border-line px-4 py-3 text-[0.68rem] tracking-[0.18em] text-sand uppercase" onClick={() => void open()}>
+        Connect wallet
       </button>
       <p className="w-full text-sm text-sand/55">
         {evm.address ? `EVM ${evm.address}` : "No EVM wallet connected."}

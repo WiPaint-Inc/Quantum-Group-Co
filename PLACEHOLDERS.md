@@ -45,10 +45,12 @@ Public pages keep these notes out of production HTML. They render only in develo
 
 These are environment values, not page copy. Defaults are placeholders and payments stay off.
 
-- PAYMENTS_ENABLED is false until the company turns invoice payments on.
-- PAY_QUANTUM_BASE_ADDRESS, PAY_QUANTUM_ETHEREUM_ADDRESS, and PAY_QUANTUM_SOLANA_ADDRESS are placeholders.
-- PAY_TIP_BASE_ADDRESS, PAY_TIP_ETHEREUM_ADDRESS, and PAY_TIP_SOLANA_ADDRESS are placeholders, and they must differ from the invoice addresses.
+- PAYMENTS_ENABLED is false until Antigua counsel signs off and invoice payments are turned on.
+- PAY_QUANTUM_BASE_ADDRESS, PAY_QUANTUM_ETHEREUM_ADDRESS, and PAY_QUANTUM_SOLANA_ADDRESS are placeholders. PAY_BASE_ADDRESS, PAY_ETHEREUM_ADDRESS, and PAY_SOLANA_ADDRESS are aliases for that profile only.
+- PAY_BOT_BASE_ADDRESS, PAY_BOT_ETHEREUM_ADDRESS, and PAY_BOT_SOLANA_ADDRESS are different placeholders. The two profiles must not share an address.
 - NEXT_PUBLIC_REOWN_PROJECT_ID is empty, so wallet connection stays off.
-- SANCTIONS_WEBHOOK_URL is empty, so the sanctions hook allows a payment and records that no list was queried.
+- SANCTIONS_API_URL and SANCTIONS_API_KEY are empty, so the address screen allows a payment and no list is queried.
+- PAYMENT_LOG_WEBHOOK_URL is empty, so a confirmed payment is written to the server console only.
+- ANONYMOUS_TIP_CAP_USD defaults to 1000. This site does not show tip mode.
 - AGENT_API_KEY is empty.
 - NEXT_PUBLIC_SITE_URL still uses the example origin.

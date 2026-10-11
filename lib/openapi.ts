@@ -357,7 +357,7 @@ export function buildOpenApi() {
       "/api/payments/screen": {
         post: {
           tags: ["Payments"],
-          summary: "Validate an invoice or tip and run the sanctions hook",
+          summary: "Validate an invoice payment and run the address screen",
           operationId: "screenPayment",
           responses: { "200": { description: "Settled payment" }, "400": { description: "Invalid payment" }, "403": { description: "Disabled, unconfigured, or blocked" } },
         },
@@ -365,16 +365,16 @@ export function buildOpenApi() {
       "/api/payments/qr": {
         post: {
           tags: ["Payments"],
-          summary: "Build a payment code for a screened invoice or tip",
+          summary: "Build a payment code for an invoice",
           operationId: "createPaymentQr",
-          responses: { "200": { description: "QR and URI" }, "403": { description: "Sending is blocked" } },
+          responses: { "200": { description: "QR and URI. Does not require PAYMENTS_ENABLED." }, "403": { description: "Address missing or screen refused" } },
         },
       },
       "/api/payments/log": {
         post: {
           tags: ["Payments"],
-          summary: "Record a client-reported transfer",
-          description: "The server does not verify the transfer on chain. chainVerified is false.",
+          summary: "Record a confirmed transfer",
+          description: "Writes the server console, and forwards to PAYMENT_LOG_WEBHOOK_URL when that URL is set. The server does not verify the transfer on chain.",
           operationId: "logPayment",
           responses: { "200": { description: "Logged" }, "400": { description: "Invalid report" } },
         },
