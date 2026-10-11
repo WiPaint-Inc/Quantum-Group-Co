@@ -105,7 +105,12 @@ export function PortfolioPlaces({ places }: { places: Place[] }) {
       const total = node.offsetHeight - window.innerHeight;
       const next = total <= 0 ? 0 : clamp01(-rect.top / total);
       progressRef.current = next;
-      setProgress((current) => (Math.abs(current - next) < 0.006 ? current : next));
+      setProgress((current) => {
+        const max = Math.max(places.length - 1, 1);
+        const indexAt = (value: number) => Math.min(places.length - 1, Math.max(0, Math.round(value * max)));
+        if (indexAt(current) !== indexAt(next + 0.02)) return next;
+        return Math.abs(current - next) < 0.01 ? current : next;
+      });
     };
     const onScroll = () => {
       cancelAnimationFrame(frame);
@@ -121,7 +126,7 @@ export function PortfolioPlaces({ places }: { places: Place[] }) {
       window.removeEventListener("quantum-scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [reduced]);
+  }, [reduced, places.length]);
 
   if (reduced || places.length === 0) return null;
 

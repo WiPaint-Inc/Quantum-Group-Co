@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { PortfolioPlacesGate } from "@/components/experience/PortfolioPlacesGate";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { PageIntro } from "@/components/site/PageIntro";
 import { portfolioProjects } from "@/content/portfolio";
 import { portfolioIntro } from "@/content/site";
-
-const PortfolioPlaces = dynamic(
-  () => import("@/components/experience/PortfolioPlaces").then((mod) => mod.PortfolioPlaces),
-  { ssr: false },
-);
 
 export const metadata: Metadata = {
   title: "Partner Portfolio",
@@ -20,7 +15,7 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <main id="content">
-      <PortfolioPlaces
+      <PortfolioPlacesGate
         places={portfolioProjects.map((project) => ({
           slug: project.slug,
           name: project.name,

@@ -16,17 +16,17 @@ const MASSES: Array<[number, number, number, number, number, number]> = [
 const CAMERA_KEYS: Array<{ at: number; pos: [number, number, number]; look: [number, number, number] }> = [
   { at: 0, pos: [11, 6.2, 16], look: [0, 0.3, 0] },
   { at: 0.12, pos: [6.5, 3.6, 9], look: [0, 0.55, 0] },
-  { at: 0.24, pos: [0.15, 8.2, 5.4], look: [0, 0, 0] },
+  { at: 0.24, pos: [0.2, 9.4, 0.9], look: [0, 0, 0.3] },
   { at: 0.36, pos: [4.8, 2.4, 6.4], look: [0, 0.65, 0] },
   { at: 0.48, pos: [2.6, 1.55, 4.1], look: [0, 0.72, 0] },
   { at: 0.58, pos: [0.35, 1.28, 3.35], look: [0.12, 0.86, 0.08] },
-  { at: 0.66, pos: [3.6, 3.1, 4.8], look: [0, 1.15, 0] },
-  { at: 0.74, pos: [0.05, 2.15, 3.5], look: [0, 0.72, 0] },
-  { at: 0.8, pos: [3.4, 1.7, 5.4], look: [0, 0.55, 0] },
-  { at: 0.86, pos: [0.15, 1.05, 2.45], look: [0.25, 0.62, 0] },
-  { at: 0.92, pos: [0.1, 3.6, 4.6], look: [0, 0.08, 0] },
-  { at: 0.97, pos: [0.3, 7.2, 13], look: [0, 0.35, 0] },
-  { at: 1, pos: [0.15, 12.5, 19], look: [0, 0.15, 0] },
+  { at: 0.66, pos: [3.4, 4.4, 4.2], look: [0, 1.05, 0] },
+  { at: 0.74, pos: [0.05, 2.35, 3.2], look: [0, 0.7, 0] },
+  { at: 0.8, pos: [3.2, 2.05, 4.8], look: [0, 0.55, 0] },
+  { at: 0.86, pos: [0.15, 1.15, 2.35], look: [0.2, 0.62, 0] },
+  { at: 0.92, pos: [0.05, 3.3, 3.1], look: [0, 0.02, 0] },
+  { at: 0.97, pos: [0.35, 3.4, 6.6], look: [0, 0.35, 0] },
+  { at: 1, pos: [0.1, 6.4, 10.5], look: [0, 0.3, 0] },
 ];
 
 const VIGNETTE_BANDS = [
@@ -124,6 +124,7 @@ export function World({ progressRef, quality }: { progressRef: { current: number
       THREE.MathUtils.lerp(from.look[1], to.look[1], local),
       THREE.MathUtils.lerp(from.look[2], to.look[2], local),
     );
+    if (quality === "low") cameraTarget.lerp(lookTarget, 0.34);
     camera.position.lerp(cameraTarget, damp);
     look.lerp(lookTarget, damp);
     camera.lookAt(look);
@@ -303,8 +304,8 @@ function Engineering() {
   return (
     <group name="engineering" visible={false}>
       {slabs.map((y, index) => (
-        <mesh key={y} position={[0, y, 0]} userData={{ lift: 0.85 - index * 0.12 }}>
-          <boxGeometry args={[2.5 - index * 0.08, 0.07, 1.45]} />
+        <mesh key={y} position={[0, y, 0]} userData={{ lift: 0.95 - index * 0.14 }}>
+          <boxGeometry args={[2.5 - index * 0.08, 0.16, 1.45]} />
           <meshStandardMaterial color={index % 2 ? "#d7c4a4" : "#f3eadc"} roughness={0.72} transparent opacity={0} />
         </mesh>
       ))}

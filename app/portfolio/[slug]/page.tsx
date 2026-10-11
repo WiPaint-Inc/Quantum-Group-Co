@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ProjectSceneGate } from "@/components/experience/ProjectSceneGate";
 import { Gallery } from "@/components/portfolio/Gallery";
 import { getPortfolioProject, portfolioProjects, projectModel } from "@/content/portfolio";
-
-const ProjectScene = dynamic(() => import("@/components/experience/ProjectScene").then((mod) => mod.ProjectScene), {
-  ssr: false,
-});
 
 export function generateStaticParams() {
   return portfolioProjects.map((project) => ({ slug: project.slug }));
@@ -40,7 +36,7 @@ async function ProjectBody({ params }: { params: Promise<{ slug: string }> }) {
       <h1 className="mt-4 font-serif text-6xl text-sand">{project.name}</h1>
       <p className="mt-6 max-w-2xl text-sand/70">{project.caption}</p>
       <div className="mt-10">
-        <ProjectScene images={project.images} model={projectModel(project.slug)} />
+        <ProjectSceneGate images={project.images} model={projectModel(project.slug)} />
       </div>
       <div className="mt-12">
         <Gallery images={project.images} />

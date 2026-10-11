@@ -45,6 +45,13 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+function chapterFor(value: number) {
+  for (let index = CHAPTERS.length - 1; index >= 0; index -= 1) {
+    if (value + 0.015 >= CHAPTERS[index].at) return CHAPTERS[index];
+  }
+  return CHAPTERS[0];
+}
+
 function hourLabel(progress: number) {
   if (progress < 0.22) return "Morning";
   if (progress < 0.42) return "Afternoon";
@@ -78,7 +85,10 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
       const total = node.offsetHeight - window.innerHeight;
       const next = total <= 0 ? 0 : clamp01(-rect.top / total);
       progressRef.current = next;
-      setProgress((current) => (Math.abs(current - next) < 0.004 ? current : next));
+      setProgress((current) => {
+        if (chapterFor(current).label !== chapterFor(next).label) return next;
+        return Math.abs(current - next) < 0.008 ? current : next;
+      });
     };
     const onScroll = () => {
       cancelAnimationFrame(frame);
@@ -97,7 +107,7 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
   }, [reduced]);
 
   const shown = reduced ? 0 : progress;
-  const chapter = [...CHAPTERS].reverse().find((item) => shown >= item.at) ?? CHAPTERS[0];
+  const chapter = chapterFor(shown);
   const chapterIndex = CHAPTERS.findIndex((item) => item.label === chapter.label);
   const hero = reduced ? 1 : 1 - clamp01((shown - 0.06) / 0.1);
   const showCanvas = !reduced;
@@ -113,7 +123,9 @@ export function Journey({ draft, villas = [] }: { draft: boolean; villas?: Scene
   return (
     <div ref={track} className={reduced ? "relative" : "relative h-[520vh] md:h-[760vh]"} data-scene={chapter.label.toLowerCase()}>
       <div className={reduced ? "relative h-dvh overflow-hidden bg-ink" : "sticky top-0 h-dvh overflow-hidden bg-ink"}>
-        <Image src={posterImage.src} alt={posterImage.alt} fill priority className="object-cover" sizes="100vw" />
+        <div className="absolute inset-0">
+          <Image src={posterImage.src} alt={posterImage.alt} fill priority className="object-cover" sizes="100vw" />
+        </div>
         {showCanvas ? (
           <div className="absolute inset-0 transition-opacity duration-700" style={{ opacity: ready ? 1 : 0 }}>
             <ExperienceCanvas progressRef={progressRef} quality={quality} onReady={() => setReady(true)} />
