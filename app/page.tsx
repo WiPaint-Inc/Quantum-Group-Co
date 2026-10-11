@@ -60,8 +60,8 @@ async function HomeBody() {
           ) : null}
           {service.slug === "developments" ? (
             <div className="mt-10 grid gap-4 md:grid-cols-2">
-              <ConceptFigure shot={conceptShots.developmentBluehour} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
-              <ConceptFigure shot={conceptShots.developmentOffshore} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
+              <ConceptFigure shot={conceptShots.developmentAerial} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
+              <ConceptFigure shot={conceptShots.developmentSea} draft={draft} className="h-[42vh] min-h-64" sizes="(min-width: 768px) 40vw, 100vw" />
             </div>
           ) : null}
           <MarkerNotes keys={service.markerKeys} />

@@ -6,8 +6,8 @@ export const conceptShots = {
   ecoAerial: "rustic-modern-aerial",
   ecoInterior: "rustic-modern-great-room",
   beachfront: "beachfront-from-water",
-  developmentBluehour: "development-bluehour-masterplan",
-  developmentOffshore: "development-golden-offshore",
+  developmentAerial: "peninsula-development-aerial",
+  developmentSea: "peninsula-development-from-sea",
   /** Optional plates. Present in the repo, not the lead sequence. */
   interior: "interior-great-room",
   dusk: "hero-villa-dusk",
