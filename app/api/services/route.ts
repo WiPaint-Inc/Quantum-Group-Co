@@ -13,6 +13,8 @@ export function GET() {
       href: buildLive.href,
       offerings: buildLive.offerings,
       kept: buildLive.kept,
+      representative: buildLive.representative,
+      avatar: { status: "coming_soon" as const, copy: buildLive.avatar.copy },
       endpoint: "/api/client-experience",
     },
     ...(roboticsEnabled() ? { robotics: { slug: "robotics", href: "/services/robotics" } } : {}),

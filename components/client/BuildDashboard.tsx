@@ -27,7 +27,8 @@ export function BuildDashboard() {
       <div className="relative h-64 overflow-hidden border border-line bg-ink md:h-[70vh]">
         {reduced ? <div className="still-ocean absolute inset-0" /> : <ClientDashboard />}
       </div>
-      <div className="mt-4 md:absolute md:inset-0 md:mt-0 md:flex md:items-center md:justify-end md:pr-[8%]">
+      <div className="mt-4 flex flex-col gap-4 md:absolute md:inset-0 md:mt-0 md:flex-row md:items-end md:justify-between md:px-8 md:pb-10">
+        <p className="w-fit border border-gold bg-ink/85 px-2 py-1 text-[0.68rem] tracking-[0.18em] text-gold-2 uppercase">Illustration · Coming soon</p>
         <ProjectAppMock />
       </div>
     </div>

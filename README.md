@@ -93,7 +93,7 @@ The site never holds keys or funds, and it does not convert, swap, or forward th
 | GET | `/api/openapi.json` | Public |
 | GET | `/api/company` | Public |
 | GET | `/api/services` and `/api/services/{slug}` | Public. Robotics is absent unless `ROBOTICS_ENABLED=true`. Includes the Your Build, Live summary. |
-| GET | `/api/client-experience` | Public. Weekly updates, channels, video meetings, the private project app, and the shared folder. |
+| GET | `/api/client-experience` | Public. Weekly updates, channels, video meetings, the private project app, the designated Representative, and the shared folder. The project avatar is `coming_soon`. |
 | GET | `/api/portfolio` and `/api/portfolio/{slug}` | Public |
 | GET | `/api/team` | Public. Confirmed cards only. |
 | GET | `/api/estates` and `/api/estates/{slug}` | Public. Same portfolio, kept for the Phase 1 path. |

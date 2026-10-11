@@ -42,6 +42,9 @@ Public pages keep these notes out of production HTML. They render only in develo
 | leadership | PLACEHOLDER | About | leadership names/titles, if owner wants them shown |
 | representative | PLACEHOLDER | Your Build, Live | Name of the designated Representative, if one should be shown. |
 | client-app | CONFIRM | Your Build, Live | the client project app is not built yet. Confirm launch timing and platform (iOS/Android/web) before go-live. |
+| avatar-launch | CONFIRM | Your Build, Live | AI project avatar launch timing before referencing any date. |
+
+[CONFIRM: AI project avatar launch timing before referencing any date.]
 
 [CONFIRM: the client project app is not built yet. Confirm launch timing and platform (iOS/Android/web) before go-live.]
 | eco-credentials | PLACEHOLDER | About | eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it. |

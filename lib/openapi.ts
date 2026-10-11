@@ -85,7 +85,7 @@ export function buildOpenApi() {
           tags: ["Company"],
           summary: "Your Build, Live for owners off-island",
           operationId: "getClientExperience",
-          responses: { "200": { description: "Weekly updates, channels, video meetings, the private project app, and the shared folder." } },
+          responses: { "200": { description: "Weekly updates, channels, video meetings, the private project app, the designated Representative, and the shared folder. The project avatar is coming_soon and is not a current offering." } },
         },
       },
       "/api/services": {

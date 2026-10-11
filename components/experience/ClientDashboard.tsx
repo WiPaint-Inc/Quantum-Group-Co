@@ -2,12 +2,69 @@
 
 import { Stars } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { SkyDome } from "@/components/experience/SkyDome";
 
 const night = { current: 0.68 };
 const calm = { current: 0 };
+
+function Avatar() {
+  const group = useRef<THREE.Group>(null);
+  const material = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: "#e6d2a8", wireframe: true, transparent: true, opacity: 0.92 }),
+    [],
+  );
+  const gold = useMemo(() => new THREE.Color("#e6d2a8"), []);
+  const tide = useMemo(() => new THREE.Color("#8fd4cb"), []);
+  const veil = useMemo(() => new THREE.Color("#d5c4f0"), []);
+  const mixed = useMemo(() => new THREE.Color(), []);
+  const glow = useRef<THREE.PointLight>(null);
+
+  useEffect(() => () => material.dispose(), [material]);
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime * 0.28;
+    if (group.current) group.current.position.y = -0.08 + Math.sin(t) * 0.04;
+    mixed.copy(gold).lerp(tide, (Math.sin(t) + 1) / 2);
+    mixed.lerp(veil, (Math.sin(t * 0.7 + 1.2) + 1) / 5);
+    material.color.copy(mixed);
+    if (glow.current) glow.current.color.copy(mixed);
+  });
+
+  return (
+    <group ref={group} position={[-2.05, -0.05, 0.9]}>
+      <pointLight ref={glow} position={[0, 0.45, 0.35]} intensity={2.4} color="#d7efe8" distance={2.8} />
+      <mesh position={[0, 0.82, 0]} material={material}>
+        <sphereGeometry args={[0.15, 12, 8]} />
+      </mesh>
+      <mesh position={[0, 0.52, 0]} material={material}>
+        <cylinderGeometry args={[0.2, 0.13, 0.38, 8, 1, true]} />
+      </mesh>
+      <mesh position={[0, 0.28, 0]} rotation={[Math.PI / 2, 0, 0]} material={material}>
+        <torusGeometry args={[0.26, 0.006, 6, 20]} />
+      </mesh>
+      <mesh position={[0, 0.05, 0]} material={material}>
+        <cylinderGeometry args={[0.11, 0.18, 0.42, 8, 1, true]} />
+      </mesh>
+      <mesh position={[0, -0.2, 0]} rotation={[Math.PI / 2, 0, 0]} material={material}>
+        <torusGeometry args={[0.15, 0.006, 6, 16]} />
+      </mesh>
+      <mesh position={[-0.26, 0.28, 0]} rotation={[0, 0, 0.55]} material={material}>
+        <cylinderGeometry args={[0.008, 0.008, 0.52, 4]} />
+      </mesh>
+      <mesh position={[0.26, 0.28, 0]} rotation={[0, 0, -0.55]} material={material}>
+        <cylinderGeometry args={[0.008, 0.008, 0.52, 4]} />
+      </mesh>
+      <mesh position={[-0.09, -0.58, 0]} material={material}>
+        <cylinderGeometry args={[0.008, 0.008, 0.68, 4]} />
+      </mesh>
+      <mesh position={[0.09, -0.58, 0]} material={material}>
+        <cylinderGeometry args={[0.008, 0.008, 0.68, 4]} />
+      </mesh>
+    </group>
+  );
+}
 
 function Glass() {
   const group = useRef<THREE.Group>(null);
@@ -72,6 +129,7 @@ export function ClientDashboard() {
         <meshStandardMaterial color="#12100e" roughness={1} />
       </mesh>
       <Glass />
+      <Avatar />
       <Stars radius={40} depth={12} count={280} factor={2} fade saturation={0} speed={0.1} />
     </Canvas>
   );

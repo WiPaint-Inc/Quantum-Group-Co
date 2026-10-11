@@ -34,7 +34,7 @@ ${link("/client", "Client area", "Your Build, Live for owners off-island: weekly
 ${link("/api/openapi.json", "OpenAPI", "Contract.")}
 ${link("/api/company", "Company", "Name, story, and how the work is run.")}
 ${link("/api/services", "Services", "The six services, in order, plus the client-experience summary.")}
-${link("/api/client-experience", "Client experience", "Weekly progress with photographs, a WhatsApp channel and a Slack channel, weekly video meetings, a service shaped to the client, and a private project app. The shared folder, cost-per-room estimates, materials management, and care after handover stay. The app is not launched yet.")}
+${link("/api/client-experience", "Client experience", "Weekly progress with photographs, a WhatsApp channel and a Slack channel, weekly video meetings, a service shaped to the client, a private project app, and a designated Representative who is a person. The shared folder, cost-per-room estimates, materials management, and care after handover stay. The app is not launched yet. A personal AI project avatar is coming soon and is not available today.")}
 ${link("/api/portfolio", "Portfolio", "Partner works and public captions.")}
 ${link("/api/estates", "Estates", "Same portfolio, kept for the Phase 1 path.")}
 ${link("/api/team", "Team", "Confirmed cards only.")}
@@ -47,7 +47,9 @@ ${link("/api/auth/agent", "Agent auth", "Header X-Quantum-Agent-Key against AGEN
 
 Weekly updates. Weekly video meetings. WhatsApp and Slack on call. Your own private project app. Wherever you are, you never miss a moment of your build.
 
-Owners off-island also keep a shared project folder for invoices, change orders, colour schedules and payments, cost-per-room estimates, materials management, and care after handover. The private project app is not built yet.
+Owners off-island also keep a shared project folder for invoices, change orders, colour schedules and payments, cost-per-room estimates, materials management, and care after handover. Every client has a designated Representative, a dedicated person who handles their project. The private project app is not built yet.
+
+Your designated Representative knows every detail of your build. Soon, they'll be with you around the clock as your personal AI project avatar. That avatar is coming soon. It is not available today, and no launch date is set.
 
 ## Payments
 

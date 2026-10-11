@@ -22,6 +22,10 @@ export function BuildLive({ nested = false }: { nested?: boolean }) {
           </li>
         ))}
       </ul>
+      <div className="mt-10 max-w-2xl border border-dashed border-gold/50 px-5 py-5">
+        <p className="kicker">Coming soon</p>
+        <p className="mt-3 text-sand/80">{buildLive.avatar.copy}</p>
+      </div>
       <Link href={buildLive.href} className="mt-8 inline-block border-b border-gold pb-1 text-[0.68rem] tracking-[0.22em] text-sand uppercase">
         Client area
       </Link>

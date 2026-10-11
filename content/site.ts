@@ -66,6 +66,7 @@ export const markers: Marker[] = [
   { key: "leadership", kind: "PLACEHOLDER", page: "About", needed: "leadership names/titles, if owner wants them shown" },
   { key: "representative", kind: "PLACEHOLDER", page: "Your Build, Live", needed: "Name of the designated Representative, if one should be shown." },
   { key: "client-app", kind: "CONFIRM", page: "Your Build, Live", needed: "the client project app is not built yet. Confirm launch timing and platform (iOS/Android/web) before go-live." },
+  { key: "avatar-launch", kind: "CONFIRM", page: "Your Build, Live", needed: "AI project avatar launch timing before referencing any date." },
   { key: "eco-credentials", kind: "PLACEHOLDER", page: "About", needed: "eco credentials. Do not claim a certification, or an energy or performance figure, until the owner supplies it." },
 ];
 
@@ -334,15 +335,27 @@ export const buildLive = {
     { id: "video-meetings", title: "Weekly video meetings", detail: "A video meeting every week." },
     { id: "custom-service", title: "Service customised to each client", detail: "The service is shaped to each client's preferences." },
     { id: "private-app", title: "A private project app", detail: "Each client gets their own private project app." },
+    {
+      id: "representative",
+      title: "A designated Representative",
+      detail: "Every client has a designated Representative, a dedicated person who handles their project.",
+    },
   ],
   kept: [
     { id: "shared-folder", title: "Shared project folder", detail: "Invoices, change orders, colour schedules and payments, in one folder." },
     { id: "room-estimates", title: "Cost-per-room estimates", detail: "Estimates with costs by room and surface." },
     { id: "materials", title: "Materials management", detail: "Materials managed through the build, with samples kept for a later repair." },
     { id: "after-handover", title: "Care after handover", detail: "Maintenance and ongoing care after handover." },
-    { id: "representative", title: "A designated Representative", detail: "A designated Representative for the project." },
   ],
-  markerKeys: ["representative", "client-app"],
+  representative: {
+    status: "current" as const,
+    detail: "Every client has a designated Representative, a dedicated person who handles their project.",
+  },
+  avatar: {
+    status: "coming_soon" as const,
+    copy: "Your designated Representative knows every detail of your build. Soon, they'll be with you around the clock as your personal AI project avatar.",
+  },
+  markerKeys: ["representative", "client-app", "avatar-launch"],
 };
 
 export const clientArea = {
