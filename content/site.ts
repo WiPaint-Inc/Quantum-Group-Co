@@ -50,20 +50,15 @@ export const markers: Marker[] = [
   { key: "heritage-finishing", kind: "PLACEHOLDER", page: "About", needed: "finishing heritage. No dates until the final copy arrives." },
   { key: "heritage-construction", kind: "PLACEHOLDER", page: "About", needed: "construction heritage. No dates until the final copy arrives." },
   { key: "heritage-join", kind: "PLACEHOLDER", page: "About", needed: "how the two practices became one company. No date until the final copy arrives." },
-  { key: "heritage-1981", kind: "CONFIRM", page: "About", needed: "Wording for the 1981 Italian family construction business, which the brochure says was under a different name." },
-  { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 1981, 2013, and January 2020." },
+  { key: "heritage-dates", kind: "CONFIRM", page: "About", needed: "Approval to keep publishing 2013 and January 2020. Italian roots stay, with no year." },
   { key: "founding", kind: "PLACEHOLDER", page: "About", needed: "Quantum Group Co founding date and legal entity, if they should be shown." },
   { key: "partner-materials", kind: "PLACEHOLDER", page: "About", needed: "partner/affiliate company content — awaiting owner materials" },
   { key: "page-16-grouping", kind: "CONFIRM", page: "Partner Portfolio", needed: "page-16 project grouping" },
   { key: "chris-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Chris Bento." },
   { key: "chris-bio", kind: "PLACEHOLDER", page: "Team", needed: "Anything further Chris wants in his bio." },
-  { key: "marco-card", kind: "CONFIRM", page: "Team", needed: "Confirm Marco Spagnolo's card for public display." },
   { key: "marco-years", kind: "CONFIRM", page: "Team", needed: "15 years is as stated in the 2022 brochure. Update before showing a figure." },
   { key: "marco-degree", kind: "CONFIRM", page: "Team", needed: "Combined wording for the civil engineering degree, energy specialisation, and University of Bologna." },
   { key: "marco-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Marco Spagnolo." },
-  { key: "luigi-card", kind: "CONFIRM", page: "Team", needed: "Confirm Luigi Spagnolo's card for public display." },
-  { key: "luigi-years", kind: "CONFIRM", page: "Team", needed: "17 years is as stated in the 2022 brochure. Update before showing a figure." },
-  { key: "luigi-headshot", kind: "PLACEHOLDER", page: "Team", needed: "Headshot for Luigi Spagnolo." },
   { key: "contact-phone-email", kind: "PLACEHOLDER", page: "Contact", needed: "contact phone/email" },
   { key: "contact-email", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co email. Do not reuse a partner address." },
   { key: "contact-phone", kind: "PLACEHOLDER", page: "Contact", needed: "Quantum Group Co phone or WhatsApp. Do not reuse a partner number." },
@@ -88,7 +83,7 @@ export const transparencyCopy = [
 
 export const story = {
   title: "One company, built on two crafts.",
-  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, from an Italian family construction business established in 1981, and luxury villas in Antigua since 2013. Precast lines followed in January 2020. Wi Paint brings bespoke luxury finishing, shaped by three principles: quality of work, back-end service, and bespoke finishes. Together, that heritage makes possible a single contract covering every stage, from renderings and plans through construction to the final coat, with materials supplied in-house and full transparency for owners who live off-island.",
+  body: "Quantum Group Co brings together the builders behind VIVID Construction and the master finishers of Wi Paint Inc. VIVID brings Italian construction heritage and engineering, from Italian roots in a family construction business, and has been building luxury villas in Antigua since 2013. Precast lines followed in January 2020. Wi Paint brings bespoke luxury finishing, shaped by three principles: quality of work, back-end service, and bespoke finishes. Together, that heritage makes possible a single contract covering every stage, from renderings and plans through construction to the final coat, with materials supplied in-house and full transparency for owners who live off-island.",
 };
 
 export const homeIntro = company.intro;
@@ -311,17 +306,9 @@ export const team: TeamMember[] = [
     id: "marco-spagnolo",
     name: "Marco Spagnolo",
     title: "Co-founder, CEO & Project Manager, VIVID Construction",
-    confirmed: false,
+    confirmed: true,
     bio: "Holds a degree in civil engineering and a specialisation in energy engineering, and completed his engineering studies at the University of Bologna. He manages the technical aspects of each project, and the relationship with clients.",
-    markerKeys: ["marco-card", "marco-years", "marco-degree", "marco-headshot"],
-  },
-  {
-    id: "luigi-spagnolo",
-    name: "Luigi Spagnolo",
-    title: "Co-founder, President & Production Director, VIVID Construction",
-    confirmed: false,
-    bio: "[PLACEHOLDER: bio]",
-    markerKeys: ["luigi-card", "luigi-years", "luigi-headshot"],
+    markerKeys: ["marco-years", "marco-degree", "marco-headshot"],
   },
 ];
 

@@ -26,20 +26,15 @@ Public pages keep these notes out of production HTML. They render only in develo
 | heritage-finishing | PLACEHOLDER | About | finishing heritage. No dates until the final copy arrives. |
 | heritage-construction | PLACEHOLDER | About | construction heritage. No dates until the final copy arrives. |
 | heritage-join | PLACEHOLDER | About | how the two practices became one company. No date until the final copy arrives. |
-| heritage-1981 | CONFIRM | About | Wording for the 1981 Italian family construction business, which the brochure says was under a different name. |
-| heritage-dates | CONFIRM | About | Approval to keep publishing 1981, 2013, and January 2020. |
+| heritage-dates | CONFIRM | About | Approval to keep publishing 2013 and January 2020. Italian roots stay, with no year. |
 | founding | PLACEHOLDER | About | Quantum Group Co founding date and legal entity, if they should be shown. |
 | partner-materials | PLACEHOLDER | About | partner/affiliate company content — awaiting owner materials |
 | page-16-grouping | CONFIRM | Partner Portfolio | page-16 project grouping |
 | chris-headshot | PLACEHOLDER | Team | Headshot for Chris Bento. |
 | chris-bio | PLACEHOLDER | Team | Anything further Chris wants in his bio. |
-| marco-card | CONFIRM | Team | Confirm Marco Spagnolo's card for public display. |
 | marco-years | CONFIRM | Team | 15 years is as stated in the 2022 brochure. Update before showing a figure. |
 | marco-degree | CONFIRM | Team | Combined wording for the civil engineering degree, energy specialisation, and University of Bologna. |
 | marco-headshot | PLACEHOLDER | Team | Headshot for Marco Spagnolo. |
-| luigi-card | CONFIRM | Team | Confirm Luigi Spagnolo's card for public display. |
-| luigi-years | CONFIRM | Team | 17 years is as stated in the 2022 brochure. Update before showing a figure. |
-| luigi-headshot | PLACEHOLDER | Team | Headshot for Luigi Spagnolo. |
 | contact-phone-email | PLACEHOLDER | Contact | contact phone/email |
 | contact-email | PLACEHOLDER | Contact | Quantum Group Co email. Do not reuse a partner address. |
 | contact-phone | PLACEHOLDER | Contact | Quantum Group Co phone or WhatsApp. Do not reuse a partner number. |
