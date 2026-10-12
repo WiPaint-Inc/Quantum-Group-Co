@@ -12,7 +12,8 @@ const corsHeaders: Record<string, string> = {
 
 function withPreviewRobots(request: NextRequest, response: NextResponse) {
   const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  if (isWorkersPreviewHost(host)) {
+  const path = request.nextUrl.pathname;
+  if (isWorkersPreviewHost(host) || path === "/concept/demo-villa" || path.startsWith("/concept/demo-villa/")) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
   }
   return response;

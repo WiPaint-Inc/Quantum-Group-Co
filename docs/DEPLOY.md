@@ -29,7 +29,7 @@ Workers Builds uses one build command for every branch. `NEXT_PUBLIC_*` values a
 
 The feature flags are not `NEXT_PUBLIC_` (except `NEXT_PUBLIC_SHOW_PLACEHOLDERS`). `lib/flags.ts` reads them from `process.env` on the request. `nodejs_compat` copies Worker vars into `process.env`. The same build artifact can therefore run with different flags:
 
-- Production deploy uses `npx opennextjs-cloudflare deploy --env production --keep-vars`. `env.production` sets `DRAFT_CONTENT` to `false`. The same values are repeated at the top level, so a deploy that forgets `--env` still ships the safe defaults. Wrangler warns in that case. Concept plates stay off.
+- Production deploy uses `npx opennextjs-cloudflare deploy --env production --keep-vars`. `env.production` sets `DRAFT_CONTENT` to `false`. The same values are repeated at the top level, so a deploy that forgets `--env` still ships the safe defaults. Wrangler warns in that case. Concept plates stay off, and `/concept/demo-villa` is a 404.
 - Non-production deploy runs `npx opennextjs-cloudflare upload --env preview`. Wrangler environment `preview` sets `DRAFT_CONTENT` to `true` and leaves every other flag off. `env.preview.name` is `quantum-group-co` on purpose. Without that, Wrangler would upload to a second Worker named `quantum-group-co-preview`. `versions upload` stores the version on `quantum-group-co` and does not send it production traffic. `preview_urls` gives that version a `*.workers.dev` hostname.
 
 Do not set `DRAFT_CONTENT` as a Workers Builds build variable. A build variable would be the same for every branch unless Preview and Production build variables are both filled in, and it is unnecessary because the flag is applied at runtime.
@@ -51,6 +51,8 @@ Leave secrets empty until they are real. Do not commit them. Set receiving addre
 ## Preview hostnames are not indexed
 
 Any host ending in `.workers.dev` receives `X-Robots-Tag: noindex, nofollow` from `proxy.ts`, and the document includes `<meta name="robots" content="noindex, nofollow">`. Concept plates on a preview URL are not offered for indexing. A custom production domain does not match this rule.
+
+`/concept/demo-villa` always sends that same `X-Robots-Tag`, on every host, including when the flag is off and the route is a 404. It is omitted from the sitemap and disallowed in `robots.txt`. The walkthrough itself is documented in [DEMO-VILLA.md](DEMO-VILLA.md).
 
 ## Local commands
 

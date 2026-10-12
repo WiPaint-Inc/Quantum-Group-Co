@@ -8,7 +8,7 @@ export function roboticsEnabled(): boolean {
   return process.env.ROBOTICS_ENABLED === "true";
 }
 
-/** Concept photographs, Estates plates, and conceptRenders. Off unless the env var is exactly "true". */
+/** Concept photographs, Estates plates, conceptRenders, and /concept/demo-villa. Off unless the env var is exactly "true". */
 export function draftContentEnabled(): boolean {
   return process.env.DRAFT_CONTENT === "true";
 }

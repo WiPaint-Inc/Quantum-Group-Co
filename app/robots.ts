@@ -14,9 +14,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     rules: {
       userAgent: "*",
       allow: "/",
-      ...(agentApiEnabled()
-        ? {}
-        : { disallow: ["/llms.txt", "/api/openapi", "/api/openapi.json", "/api/auth/agent"] }),
+      disallow: agentApiEnabled()
+        ? ["/concept/demo-villa"]
+        : ["/llms.txt", "/api/openapi", "/api/openapi.json", "/api/auth/agent", "/concept/demo-villa"],
     },
     sitemap: absoluteUrl("/sitemap.xml"),
   };
