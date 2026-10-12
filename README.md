@@ -146,7 +146,7 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 
 ## Hosting
 
-Cloudflare Workers, free plan, via the OpenNext adapter. Cache Components and partial prefetching stay on: the adapter supports them on the Node.js runtime, and the feature flags are read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding. The request gate is `middleware.ts` on the edge runtime, because Next.js 16 `proxy.ts` is Node-only and the adapter does not run Node middleware.
+Cloudflare Workers, free plan, via the OpenNext adapter. Next.js is pinned to 16.3.8. Cache Components and partial prefetching are off so `headers()` and `connection()` are not left pending on the Workers runtime. Feature flags are still read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding. The request gate is `middleware.ts` on the edge runtime, because Next.js 16 `proxy.ts` is Node-only and the adapter does not run Node middleware.
 
 `npm run build` is the Next.js build. Workers Builds runs `npx opennextjs-cloudflare build`. The full settings, flag table, and preview noindex rule are in [docs/DEPLOY.md](docs/DEPLOY.md).
 

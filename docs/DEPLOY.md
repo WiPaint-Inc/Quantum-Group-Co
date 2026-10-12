@@ -20,7 +20,9 @@ Cloudflare Workers, free plan, through the OpenNext adapter. The Workers Builds 
 
 Workers Builds defaults to Node.js 24.18.0. `.node-version` selects 22.23.2, which that build image already has, and which satisfies Next.js 16 (`node >= 20.9.0`). A dashboard `NODE_VERSION` would override the file, so leave it unset.
 
-`cacheComponents` and `partialPrefetching` stay on. `@opennextjs/cloudflare` 1.20 supports Next.js 16.3.8 and later, including composable caching and partial prerendering, on the Node.js runtime (`nodejs_compat`). This app is Next.js 16.4.0.
+Next.js is pinned to `16.3.8`. `@opennextjs/cloudflare` 1.20.10 accepts `>=16.3.8`, but 16.4.0 loads `.next/server/preview-props.json` from `NextNodeServer.getPreviewProps`, and this adapter's `loadManifest` patch does not inline that file. Every dynamic route then throws `Unexpected loadManifest(/.next/server/preview-props.json) call!` (Cloudflare error 1101). `16.3.8` is the newest release whose manifests the adapter inlines.
+
+`cacheComponents` and `partialPrefetching` are off. With them on, Next parks `headers()` and `connection()` on a promise that only resolves when the Cache Components stage scheduler advances. That scheduler patches Node timer `_idleStart`. workerd does not have it, and 1.20.10 does not include the workerd scheduler, so the promise never settles and the runtime reports that the Worker hung. The same hang shows on `/about`, which does not load the 3D scene. Draft flags are still read per request: the root layout calls `headers()`, so routes render on the Worker instead of being frozen at build time.
 
 Next.js 16 `proxy.ts` always runs as Node middleware, and the adapter does not run Node middleware. The portal gate, API CORS, and preview `noindex` header stay in `middleware.ts` with the runtime left unset, so Next compiles them for the edge runtime the adapter does run. The build warns that the `middleware` filename is deprecated. That warning is expected.
 
