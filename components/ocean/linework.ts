@@ -15,6 +15,7 @@ export function buildLines(strokes: Stroke[]) {
   const sides: number[] = [];
   const brights: number[] = [];
   const scatter: number[] = [];
+  const normals: number[] = [];
   const side = new THREE.Vector3();
   const up = new THREE.Vector3(0, 1, 0);
   for (const stroke of strokes) {
@@ -30,18 +31,19 @@ export function buildLines(strokes: Stroke[]) {
       dir.multiplyScalar(1 / len);
       side.crossVectors(dir, up);
       if (side.lengthSq() < 1e-5) side.set(0, 0, 1);
-      side.normalize().multiplyScalar(stroke.width * 0.5);
+      side.normalize();
       const ta = THREE.MathUtils.lerp(stroke.t0, stroke.t1, i / (points.length - 1));
       const tb = THREE.MathUtils.lerp(stroke.t0, stroke.t1, (i + 1) / (points.length - 1));
-      const corners = [a.clone().sub(side), a.clone().add(side), b.clone().add(side), a.clone().sub(side), b.clone().add(side), b.clone().sub(side)];
+      const centers = [a, a, b, a, b, b];
       const cornerT = [ta, ta, tb, ta, tb, tb];
       const cornerS = [-1, 1, 1, -1, 1, -1];
       for (let k = 0; k < 6; k += 1) {
-        positions.push(corners[k].x, corners[k].y, corners[k].z);
+        positions.push(centers[k].x, centers[k].y, centers[k].z);
         ts.push(cornerT[k]);
         sides.push(cornerS[k]);
         brights.push(bright);
         scatter.push(off.x, off.y, off.z);
+        normals.push(side.x, side.y, side.z);
       }
     }
   }
@@ -51,6 +53,7 @@ export function buildLines(strokes: Stroke[]) {
   geo.setAttribute("aSide", new THREE.Float32BufferAttribute(sides, 1));
   geo.setAttribute("aBright", new THREE.Float32BufferAttribute(brights, 1));
   geo.setAttribute("aScatter", new THREE.Float32BufferAttribute(scatter, 3));
+  geo.setAttribute("aN", new THREE.Float32BufferAttribute(normals, 3));
   return geo;
 }
 
@@ -70,8 +73,8 @@ function line(a: THREE.Vector3, b: THREE.Vector3, t0: number, t1: number, width:
 
 export function linesFor(kind: string, radius: number) {
   const s = radius * 0.42;
-  const h = Math.min(16, Math.max(6, radius * 0.07));
-  const w = Math.max(1.8, radius * 0.011);
+  const h = Math.min(42, Math.max(8, radius * 0.09));
+  const w = 1;
   const strokes: Stroke[] = [];
   if (kind === "design") {
     strokes.push(...rect(-s, 0.2, -s * 0.72, s * 2, s * 1.44, 0, 0.28, w));

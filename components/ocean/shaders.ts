@@ -13,6 +13,8 @@ export const skyFragment = /* glsl */ `
   uniform vec3 uSun;
   uniform vec3 uSunColor;
   uniform vec3 uMoon;
+  uniform vec3 uCamera;
+  uniform float uTime;
   uniform float uNight;
   in vec3 vDir;
   out vec4 fragColor;
@@ -33,7 +35,7 @@ export const skyFragment = /* glsl */ `
   float fbm(vec2 p) {
     float s = 0.0;
     float a = 0.5;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 3; i++) {
       s += a * noise(p);
       p = p * 2.05 + vec2(1.7, 9.2);
       a *= 0.5;
@@ -42,7 +44,7 @@ export const skyFragment = /* glsl */ `
   }
 
   void main() {
-    vec3 dir = normalize(vDir);
+    vec3 dir = normalize(vDir - uCamera);
     vec3 sun = normalize(uSun);
     float up = max(dir.y, 0.0);
     float h = pow(up, 0.45);
@@ -51,20 +53,32 @@ export const skyFragment = /* glsl */ `
     float day = 1.0 - uNight;
     col += uSunColor * pow(mu, 6.0) * 0.28 * day;
     col += uSunColor * pow(mu, 180.0) * day;
-    vec2 cuv = dir.xz / (dir.y * 0.8 + 0.22);
-    float cl = fbm(cuv * 1.15);
-    float mask = smoothstep(0.52, 0.74, cl) * smoothstep(0.04, 0.2, dir.y);
-    float silver = smoothstep(0.48, 0.58, cl) * (1.0 - smoothstep(0.66, 0.84, cl));
+    float cover = 0.0;
+    float light = 0.0;
+    if (dir.y >= 0.04) {
+      float t0 = max((820.0 - uCamera.y) / dir.y, 0.0);
+      float t1 = (2300.0 - uCamera.y) / dir.y;
+      float stepLen = max(t1 - t0, 0.0) / 4.0;
+      for (int i = 0; i < 4; i++) {
+        vec3 p = uCamera + dir * (t0 + stepLen * (float(i) + 0.5));
+        float layer = smoothstep(820.0, 1180.0, p.y) * (1.0 - smoothstep(1680.0, 2300.0, p.y));
+        float d = smoothstep(0.46, 0.72, fbm(p.xz * 0.00032 + vec2(uTime * 0.004, p.y * 0.00008))) * layer;
+        cover += d;
+        light += d * smoothstep(0.42, 0.75, fbm((p.xz + sun.xz * 240.0) * 0.00032));
+      }
+      cover = clamp(cover * 0.62, 0.0, 1.0);
+    }
     float sunUp = smoothstep(-0.05, 0.25, sun.y);
-    vec3 cloudCol = mix(vec3(0.45, 0.5, 0.56), vec3(0.98, 0.96, 0.93), 0.35 + 0.65 * sunUp);
-    cloudCol += uSunColor * silver * 0.65 * day;
-    col = mix(col, cloudCol, mask * 0.9 * (0.35 + 0.65 * day));
+    vec3 cloudCol = mix(vec3(0.55, 0.58, 0.66), vec3(0.98, 0.96, 0.93), 0.35 + 0.65 * sunUp);
+    cloudCol = mix(cloudCol, uSunColor, light * 0.35 * day);
+    cloudCol = mix(cloudCol, vec3(0.62, 0.68, 0.78), uNight * 0.55);
+    col = mix(col, cloudCol, cover * (0.55 + 0.4 * day) * smoothstep(0.02, 0.16, dir.y));
     float moon = pow(max(dot(dir, normalize(uMoon)), 0.0), 1400.0);
     float moonGlow = pow(max(dot(dir, normalize(uMoon)), 0.0), 14.0);
     col += vec3(0.9, 0.93, 1.0) * moon * uNight;
     col += vec3(0.55, 0.62, 0.78) * moonGlow * 0.22 * uNight;
     float stars = step(0.9982, hash(floor(dir.xy * 220.0)));
-    col += vec3(0.92, 0.95, 1.0) * stars * uNight * smoothstep(0.12, 0.4, dir.y) * (1.0 - mask);
+    col += vec3(0.92, 0.95, 1.0) * stars * uNight * smoothstep(0.12, 0.4, dir.y) * (1.0 - cover);
     fragColor = vec4(col, 1.0);
   }
 `;
@@ -147,47 +161,65 @@ export const waterFragment = /* glsl */ `
     vec3 viewDir = normalize(uCamera - vWorld);
     vec3 refl = reflect(-viewDir, normal);
     float fres = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.0);
-    float sand = 0.0;
-    float reef = 0.0;
     float foam = 0.0;
+    float best = 4.0;
+    vec3 bottom = vec3(0.02, 0.07, 0.13);
     for (int i = 0; i < 16; i++) {
       if (i >= uIslandCount) break;
       vec2 center = uIslands[i].xy;
       float radius = uIslands[i].z;
       float stretch = max(uIslands[i].w, 0.2);
       vec2 delta = vWorld.xz - center;
-      float reach = radius * max(stretch, 1.0) * 2.4;
+      float reach = radius * max(stretch, 1.0) * 2.6;
       if (dot(delta, delta) > reach * reach) continue;
       vec2 q = delta / vec2(radius * stretch, radius);
-      float d = length(q);
-      float fromShore = max(d - 1.0, 0.0);
-      sand = max(sand, exp(-fromShore * 9.0));
-      reef = max(reef, exp(-fromShore * 2.4));
+      float ang = atan(q.y, q.x);
+      float irregular = 1.0 + (noise(vec2(cos(ang) * 1.7, sin(ang) * 1.7) + center * 0.01) - 0.5) * 0.34;
+      float d = length(q) / irregular;
+      float warp = noise(vWorld.xz * 0.012 + center * 0.004) * 0.22 - 0.1;
+      float shelf = noise(center * 0.003 + 4.0);
+      float s = clamp((d - 1.0 + warp) / (0.48 + shelf * 0.45), 0.0, 1.0);
+      float reefN = noise(vWorld.xz * 0.021 + center * 0.008);
+      float gaps = smoothstep(0.34, 0.58, reefN);
+      float reefBand = smoothstep(0.4, 0.52, s) * (1.0 - smoothstep(0.6, 0.78, s)) * gaps;
+      float patches = smoothstep(0.5, 0.74, noise(vWorld.xz * 0.05 + 2.0)) * smoothstep(0.08, 0.36, s) * (1.0 - smoothstep(0.7, 0.88, s));
+      vec3 sandCol = vec3(0.97, 0.94, 0.88);
+      vec3 shade = mix(sandCol * vec3(0.9, 0.98, 0.96), vec3(0.28, 0.84, 0.82), smoothstep(0.0, 0.16, s));
+      shade = mix(shade, vec3(0.04, 0.58, 0.68), smoothstep(0.14, 0.42, s));
+      shade = mix(shade, vec3(0.04, 0.2, 0.26), patches * 0.7);
+      shade = mix(shade, vec3(0.06, 0.24, 0.28), reefBand * 0.85);
+      shade = mix(shade, vec3(0.02, 0.1, 0.16), smoothstep(0.7, 0.95, s));
       float n = noise(vWorld.xz * 0.08 + vec2(uTime * 0.15, -uTime * 0.08));
-      float lip = exp(-pow((d - 1.015) / 0.018, 2.0));
-      float wash = exp(-pow((d - 1.07) / 0.02, 2.0)) * smoothstep(0.35, 0.7, n);
-      foam = max(foam, (lip * (0.65 + 0.35 * n) + wash * 0.7) * smoothstep(1.35, 1.02, d));
+      float lip = exp(-pow((d - 1.012) / 0.016, 2.0));
+      float wash = exp(-pow((d - 1.06) / 0.02, 2.0)) * smoothstep(0.35, 0.7, n);
+      float breaker = exp(-pow((s - 0.64) / 0.04, 2.0)) * smoothstep(0.55, 0.8, noise(vWorld.xz * 0.03 + vec2(uTime * 0.04, 0.0)));
+      foam = max(foam, (lip * (0.65 + 0.35 * n) + wash * 0.55 + breaker * 0.45) * smoothstep(1.4, 1.02, d));
+      if (s < best) {
+        best = s;
+        bottom = shade;
+      }
     }
-    vec3 deep = mix(vec3(0.012, 0.045, 0.095), vec3(0.008, 0.02, 0.045), uNight);
-    vec3 turquoise = mix(vec3(0.02, 0.62, 0.64), vec3(0.015, 0.28, 0.36), uNight);
-    vec3 sandCol = vec3(0.86, 0.9, 0.84);
-    vec3 water = mix(deep, turquoise, clamp(reef, 0.0, 1.0));
-    water = mix(water, sandCol, clamp(sand, 0.0, 1.0) * 0.82);
+    vec3 deep = mix(vec3(0.015, 0.05, 0.1), vec3(0.02, 0.055, 0.1), uNight);
+    float shallows = 1.0 - smoothstep(0.72, 1.0, best);
+    vec3 water = mix(deep, bottom, shallows);
     vec3 reflected = skyReflect(refl);
     vec3 sunDir = normalize(uSun);
     vec3 moonDir = normalize(uMoon);
-    float sunGlint = glitter(normal, viewDir, sunDir, 0.045, 0.72);
-    float sunSpark = pow(max(dot(refl, sunDir), 0.0), 48.0);
-    float sparkMask = step(0.82, hash(floor(vWorld.xz * 0.55 + uTime * 0.4)));
-    float moonPath = glitter(normal, viewDir, moonDir, 0.03, 1.35);
-    vec3 col = mix(water, reflected, fres * (0.35 + 0.4 * (1.0 - reef)));
-    col += uSunColor * sunGlint * 1.15 * (1.0 - uNight) * smoothstep(-0.08, 0.12, sunDir.y);
-    col += uSunColor * sunSpark * sparkMask * 1.6 * (1.0 - uNight);
-    col += vec3(0.75, 0.84, 1.0) * moonPath * 0.85 * uNight;
+    float lowSun = (1.0 - uNight) * (1.0 - smoothstep(0.04, 0.32, sunDir.y)) * smoothstep(-0.05, 0.1, sunDir.y);
+    float sunGlint = glitter(normal, viewDir, sunDir, mix(0.045, 0.11, lowSun), mix(0.72, 1.45, lowSun));
+    float sunSpark = pow(max(dot(refl, sunDir), 0.0), mix(48.0, 28.0, lowSun));
+    float sparkMask = step(mix(0.82, 0.62, lowSun), hash(floor(vWorld.xz * 0.55 + uTime * 0.4)));
+    float moonPath = glitter(normal, viewDir, moonDir, 0.2, 1.1);
+    float moonSpark = step(0.68, hash(floor(vWorld.xz * 0.22 + vec2(uTime * 0.12, 1.7)))) * pow(max(dot(normal, normalize(moonDir * 0.35 + viewDir)), 0.0), 8.0);
+    vec3 col = mix(water, reflected, fres * (0.32 + 0.35 * (1.0 - shallows)));
+    col += uSunColor * sunGlint * (1.15 + lowSun * 2.4) * (1.0 - uNight) * smoothstep(-0.08, 0.12, sunDir.y);
+    col += uSunColor * sunSpark * sparkMask * (1.6 + lowSun * 1.4) * (1.0 - uNight);
+    col += vec3(0.78, 0.86, 1.0) * (moonPath * 0.7 + moonSpark * 0.85) * uNight;
+    col += vec3(0.04, 0.07, 0.12) * uNight;
     float crest = smoothstep(1.4, 3.2, vWorld.y) * 0.18;
     col = mix(col, vec3(0.95, 0.96, 0.94), clamp(foam + crest, 0.0, 1.0) * 0.82);
-    float bio = reef * uNight * step(0.93, hash(floor(vWorld.xz * 0.35)));
-    col += vec3(0.2, 0.85, 0.7) * bio * 0.45;
+    float bio = smoothstep(0.68, 0.9, noise(vWorld.xz * 0.07)) * smoothstep(0.12, 0.4, best) * (1.0 - smoothstep(0.62, 0.86, best));
+    col += vec3(0.12, 0.72, 0.6) * bio * 0.28 * uNight;
     float haze = smoothstep(2200.0, 11000.0, distance(uCamera.xz, vWorld.xz));
     col = mix(col, uHorizon * 0.72 + uZenith * 0.28, haze * 0.22);
     fragColor = vec4(col, 1.0);
@@ -212,6 +244,7 @@ export const islandFragment = /* glsl */ `
   uniform vec3 uSun;
   uniform vec3 uSunColor;
   uniform vec3 uMoon;
+  uniform vec3 uCamera;
   uniform float uNight;
   uniform sampler2D uCanopy;
   in vec3 vColor;
@@ -221,19 +254,30 @@ export const islandFragment = /* glsl */ `
   void main() {
     if (vWorld.y < -0.35) discard;
     vec3 n = normalize(vNormal);
+    vec3 sunDir = normalize(uSun);
     float veg = smoothstep(0.02, 0.16, vColor.g - vColor.r * 0.85);
     vec3 canopy = texture(uCanopy, vWorld.xz * 0.012).rgb;
     vec3 albedo = mix(vColor, canopy, veg);
-    float wrap = max(dot(n, normalize(uSun)), 0.0) * 0.78 + 0.22;
+    float wrap = max(dot(n, sunDir), 0.0) * 0.78 + 0.22;
     float moon = max(dot(n, normalize(uMoon)), 0.0);
     float wet = smoothstep(1.8, 0.15, vWorld.y) * smoothstep(0.05, 0.2, vColor.r - vColor.g);
-    albedo = mix(albedo, albedo * vec3(0.62, 0.6, 0.52), wet);
-    vec3 col = albedo * uSunColor * wrap * (1.0 - uNight * 0.7);
-    col += albedo * vec3(0.42, 0.52, 0.68) * moon * uNight * 0.9;
-    col += albedo * 0.05;
+    albedo = mix(albedo, albedo * vec3(0.92, 0.88, 0.8), wet * 0.22);
+    vec3 col = albedo * uSunColor * wrap * (1.0 - uNight * 0.42);
+    col += albedo * vec3(0.62, 0.7, 0.84) * (moon * 0.9 + 0.28) * uNight;
+    col += albedo * 0.08;
+    float lowSun = (1.0 - uNight) * smoothstep(0.28, 0.0, sunDir.y) * smoothstep(-0.04, 0.1, sunDir.y);
+    float ridge = smoothstep(8.0, 36.0, vWorld.y) * max(dot(n, sunDir), 0.0);
+    col += uSunColor * ridge * lowSun * 0.62;
+    float cap = smoothstep(48.0, 70.0, vWorld.y);
+    col = mix(col, mix(vec3(0.96, 0.97, 0.98), uSunColor, 0.18), cap * (0.72 - uNight * 0.45));
+    float beach = smoothstep(2.4, 0.25, vWorld.y) * smoothstep(0.15, 0.7, vColor.r);
+    col += vec3(0.82, 0.86, 0.95) * beach * (moon * 0.55 + 0.2) * uNight * 0.45;
+    float dist = distance(uCamera, vWorld);
+    float haze = smoothstep(500.0, 7000.0, dist) * smoothstep(12.0, 64.0, vWorld.y);
+    col = mix(col, uSunColor * 0.25 + vec3(0.78, 0.84, 0.9), haze * (0.42 + uNight * 0.1));
     float rim = pow(1.0 - clamp(n.y, 0.0, 1.0), 1.7);
-    col += vec3(0.2, 0.48, 0.55) * rim * uNight * 1.3;
-    col += vec3(0.55, 0.78, 0.8) * wet * uNight * 0.25;
+    col += vec3(0.2, 0.48, 0.55) * rim * uNight * 1.1;
+    col += vec3(0.55, 0.78, 0.8) * wet * uNight * 0.2;
     fragColor = vec4(col, 1.0);
   }
 `;
@@ -243,13 +287,21 @@ export const lineVertex = /* glsl */ `
   in float aSide;
   in float aBright;
   in vec3 aScatter;
+  in vec3 aN;
   uniform float uDraw;
+  uniform vec2 uResolution;
+  uniform float uHalfPx;
   out float vT;
   out float vSide;
   out float vBright;
   void main() {
     vec3 p = position + aScatter * (1.0 - uDraw);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+    vec4 clip = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+    vec4 nudged = projectionMatrix * modelViewMatrix * vec4(p + aN, 1.0);
+    vec2 px = (nudged.xy / max(nudged.w, 0.0001) - clip.xy / max(clip.w, 0.0001)) * uResolution * 0.5;
+    float span = max(length(px), 0.0001);
+    gl_Position = clip;
+    gl_Position.xy += (px / span) * aSide * uHalfPx * clip.w / uResolution;
     vT = aT;
     vSide = aSide;
     vBright = aBright;
@@ -267,14 +319,15 @@ export const lineFragment = /* glsl */ `
   in float vBright;
   out vec4 fragColor;
   void main() {
-    float edge = pow(1.0 - smoothstep(0.15, 1.0, abs(vSide)), 1.15);
+    float core = smoothstep(0.28, 0.04, abs(vSide));
+    float glow = (1.0 - smoothstep(0.2, 1.0, abs(vSide))) * 0.42;
     float shown = smoothstep(vT - 0.035, vT + 0.002, uDraw);
     float head = exp(-pow((vT - uDraw) * 26.0, 2.0));
     if (shown < 0.02 && head < 0.04) discard;
     float wash = exp(-pow((vT - uWash) * 4.5, 2.0)) * step(0.02, uWash);
-    vec3 col = uColor * vBright * (0.75 + head * 1.8 + uNight * 0.65);
-    col += vec3(1.0, 0.93, 0.8) * wash;
-    float alpha = edge * max(shown, head * 0.85) * (0.62 + head) * uFade;
+    vec3 col = uColor * vBright * (0.85 + head * 2.2 + uNight * 0.85);
+    col += vec3(1.0, 0.93, 0.8) * (wash + glow * 0.35);
+    float alpha = (core * 0.95 + glow) * max(shown, head * 0.85) * (0.7 + head) * uFade;
     fragColor = vec4(col, alpha);
   }
 `;

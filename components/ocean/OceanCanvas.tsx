@@ -22,9 +22,9 @@ export function OceanCanvas({
   return (
     <Canvas
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-      camera={{ position: [420, 285, 2680], fov: quality === "low" ? 52 : 46, near: 2, far: 28000 }}
+      camera={{ position: [420, 278, 980], fov: quality === "low" ? 52 : 46, near: 0.12, far: 28000 }}
       dpr={quality === "high" ? [1, 1.25] : [1, 1]}
-      gl={{ antialias: quality === "high", alpha: false, powerPreference: "high-performance", failIfMajorPerformanceCaveat: false }}
+      gl={{ antialias: quality === "high", alpha: false, powerPreference: "high-performance", failIfMajorPerformanceCaveat: false, preserveDrawingBuffer: Boolean(reportFps) }}
       onCreated={({ gl }) => {
         gl.setClearColor("#07141c", 1);
         gl.toneMapping = THREE.ACESFilmicToneMapping;

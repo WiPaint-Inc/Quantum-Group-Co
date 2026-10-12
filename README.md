@@ -35,9 +35,11 @@ These three switches are off for launch. Leave them unset, or set them to `false
 
 `DRAFT_CONTENT` is the switch for test studies made later from anonymous sample floor plans. The slot is `conceptRenders` in [`content/concept-renders.ts`](content/concept-renders.ts). It is empty. A plate from that slot appears only when the flag is `true`, and it is labelled Concept render. It is not a client project and it is not completed work. It is not part of the Partner Portfolio, the sitemap, or JSON-LD. With the flag false, the slot renders nothing. Remove those studies, or replace them with approved images, before go-live.
 
+The same flag opens `/concept/demo-villa`, a scroll-driven concept walkthrough. The page is labelled Concept walkthrough · Demo Villa. It is not a client project and it is not a completed house. With the flag false the route is a 404. It is `noindex`, disallowed in `robots.txt`, and absent from the sitemap. How to replace the procedural pavilion with a glTF file is in [`docs/DEMO-VILLA.md`](docs/DEMO-VILLA.md).
+
 ## Experience
 
-Scroll is the timeline. One canvas follows an estate from an empty site through vision, blueprint, structure, finish, and evening. Lighting moves from morning through dusk to night. A stage counter and a timeline of buttons mark the place in that journey. The canvas is its own chunk. Phones use a simpler scene: lower resolution, a coarser water mesh, fewer stars, and no shadows. `prefers-reduced-motion` skips the canvas and keeps the dusk photograph plus the written pages. Sound stays off until a visitor turns it on.
+The homepage is one scroll-driven flight over an archipelago, one island per service. Cruise altitude is about 285 m. Each island is approached between about 60 m and 160 m, with the path banking through the turns. The sun is fixed in the world, so the light changes as the heading changes: day, into the sunset, night, then dawn. The last moment stays on that same path: a continuous descent to eye level at sunrise, two chairs and two drinks on a private cay, with the contact card fading in only as the camera settles. Gold linework is about 2.4 px at the core. Estate photographs, with blueprint lines registered to the buildings, appear only on Design and Developments, and only when `DRAFT_CONTENT=true`. Sound stays off until a visitor turns it on. `prefers-reduced-motion` holds the written stops.
 
 Lenis smooths wheel scrolling and stays in step with the camera. A gold ring follows a fine pointer and eases toward links. It does not replace the system cursor.
 
@@ -60,7 +62,7 @@ The partner portfolio is a flight from project to project. Scroll or choose a na
 
 To replace a project's photographs with a model:
 
-1. Export glTF binary and compress it. Prefer meshopt. This site decodes meshopt. It does not load a Draco decoder or a KTX2 transcoder. Use WebP or JPEG textures inside the file until a transcoder is added. Keep each model under 8 MB, and under 4 MB when you can. 1K or 2K textures are enough at this camera distance.
+1. Export glTF binary and compress it. Prefer meshopt. Portfolio scenes decode meshopt only. They do not load a Draco decoder or a KTX2 transcoder. Use WebP or JPEG textures inside the file. Keep each model under 8 MB, and under 4 MB when you can. 1K or 2K textures are enough at this camera distance.
 2. Save it as `public/models/<project-slug>/scene.glb`.
 3. Register the public path in `projectModels` in [`content/portfolio.ts`](content/portfolio.ts):
 
@@ -70,7 +72,7 @@ export const projectModels: Record<string, string> = {
 };
 ```
 
-A Gaussian splat can use that same slot later. Today `model` is a glTF URL. `models/demo-villa/` is an old demo and is not loaded.
+A Gaussian splat can use that same slot later. Today `model` is a glTF URL. `models/demo-villa/` is parked and is not served. The draft walkthrough at `/concept/demo-villa` is the only route that decodes Draco, meshopt, and KTX2, and it reads `public/models/demo-villa/` only when `DRAFT_CONTENT=true`. See [`docs/DEMO-VILLA.md`](docs/DEMO-VILLA.md).
 
 ## Edit the public copy
 

@@ -1,18 +1,22 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { scrollToY } from "@/components/experience/scroll";
+import { OceanCanvas } from "@/components/ocean/OceanCanvas";
+import { PlateBlueprint } from "@/components/ocean/PlateBlueprint";
 import { oceanStops } from "@/content/ocean-stops";
 import { company } from "@/content/site";
-import { nearestStop, stopPresence, stopProgress } from "@/lib/ocean-flight";
+import { contactReveal, nearestStop, stopPresence, stopProgress } from "@/lib/ocean-flight";
 
-const OceanCanvas = dynamic(
-  () => import("@/components/ocean/OceanCanvas").then((mod) => mod.OceanCanvas),
-  { ssr: false },
-);
+function subscribeMounted() {
+  return () => {};
+}
+
+function mountedOnClient() {
+  return true;
+}
 
 function subscribeMotion(onChange: () => void) {
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -89,6 +93,7 @@ function OceanSound() {
 
 export function OceanJourney({ draft }: { draft: boolean }) {
   const reduced = useSyncExternalStore(subscribeMotion, prefersReducedMotion, () => false);
+  const showScene = useSyncExternalStore(subscribeMounted, mountedOnClient, () => false);
   const progressRef = useRef(0);
   const introRef = useRef(0);
   const track = useRef<HTMLDivElement>(null);
@@ -224,7 +229,9 @@ export function OceanJourney({ draft }: { draft: boolean }) {
     <div ref={track} className="relative h-[1100vh]" data-capture={capture ? "1" : undefined} data-journey="ocean">
       <div className="sticky top-0 h-dvh overflow-hidden bg-ink">
         <div className="absolute inset-0" style={{ opacity: ready ? 1 : 0 }}>
-          <OceanCanvas progressRef={progressRef} introRef={introRef} quality={quality} draft={draft} reportFps={capture} onReady={() => setReady(true)} />
+          {showScene ? (
+            <OceanCanvas progressRef={progressRef} introRef={introRef} quality={quality} draft={draft} reportFps={capture} onReady={() => setReady(true)} />
+          ) : null}
         </div>
         {ready ? null : (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-ink">
@@ -248,18 +255,14 @@ export function OceanJourney({ draft }: { draft: boolean }) {
         </p>
         {oceanStops.map((stop, index) => {
           if (index === 0) return null;
-          const presence = stopPresence(progress, index);
+          const presence = stop.id === "contact" ? contactReveal(progress) : stopPresence(progress, index);
           const plateOpacity = draft && stop.plate ? Math.min(1, Math.max(0, (presence - 0.62) / 0.32)) : 0;
           return (
             <div key={stop.id}>
               {plateOpacity > 0.02 ? (
                 <div className="pointer-events-none absolute inset-0 z-10" style={{ opacity: plateOpacity }}>
                   <Image src={`/concept/${stop.plate}-1280.webp`} alt="Concept render" fill className="object-cover" sizes="100vw" />
-                  <svg viewBox="0 0 1600 900" className="absolute inset-0 h-full w-full" aria-hidden="true">
-                    <g fill="none" stroke="#E6D3A3" strokeWidth="1.4">
-                      <path d="M380 220 H1220 M380 420 H1220 M380 620 H1220 M540 160 V780 M800 160 V780 M1060 160 V780" />
-                    </g>
-                  </svg>
+                  <PlateBlueprint plate={stop.plate} draw={Math.min(1, Math.max(0, (presence - 0.5) / 0.28))} />
                   <p className="absolute bottom-36 left-6 text-[0.62rem] tracking-[0.22em] text-sand uppercase md:left-12">
                     Concept render{stop.plateCaption ? ` · ${stop.plateCaption}` : ""}
                   </p>
