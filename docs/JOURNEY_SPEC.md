@@ -56,6 +56,17 @@ The cay origin is the contact island `(3480, 260)`. Local keys, `u` along the fi
 
 Sample with Catmull-Rom through those keys. The contact card stays hidden until `u = 0.78`, then fades in over the remaining `0.22`.
 
+**Locked.** Do not change the contact scene or this card. The scene is the tiny private cay at sunrise: two chairs, a small table, two drinks, the camera low behind the chairs, palms framing the view. The card copy is exact:
+
+| | |
+| --- | --- |
+| Eyebrow | Begin |
+| Title | Your estate starts with a conversation. |
+| Line | Speak with a Representative on WhatsApp, or arrange a private video meeting. |
+| CTA | Start on WhatsApp |
+
+Do not use “Start a conversation.”
+
 ## Sun and time of day
 
 One key per stop. The sun is world-fixed: only these keys are interpolated, so a turn changes where the sun sits in frame. Night is `0` (day) to `1` (night). Sky colours are the hex values in `journeyPath.sky`.

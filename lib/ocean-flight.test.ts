@@ -40,6 +40,16 @@ test("the sun stays world-fixed while the heading turns into it at sunset", () =
   assert.deepEqual(day.moon, night.moon);
 });
 
+test("the contact card copy is locked", () => {
+  const contact = oceanStops.find((stop) => stop.id === "contact");
+  assert.ok(contact);
+  assert.equal(contact.tag, "Begin");
+  assert.equal(contact.title, "Your estate starts with a conversation.");
+  assert.equal(contact.line, "Speak with a Representative on WhatsApp, or arrange a private video meeting.");
+  assert.equal(contact.cta, "Start on WhatsApp");
+  assert.equal(JSON.stringify(oceanStops).includes("Start a conversation"), false);
+});
+
 test("the opening stays high and the contact finale settles at eye level without a cut", () => {
   const arrival = sampleFlight(0);
   assert.ok(Math.abs(arrival.pos[0] - 420) < 0.01);
