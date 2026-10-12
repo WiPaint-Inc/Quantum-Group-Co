@@ -1,8 +1,15 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 import { agentApiEnabled } from "@/lib/flags";
+import { isWorkersPreviewHost } from "@/lib/preview-host";
 import { absoluteUrl } from "@/lib/site";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const headerList = await headers();
+  const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+  if (isWorkersPreviewHost(host)) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
   return {
     rules: {
       userAgent: "*",

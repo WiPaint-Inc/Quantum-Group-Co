@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "quantum-group-co",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2026-10-11",
+  "compatibility_date": "2026-10-12",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "preview_urls": true,
   "assets": {
@@ -14,5 +14,42 @@
       "binding": "WORKER_SELF_REFERENCE",
       "service": "quantum-group-co"
     }
-  ]
+  ],
+  // Production runtime flags. These are not NEXT_PUBLIC_, so Next does not inline them.
+  // The Worker reads them on the request. Safe defaults: every gated feature stays off.
+  // SHOW_VIVID_PRODUCT_LINES is on unless it is the string "false".
+  "vars": {
+    "PAYMENTS_ENABLED": "false",
+    "AI_FEATURES_ENABLED": "false",
+    "ROBOTICS_ENABLED": "false",
+    "AGENT_API_ENABLED": "false",
+    "DRAFT_CONTENT": "false",
+    "SHOW_VIVID_PRODUCT_LINES": "true",
+    "NEXT_PUBLIC_SHOW_PLACEHOLDERS": "false"
+  },
+  "env": {
+    // Workers Builds non-production command: npx opennextjs-cloudflare upload --env preview
+    // Without `name`, Wrangler would upload to quantum-group-co-preview.
+    // The explicit name keeps the version on the same Worker. `versions upload` does not promote it.
+    // `vars` and `services` are not inherited, so they are repeated here.
+    // DRAFT_CONTENT is true only in this environment. The other flags stay off.
+    "preview": {
+      "name": "quantum-group-co",
+      "vars": {
+        "PAYMENTS_ENABLED": "false",
+        "AI_FEATURES_ENABLED": "false",
+        "ROBOTICS_ENABLED": "false",
+        "AGENT_API_ENABLED": "false",
+        "DRAFT_CONTENT": "true",
+        "SHOW_VIVID_PRODUCT_LINES": "true",
+        "NEXT_PUBLIC_SHOW_PLACEHOLDERS": "false"
+      },
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "quantum-group-co"
+        }
+      ]
+    }
+  }
 }

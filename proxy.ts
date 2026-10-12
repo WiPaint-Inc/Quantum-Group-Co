@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isWorkersPreviewHost } from "@/lib/preview-host";
 import { decodeSession, SESSION_COOKIE } from "@/lib/session";
 
 const corsHeaders: Record<string, string> = {
@@ -8,6 +9,14 @@ const corsHeaders: Record<string, string> = {
   "access-control-allow-headers": "Content-Type, X-Quantum-Agent-Key",
   "access-control-max-age": "86400",
 };
+
+function withPreviewRobots(request: NextRequest, response: NextResponse) {
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (isWorkersPreviewHost(host)) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  return response;
+}
 
 function isGated(pathname: string) {
   return (
@@ -21,7 +30,7 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api") && request.method === "OPTIONS") {
-    return new NextResponse(null, { status: 204, headers: corsHeaders });
+    return withPreviewRobots(request, new NextResponse(null, { status: 204, headers: corsHeaders }));
   }
 
   if (isGated(pathname)) {
@@ -30,7 +39,7 @@ export function proxy(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/client/login";
       url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
+      return withPreviewRobots(request, NextResponse.redirect(url));
     }
   }
 
@@ -40,9 +49,9 @@ export function proxy(request: NextRequest) {
       response.headers.set(key, value);
     }
   }
-  return response;
+  return withPreviewRobots(request, response);
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/client/portal", "/client/portal/:path*", "/client/homes/:path*"],
+  matcher: ["/((?!_next/static|_next/image).*)"],
 };

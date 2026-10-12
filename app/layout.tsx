@@ -6,6 +6,7 @@ import { Cursor } from "@/components/experience/Cursor";
 import { SmoothScroll } from "@/components/experience/SmoothScroll";
 import { Footer } from "@/components/site/Footer";
 import { Header, HeaderFallback } from "@/components/site/Header";
+import { PreviewRobots } from "@/components/site/PreviewRobots";
 import { JsonLd } from "@/components/site/JsonLd";
 import { company } from "@/content/site";
 import { organizationJsonLd } from "@/lib/jsonld";
@@ -74,6 +75,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} ${paperFace.variable} h-full antialiased`}>
       <body className="min-h-dvh bg-ink font-sans text-sand">
+        <Suspense fallback={null}>
+          <PreviewRobots />
+        </Suspense>
         <PaperTone />
         <SmoothScroll />
         <Cursor />

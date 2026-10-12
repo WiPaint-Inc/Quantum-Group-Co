@@ -146,22 +146,22 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 
 Cloudflare Workers, free plan, via the OpenNext adapter. Cache Components stay on, so the feature flags are read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding.
 
-`npm run build` is the Next.js build. `npm run build:cloudflare` is the same command Workers Builds runs.
+`npm run build` is the Next.js build. Workers Builds runs `npx opennextjs-cloudflare build`. The full settings, flag table, and preview noindex rule are in [docs/DEPLOY.md](docs/DEPLOY.md).
 
-Workers Builds, connected to this Git repository:
+Workers Builds, connected to this Git repository. The project name must equal the wrangler name. Use the pull-request branch as the production branch until it is merged, because `main` does not yet contain `wrangler.jsonc`.
 
 | Setting | Value |
 | --- | --- |
-| Worker name | `quantum-group-co` |
-| Production branch | `main` |
+| Project / Worker name | `quantum-group-co` |
+| Production branch | `cursor/quantum-phase-1-cb33` until merged, then `main` |
 | Root directory | repository root |
 | Build command | `npx opennextjs-cloudflare build` |
-| Deploy command | `npx opennextjs-cloudflare deploy -- --keep-vars` |
-| Non-production branch deploy command | `npx wrangler versions upload` |
-| Compatibility date | `2026-10-11` |
+| Deploy command | `npx opennextjs-cloudflare deploy --keep-vars` |
+| Non-production branch deploy command | `npx opennextjs-cloudflare upload --env preview` |
+| Compatibility date | `2026-10-12` |
 | Compatibility flags | `nodejs_compat`, `global_fetch_strictly_public` |
 
-`preview_urls` is true, so a non-production upload receives a `workers.dev` preview URL. `--keep-vars` leaves dashboard variables in place on production deploys. The worker entry is `.open-next/worker.js`. Static files come from `.open-next/assets` on the `ASSETS` binding. `WORKER_SELF_REFERENCE` points at `quantum-group-co`.
+`preview_urls` is true, so a non-production upload receives a `workers.dev` preview URL. `--keep-vars` leaves dashboard secrets in place on production deploys. The worker entry is `.open-next/worker.js`. Static files come from `.open-next/assets` on the `ASSETS` binding. `WORKER_SELF_REFERENCE` points at `quantum-group-co`. Feature flags live in `wrangler.jsonc` `vars`. `DRAFT_CONTENT` is `false` there and `true` only under `env.preview`. Hosts ending in `.workers.dev` send `X-Robots-Tag: noindex` and a noindex robots meta.
 
 ### Environment variables
 
@@ -169,7 +169,7 @@ Set these in the Workers Builds dashboard. Production and Preview are separate. 
 
 `NEXT_PUBLIC_*` values are inlined when Next builds, so they must be present for that build. Server flags are also read on the request. An unset flag is off, because each flag is enabled only by the exact string `true`. `SHOW_VIVID_PRODUCT_LINES` stays on unless it is `false`.
 
-For a preview that shows the concept plates, set `DRAFT_CONTENT` to `true` on the Preview environment only. Leave it unset or `false` on Production.
+Concept plates on a non-production branch come from `env.preview` in `wrangler.jsonc`, where `DRAFT_CONTENT` is `true`. Production `vars` keep it `false`. Do not also set `DRAFT_CONTENT` as a build variable.
 
 | Variable | Purpose |
 | --- | --- |
@@ -205,7 +205,7 @@ For a preview that shows the concept plates, set `DRAFT_CONTENT` to `true` on th
 
 ### Preview deployments
 
-`main` uses the deploy command and the Production variables. Every other branch uses `npx wrangler versions upload` and the Preview variables. With `preview_urls` on, that upload gets a `workers.dev` preview address. Set `DRAFT_CONTENT=true` on Preview and leave `PAYMENTS_ENABLED`, `AI_FEATURES_ENABLED`, `ROBOTICS_ENABLED`, and `AGENT_API_ENABLED` false in both environments. Set `NEXT_PUBLIC_SITE_URL` per environment when the preview or production hostname should appear in metadata. Unset, it stays `https://quantum-group.example`.
+Until this branch is merged, the Workers Builds production branch is `cursor/quantum-phase-1-cb33`. That branch uses `npx opennextjs-cloudflare deploy --keep-vars` and the top-level vars (`DRAFT_CONTENT=false`). Every other branch uses `npx opennextjs-cloudflare upload --env preview` (`DRAFT_CONTENT=true`, other flags false) and gets a `workers.dev` preview address. Those preview hostnames are `noindex`. Set `NEXT_PUBLIC_SITE_URL` as a build variable when the public hostname should appear in metadata. Unset, it stays `https://quantum-group.example`.
 
 ## Phase 2
 
