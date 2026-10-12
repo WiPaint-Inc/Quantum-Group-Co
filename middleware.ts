@@ -27,7 +27,9 @@ function isGated(pathname: string) {
   );
 }
 
-export function proxy(request: NextRequest) {
+// Edge middleware. Next 16 `proxy.ts` is Node-only, and the OpenNext Cloudflare
+// adapter does not run Node middleware. Leave the runtime unset so this stays on the edge.
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api") && request.method === "OPTIONS") {

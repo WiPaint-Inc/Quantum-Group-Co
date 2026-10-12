@@ -192,7 +192,7 @@ export function CargoShip({ progressRef }: { progressRef: { current: number } })
     return spots;
   }, []);
   const outlines = useMemo(() => {
-    const strokes = [];
+    const strokes: Array<{ points: THREE.Vector3[]; width: number; t0: number; t1: number }> = [];
     const stacks = [
       { x: -9.2, z: -74, w: 18.4, d: 74, h: 15.6 },
       { x: -9.2, z: 8, w: 18.4, d: 62, h: 13.2 },

@@ -140,13 +140,13 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 - Next.js App Router and TypeScript. Pages are server-rendered from `content/site.ts`.
 - Tailwind for the editorial UI.
 - React Three Fiber and Three.js for the home journey, the service vignettes, and the portfolio scenes. Each canvas is a client-only dynamic import. Lenis drives smooth scrolling.
-- Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the discovery routes answer only when `AGENT_API_ENABLED=true`. `proxy.ts` gates the client portal and adds CORS on `/api`.
+- Route Handlers for JSON reads. `llms.txt`, OpenAPI, and the discovery routes answer only when `AGENT_API_ENABLED=true`. `middleware.ts` gates the client portal and adds CORS on `/api`.
 - JSON-LD on the key pages. Sitemap, robots, Open Graph image, and semantic HTML are included.
 - `src/features/crypto-pay` is self-contained apart from the Next.js routes that call it.
 
 ## Hosting
 
-Cloudflare Workers, free plan, via the OpenNext adapter. Cache Components stay on, so the feature flags are read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding.
+Cloudflare Workers, free plan, via the OpenNext adapter. Cache Components and partial prefetching stay on: the adapter supports them on the Node.js runtime, and the feature flags are read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding. The request gate is `middleware.ts` on the edge runtime, because Next.js 16 `proxy.ts` is Node-only and the adapter does not run Node middleware.
 
 `npm run build` is the Next.js build. Workers Builds runs `npx opennextjs-cloudflare build`. The full settings, flag table, and preview noindex rule are in [docs/DEPLOY.md](docs/DEPLOY.md).
 
@@ -159,7 +159,8 @@ Workers Builds, connected to this Git repository. The project name must equal th
 | Root directory | repository root |
 | Build command | `npx opennextjs-cloudflare build` |
 | Deploy command | `npx opennextjs-cloudflare deploy --env production --keep-vars` |
-| Non-production branch deploy command | `npx opennextjs-cloudflare upload --env preview` |
+| Preview command | `npx opennextjs-cloudflare upload --env preview` |
+| Node.js | `22.23.2` from `.node-version`. Leave dashboard `NODE_VERSION` unset. |
 | Compatibility date | `2026-10-12` |
 | Compatibility flags | `nodejs_compat`, `global_fetch_strictly_public` |
 

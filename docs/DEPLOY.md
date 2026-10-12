@@ -10,12 +10,19 @@ Cloudflare Workers, free plan, through the OpenNext adapter. The Workers Builds 
 | --- | --- |
 | Project name | `quantum-group-co` |
 | Production branch | `cursor/quantum-phase-1-cb33` until merged, then `main` |
-| Root directory | repository root |
+| Root directory | repository root (leave the dashboard field empty) |
 | Build command | `npx opennextjs-cloudflare build` |
 | Deploy command | `npx opennextjs-cloudflare deploy --env production --keep-vars` |
-| Non-production branch deploy command | `npx opennextjs-cloudflare upload --env preview` |
+| Preview command | `npx opennextjs-cloudflare upload --env preview` |
+| Node.js | `22.23.2`, from `.node-version`. Do not also set `NODE_VERSION`. |
 | Compatibility date | `2026-10-12` |
 | Compatibility flags | `nodejs_compat`, `global_fetch_strictly_public` |
+
+Workers Builds defaults to Node.js 24.18.0. `.node-version` selects 22.23.2, which that build image already has, and which satisfies Next.js 16 (`node >= 20.9.0`). A dashboard `NODE_VERSION` would override the file, so leave it unset.
+
+`cacheComponents` and `partialPrefetching` stay on. `@opennextjs/cloudflare` 1.20 supports Next.js 16.3.8 and later, including composable caching and partial prerendering, on the Node.js runtime (`nodejs_compat`). This app is Next.js 16.4.0.
+
+Next.js 16 `proxy.ts` always runs as Node middleware, and the adapter does not run Node middleware. The portal gate, API CORS, and preview `noindex` header stay in `middleware.ts` with the runtime left unset, so Next compiles them for the edge runtime the adapter does run. The build warns that the `middleware` filename is deprecated. That warning is expected.
 
 `preview_urls` is true. A non-production upload receives a `*.workers.dev` preview URL and is not promoted to production traffic.
 
@@ -50,7 +57,7 @@ Leave secrets empty until they are real. Do not commit them. Set receiving addre
 
 ## Preview hostnames are not indexed
 
-Any host ending in `.workers.dev` receives `X-Robots-Tag: noindex, nofollow` from `proxy.ts`, and the document includes `<meta name="robots" content="noindex, nofollow">`. Concept plates on a preview URL are not offered for indexing. A custom production domain does not match this rule.
+Any host ending in `.workers.dev` receives `X-Robots-Tag: noindex, nofollow` from `middleware.ts`, and the document includes `<meta name="robots" content="noindex, nofollow">`. Concept plates on a preview URL are not offered for indexing. A custom production domain does not match this rule.
 
 `/concept/demo-villa` always sends that same `X-Robots-Tag`, on every host, including when the flag is off and the route is a 404. It is omitted from the sitemap and disallowed in `robots.txt`. The walkthrough itself is documented in [DEMO-VILLA.md](DEMO-VILLA.md).
 
@@ -60,9 +67,10 @@ Any host ending in `.workers.dev` receives `X-Robots-Tag: noindex, nofollow` fro
 | --- | --- |
 | `build` | `next build` |
 | `preview` | `opennextjs-cloudflare build && opennextjs-cloudflare preview` |
-| `deploy` | `opennextjs-cloudflare build && opennextjs-cloudflare deploy` |
+| `deploy` | `opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production --keep-vars` |
+| `upload` | `opennextjs-cloudflare build && opennextjs-cloudflare upload --env preview` |
 | `cf-typegen` | `wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts` |
 
 `npm run build` is only the Next.js build. Workers Builds runs `npx opennextjs-cloudflare build`, which includes the Next build and writes `.open-next/`.
 
-The free plan allows a gzip-compressed Worker script of 3 MiB. Check the wrangler dry-run bundle after `npx opennextjs-cloudflare build`, not the uncompressed `.open-next` directory.
+The free plan allows a gzip-compressed Worker script of 3 MiB. Check the wrangler dry-run bundle after `npx opennextjs-cloudflare build`, not the uncompressed `.open-next` directory. A dry-run of this branch (`npx wrangler deploy --dry-run --env production --outdir /tmp/cf-dry --keep-vars`) reported **gzip 2906.46 KiB** (about 2.84 MiB), under that limit. Production `vars` in that bundle keep `DRAFT_CONTENT` at `false`.

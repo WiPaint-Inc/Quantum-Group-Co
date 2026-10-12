@@ -259,7 +259,7 @@ export function OceanJourney({ draft }: { draft: boolean }) {
           const plateOpacity = draft && stop.plate ? Math.min(1, Math.max(0, (presence - 0.62) / 0.32)) : 0;
           return (
             <div key={stop.id}>
-              {plateOpacity > 0.02 ? (
+              {stop.plate && plateOpacity > 0.02 ? (
                 <div className="pointer-events-none absolute inset-0 z-10" style={{ opacity: plateOpacity }}>
                   <Image src={`/concept/${stop.plate}-1280.webp`} alt="Concept render" fill className="object-cover" sizes="100vw" />
                   <PlateBlueprint plate={stop.plate} draw={Math.min(1, Math.max(0, (presence - 0.5) / 0.28))} />
