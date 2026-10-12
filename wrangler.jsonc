@@ -28,6 +28,27 @@
     "NEXT_PUBLIC_SHOW_PLACEHOLDERS": "false"
   },
   "env": {
+    // Production deploy: npx opennextjs-cloudflare deploy --env production --keep-vars
+    // Same flags as the top-level vars. The top-level block stays so a deploy
+    // without --env still ships the safe defaults, including DRAFT_CONTENT=false.
+    "production": {
+      "name": "quantum-group-co",
+      "vars": {
+        "PAYMENTS_ENABLED": "false",
+        "AI_FEATURES_ENABLED": "false",
+        "ROBOTICS_ENABLED": "false",
+        "AGENT_API_ENABLED": "false",
+        "DRAFT_CONTENT": "false",
+        "SHOW_VIVID_PRODUCT_LINES": "true",
+        "NEXT_PUBLIC_SHOW_PLACEHOLDERS": "false"
+      },
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "quantum-group-co"
+        }
+      ]
+    },
     // Workers Builds non-production command: npx opennextjs-cloudflare upload --env preview
     // Without `name`, Wrangler would upload to quantum-group-co-preview.
     // The explicit name keeps the version on the same Worker. `versions upload` does not promote it.

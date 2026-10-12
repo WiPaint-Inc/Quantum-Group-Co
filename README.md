@@ -156,7 +156,7 @@ Workers Builds, connected to this Git repository. The project name must equal th
 | Production branch | `cursor/quantum-phase-1-cb33` until merged, then `main` |
 | Root directory | repository root |
 | Build command | `npx opennextjs-cloudflare build` |
-| Deploy command | `npx opennextjs-cloudflare deploy --keep-vars` |
+| Deploy command | `npx opennextjs-cloudflare deploy --env production --keep-vars` |
 | Non-production branch deploy command | `npx opennextjs-cloudflare upload --env preview` |
 | Compatibility date | `2026-10-12` |
 | Compatibility flags | `nodejs_compat`, `global_fetch_strictly_public` |
@@ -205,7 +205,7 @@ Concept plates on a non-production branch come from `env.preview` in `wrangler.j
 
 ### Preview deployments
 
-Until this branch is merged, the Workers Builds production branch is `cursor/quantum-phase-1-cb33`. That branch uses `npx opennextjs-cloudflare deploy --keep-vars` and the top-level vars (`DRAFT_CONTENT=false`). Every other branch uses `npx opennextjs-cloudflare upload --env preview` (`DRAFT_CONTENT=true`, other flags false) and gets a `workers.dev` preview address. Those preview hostnames are `noindex`. Set `NEXT_PUBLIC_SITE_URL` as a build variable when the public hostname should appear in metadata. Unset, it stays `https://quantum-group.example`.
+Until this branch is merged, the Workers Builds production branch is `cursor/quantum-phase-1-cb33`. That branch uses `npx opennextjs-cloudflare deploy --env production --keep-vars` (`DRAFT_CONTENT=false`). Every other branch uses `npx opennextjs-cloudflare upload --env preview` (`DRAFT_CONTENT=true`, other flags false) and gets a `workers.dev` preview address. Those preview hostnames are `noindex`. Set `NEXT_PUBLIC_SITE_URL` as a build variable when the public hostname should appear in metadata. Unset, it stays `https://quantum-group.example`.
 
 ## Phase 2
 
