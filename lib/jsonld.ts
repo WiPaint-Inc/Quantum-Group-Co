@@ -1,5 +1,6 @@
 import { company, services } from "@/content/site";
 import { portfolioProjects } from "@/content/portfolio";
+// conceptRenders stay out of JSON-LD. They are not places and not completed work.
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
 
 export function organizationJsonLd() {

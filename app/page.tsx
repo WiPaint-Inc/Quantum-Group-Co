@@ -5,6 +5,7 @@ import { Journey } from "@/components/journey/Journey";
 import { StoryHalves } from "@/components/site/StoryHalves";
 import { TeamGrid } from "@/components/site/TeamGrid";
 import { ConceptFigure } from "@/components/site/ConceptFigure";
+import { ConceptRenderSlot } from "@/components/site/ConceptRenderSlot";
 import { JsonLd } from "@/components/site/JsonLd";
 import { MarkerNotes } from "@/components/site/MarkerNote";
 import { BuildLive } from "@/components/client/BuildLive";
@@ -107,6 +108,7 @@ async function HomeBody() {
         <RoboticsChapter />
       </Suspense>
 
+      <ConceptRenderSlot draft={draft} />
       <BuildLive />
 
       <StoryHalves />

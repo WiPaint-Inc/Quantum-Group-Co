@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { estates } from "@/content/estates";
 import { portfolioProjects } from "@/content/portfolio";
+// conceptRenders are draft studies. They have no public URLs and are not listed here.
 import { services } from "@/content/site";
 import { paymentsEnabled, roboticsEnabled } from "@/lib/flags";
 import { absoluteUrl } from "@/lib/site";

@@ -33,6 +33,8 @@ These three switches are off for launch. Leave them unset, or set them to `false
 
 `PAYMENTS_ENABLED` and `DRAFT_CONTENT` also default to false. `SHOW_VIVID_PRODUCT_LINES` stays on unless it is set to `false`.
 
+`DRAFT_CONTENT` is the switch for test studies made later from anonymous sample floor plans. The slot is `conceptRenders` in [`content/concept-renders.ts`](content/concept-renders.ts). It is empty. A plate from that slot appears only when the flag is `true`, and it is labelled Concept render. It is not a client project and it is not completed work. It is not part of the Partner Portfolio, the sitemap, or JSON-LD. With the flag false, the slot renders nothing. Remove those studies, or replace them with approved images, before go-live.
+
 ## Experience
 
 Scroll is the timeline. One canvas follows an estate from an empty site through vision, blueprint, structure, finish, and evening. Lighting moves from morning through dusk to night. A stage counter and a timeline of buttons mark the place in that journey. The canvas is its own chunk. Phones use a simpler scene: lower resolution, a coarser water mesh, fewer stars, and no shadows. `prefers-reduced-motion` skips the canvas and keeps the dusk photograph plus the written pages. Sound stays off until a visitor turns it on.
