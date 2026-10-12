@@ -52,6 +52,37 @@ export const journeyPath = {
       orbitFore: 34,
       orbitHeight: -5,
     },
+    /**
+     * Continuous fly-ins. orbit −1 stays on the authored approach.
+     * orbit 0 is the chapter rest. orbit 1 is the close of the dwell.
+     * shore/side place the estate origin on the island. Local +Z is seaward.
+     * back/side are metres from that origin, toward the sea and to the right.
+     */
+    estateFlyIn: {
+      "design-build": {
+        bearing: 40,
+        shore: 262,
+        side: 0,
+        base: 2.4,
+        rest: { back: 168, height: 56, side: 78, lookHeight: 6 },
+        close: { back: 72, height: 22, side: 24, lookHeight: 4.5 },
+      },
+      engineering: {
+        bearing: 315,
+        shore: 188,
+        side: 8,
+        base: 16,
+        rest: { back: 64, height: 34, side: 36, lookHeight: 20 },
+        close: { back: 28, height: 21, side: 14, lookHeight: 18.5 },
+      },
+    },
+  },
+  /** Terrace cut into the engineering island. The rest of that island is unchanged. */
+  cliffLedge: {
+    stop: "engineering",
+    width: 44,
+    length: 30,
+    face: 12,
   },
   timing: {
     /** Homepage scroll track. Stop i sits at progress i / (stopCount - 1). */

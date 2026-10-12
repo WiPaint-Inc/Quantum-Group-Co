@@ -1,7 +1,10 @@
 import type { ComponentType } from "react";
 
 /**
- * Self-contained estate scenes. A module's default export is rendered inside the canvas.
- * Leave this empty until CAD registers one. See docs/ESTATES.md.
+ * Shared with the homepage fly-in. The module loads the CAD glTF when it is present
+ * and the placeholder massing until then. See docs/ESTATES.md and docs/JOURNEY_SPEC.md.
  */
-export const estateSceneModules: Record<string, () => Promise<{ default: ComponentType }>> = {};
+export const estateSceneModules: Record<string, () => Promise<{ default: ComponentType }>> = {
+  "mega-estate": () => import("./scenes/mega-estate"),
+  cliffside: () => import("./scenes/cliffside"),
+};

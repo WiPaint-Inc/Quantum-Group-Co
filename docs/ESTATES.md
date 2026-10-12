@@ -17,7 +17,9 @@ Records live in `content/estates.ts`. One placeholder, `WHATSAPP_ENQUIRY_NUMBER`
 - Enclosed gross: 4,570 m² and 49,191 ft²
 - Buildings: 9 (A, B, C1, C2, D, E, F1, F2, G)
 
-The square-foot total is the schedule total. Do not replace it with a sum of the rounded building rows. Leave `video` as `null` and `plans` as `[]` until files exist. Do not set `walkthrough3d` until a model exists.
+The square-foot total is the schedule total. Do not replace it with a sum of the rounded building rows. Leave `video` as `null` and `plans` as `[]` until files exist.
+
+`mega-estate-aerial` and `rustic-modern-cliffside` share their 3D with the homepage fly-in. The loader is `lib/estate-drop.ts`. CAD writes the Grand Beachfront files to `quantum-group-co/estates/mega-estate/web/` and the Cliffside files to `quantum-group-co/estates/cliffside/web/`. Both folders are served from `/estates/<name>/web/`. Metres, Y-up, origin at the estate centre on the ground, sea on +Z, FOV 46. The cliffside drop may also include `cliffside_mep.glb`. Until a file is there, the page and the fly-in use the placeholder. Do not set `walkthrough3d` on the other estates until a model exists.
 
 ## Walkthrough video
 

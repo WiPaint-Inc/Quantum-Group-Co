@@ -25,9 +25,53 @@ The opening does not orbit an island. Later stops use the approach rows in `jour
 - `bearing` is degrees, `0` along +Z.
 - Camera position is the island origin plus `(sin(bearing) * distance, height, cos(bearing) * distance)`.
 - Look-at is the island origin minus `(sin(bearing) * lookAhead * distance, …)` with look height `3 + height * 0.02`.
-- During the dwell, `bearing` shifts by `orbit * dwellProgress` degrees and height scales by `1.06 - 0.06 * orbit`.
+- During the dwell, `bearing` shifts by `orbit * dwellProgress` degrees and height scales by `1.06 - 0.06 * orbit`. Design and Build and Engineering do not use that small orbit. They use `journeyPath.camera.estateFlyIn` instead.
 
 The scroll track is `1100vh`. Each stop-to-stop span holds the stop pose for the first `dwell` (`0.17`) of the span, travels on a cubic bezier, then settles into the next pose for the last `0.17`. The bezier is lifted toward the 285 m cruise. The website eases the parameter with a smootherstep blend (`0.25` linear + `0.75` smootherstep). That ease is part of the spline.
+
+## Estate fly-in
+
+**Hard requirement.** The scroll flies into an estate as one continuous camera move. It does not cut, and it does not crossfade to a still photograph. The camera never rests on a flat picture. Parallax continues for the whole move.
+
+`orbit = -1` is still the authored aerial approach, so the cruise into the stop does not jump. `orbit = 0` is the chapter. `orbit = 1` is the close at the end of the dwell, and the next cruise leaves from there. A file named `*_camera_path.json` may replace the middle of that move. It is blended back to the authored poses at both ends, so the cruise still does not cut.
+
+### Full Design and Build
+
+Stop 01 is the volcanic island in daylight. The gold site plan and the elevation lines resolve into the Grand Beachfront estate, standing on the shore. That is the same estate as `/estates/mega-estate-aerial`. The homepage and the estate page share one loader.
+
+CAD delivers the model at `quantum-group-co/estates/mega-estate/web/`, served from `/estates/mega-estate/web/`:
+
+| File | Role |
+| --- | --- |
+| `mega-estate_web.glb` | Built form |
+| `mega-estate_web_lod1.glb` | Mid distance |
+| `mega-estate_web_lod2.glb` | Far |
+| `mega-estate_web_wireframe.glb` | The gold lines the form resolves from |
+| `mega-estate_vegetation.json` | Trees, optional |
+| `mega-estate_camera_path.json` | Local camera frames, optional |
+
+Metres, Y-up. The origin is the estate centre at ground level. Sea is **+Z**. FOV is 46°. Until those files are present, the loader builds a placeholder massing from the site plan.
+
+### Engineering
+
+The engineering stop is the night island. The camera flies into the Cliffside Residence: a green roof on a ledge cut into the slope, with an added rock face behind it. The rest of the island is unchanged. The ledge is `journeyPath.cliffLedge`.
+
+The view is an engineering study, not a photograph. A ghosted glass shell shows the structure, with faint fresnel edges and thin gold slab and column lines. Inside it, the services trace in sequence and then keep moving:
+
+| System | Colour | Motion |
+| --- | --- | --- |
+| Plumbing | Cool blue | Pulses flow along the pipes |
+| HVAC | White / silver | Airflow particles travel the ducts |
+| Electrical | Gold | Sparks travel the conduits |
+| Plant | Solid gold and white | Chillers, AHU, pumps, generator, roof solar, tanks and cistern |
+
+It has to stay readable at night, so the lines, pulses and plant are emissive. The same loader serves `/estates/rustic-modern-cliffside`.
+
+CAD delivers it at `quantum-group-co/estates/cliffside/web/`, served from `/estates/cliffside/web/`, with the same names (`cliffside_web.glb`, `_lod1`, `_lod2`, `_wireframe.glb`, `_vegetation.json`, `_camera_path.json`). An optional MEP layer is `cliffside_mep.glb`. Until those files are present, the loader uses the placeholder shell and the animated services.
+
+### Developments
+
+Developments keeps the gold site linework on the peninsula. There is no masterplan model and no photograph.
 
 ### Materials
 

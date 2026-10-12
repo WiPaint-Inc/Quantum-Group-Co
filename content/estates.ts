@@ -76,6 +76,7 @@ export const estates: EstateRecord[] = [
       ],
     },
     video: "/estates/mega-estate-aerial/walkthrough.mp4",
+    walkthrough3d: { scene: "mega-estate" },
     plans: [
       { src: "/estates/mega-estate-aerial/plans/teaser-site.png", label: "Site" },
       { src: "/estates/mega-estate-aerial/plans/teaser-ground.png", label: "Ground floor" },
@@ -255,6 +256,7 @@ export const estates: EstateRecord[] = [
     landscape:
       "The fruit forest is planned landward of the house, in walled terraces and courtyards. Sapodilla and tamarind hold the outer wall. Mango and genip sit in the sheltered courtyard. No fruit trees are planned on the seaward face.",
     hero: "rustic-modern-cliffside",
+    walkthrough3d: { scene: "cliffside" },
     ...unpublished(),
     zones: [
       { name: "Orchard allée", intent: "A short avenue of wind-firm fruit trees and a clipped hedge." },

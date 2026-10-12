@@ -75,13 +75,56 @@ export function islandHeight(distance: number, peak: number) {
   return edge * peak * crown;
 }
 
-export function makeIsland(radius: number, peak: number, stretch: number, segments: number, form: IslandForm = "ridge") {
+export type CliffLedge = {
+  /** Island-local centre of the pad. */
+  x: number;
+  z: number;
+  /** Radians. Local +Z of the pad points to sea. */
+  yaw: number;
+  width: number;
+  length: number;
+  /** Absolute metres. The carved terrace. */
+  pad: number;
+};
+
+/** Flatten a terrace into an existing island. Points outside the pad are unchanged. */
+export function applyCliffLedge(position: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, ledge: CliffLedge) {
+  const c = Math.cos(ledge.yaw);
+  const s = Math.sin(ledge.yaw);
+  const halfW = ledge.width / 2;
+  const halfL = ledge.length / 2;
+  for (let i = 0; i < position.count; i += 1) {
+    const wx = position.getX(i) - ledge.x;
+    const wz = position.getZ(i) - ledge.z;
+    const lx = wx * c - wz * s;
+    const lz = wx * s + wz * c;
+    const y = position.getY(i);
+    if (y < 0.3) continue;
+    const ax = Math.abs(lx) / halfW;
+    const az = Math.abs(lz) / halfL;
+    if (ax > 1.08 || az > 1.08) continue;
+    const side = Math.min(1, Math.max(0, (ax - 0.78) / 0.3));
+    const front = lz > 0 ? Math.min(1, Math.max(0, (az - 0.72) / 0.36)) : 0;
+    const blend = Math.max(side, front);
+    position.setY(i, ledge.pad * (1 - blend) + y * blend);
+  }
+}
+
+export function makeIsland(
+  radius: number,
+  peak: number,
+  stretch: number,
+  segments: number,
+  form: IslandForm = "ridge",
+  ledge?: CliffLedge,
+) {
   const geo = new THREE.PlaneGeometry(radius * 2 * stretch, radius * 2, segments, Math.max(8, Math.round(segments / stretch)));
   geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i += 1) {
     pos.setY(i, sampleIslandHeight(form, pos.getX(i), pos.getZ(i), radius, peak, stretch));
   }
+  if (ledge) applyCliffLedge(pos, ledge);
   geo.computeVertexNormals();
   const normal = geo.attributes.normal;
   const colors = new Float32Array(pos.count * 3);
@@ -101,6 +144,22 @@ export function makeIsland(radius: number, peak: number, stretch: number, segmen
     colors[i * 3] = color.r;
     colors[i * 3 + 1] = color.g;
     colors[i * 3 + 2] = color.b;
+  }
+  if (ledge) {
+    const c = Math.cos(ledge.yaw);
+    const s = Math.sin(ledge.yaw);
+    const cut = new THREE.Color("#6e655c");
+    for (let i = 0; i < pos.count; i += 1) {
+      const wx = pos.getX(i) - ledge.x;
+      const wz = pos.getZ(i) - ledge.z;
+      const lx = wx * c - wz * s;
+      const lz = wx * s + wz * c;
+      if (Math.abs(lx) > ledge.width / 2 || Math.abs(lz) > ledge.length / 2) continue;
+      if (Math.abs(pos.getY(i) - ledge.pad) > 0.8) continue;
+      colors[i * 3] = cut.r;
+      colors[i * 3 + 1] = cut.g;
+      colors[i * 3 + 2] = cut.b;
+    }
   }
   geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   return geo;

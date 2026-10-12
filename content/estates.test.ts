@@ -26,7 +26,7 @@ test("mega estate uses the area schedule total", () => {
   assert.equal(mega.specs.buildings.find((building) => building.code === "F1")?.sqft, 1163);
   assert.equal(mega.video, "/estates/mega-estate-aerial/walkthrough.mp4");
   assert.equal(mega.plans.length, 2);
-  assert.equal(mega.walkthrough3d, undefined);
+  assert.deepEqual(mega.walkthrough3d, { scene: "mega-estate" });
   assert.equal(WHATSAPP_ENQUIRY_NUMBER, "0000000000");
   assert.equal(estates.some((estate) => estate.specs?.buildings.some((building) => building.code === "H")), false);
 });
@@ -42,9 +42,10 @@ test("the other four estates stay empty for later drawings", () => {
     assert.equal(estate.specs, null);
     assert.equal(estate.video, null);
     assert.deepEqual(estate.plans, []);
-    assert.equal(estate.walkthrough3d, undefined);
-    assert.deepEqual(Object.keys(estateSceneModules), []);
+    if (slug === "rustic-modern-cliffside") assert.deepEqual(estate.walkthrough3d, { scene: "cliffside" });
+    else assert.equal(estate.walkthrough3d, undefined);
     assert.ok(estate.materials.length > 0);
     assert.ok(estate.landscape.length > 0);
   }
+  assert.deepEqual(Object.keys(estateSceneModules).sort(), ["cliffside", "mega-estate"]);
 });

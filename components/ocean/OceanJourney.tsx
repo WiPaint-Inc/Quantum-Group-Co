@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { scrollToY } from "@/components/experience/scroll";
 import { OceanCanvas } from "@/components/ocean/OceanCanvas";
-import { PlateBlueprint } from "@/components/ocean/PlateBlueprint";
 import { oceanStops } from "@/content/ocean-stops";
 import { company } from "@/content/site";
 import { contactReveal, nearestStop, stopPresence, stopProgress } from "@/lib/ocean-flight";
@@ -248,24 +246,20 @@ export function OceanJourney({ draft }: { draft: boolean }) {
         {oceanStops.map((stop, index) => {
           if (index === 0) return null;
           const presence = stop.id === "contact" ? contactReveal(progress) : stopPresence(progress, index);
-          const plateOpacity = draft && stop.plate ? Math.min(1, Math.max(0, (presence - 0.62) / 0.32)) : 0;
+          const study = draft && stop.id === "design-build"
+            ? "Concept walkthrough · The Grand Beachfront Estate"
+            : draft && stop.id === "engineering"
+              ? "Engineering study · The Cliffside Residence"
+              : null;
           return (
             <div key={stop.id}>
-              {stop.plate && plateOpacity > 0.02 ? (
-                <div className="pointer-events-none absolute inset-0 z-10" style={{ opacity: plateOpacity }}>
-                  <Image src={`/concept/${stop.plate}-1280.webp`} alt="Concept render" fill className="object-cover" sizes="100vw" />
-                  <PlateBlueprint plate={stop.plate} draw={Math.min(1, Math.max(0, (presence - 0.5) / 0.28))} />
-                  <p className="absolute bottom-36 left-6 text-[0.62rem] tracking-[0.22em] text-sand uppercase md:left-12">
-                    Concept render{stop.plateCaption ? ` · ${stop.plateCaption}` : ""}
-                  </p>
-                </div>
-              ) : null}
               <article
                 className="pointer-events-none absolute bottom-24 left-6 z-20 w-[min(26rem,calc(100%-7rem))] md:left-12"
                 style={{ opacity: presence, transform: `translateY(${(1 - presence) * 16}px)` }}
                 aria-hidden={presence < 0.4}
               >
                 <div className="glass-panel pointer-events-auto px-6 py-6">
+                  {study ? <p className="mb-3 text-[0.62rem] tracking-[0.22em] text-gold-2 uppercase">{study}</p> : null}
                   <p className="kicker">{stop.tag}</p>
                   <h2 className="mt-3 font-serif text-4xl leading-none text-sand md:text-5xl">{stop.title}</h2>
                   <p className="mt-4 text-sm text-sand/75 md:text-base">{stop.line}</p>

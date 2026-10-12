@@ -4,7 +4,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { islandScale, oceanStops } from "@/content/ocean-stops";
-import { enableSolidShadows, hash, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, makeTerrainTexture, makeWaterNormal, sampleIslandHeight } from "@/components/ocean/geometry";
+import { EstateFlyIns } from "@/components/ocean/EstateFlyIns";
+import { enableSolidShadows, hash, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, makeTerrainTexture, makeWaterNormal, sampleIslandHeight, type CliffLedge } from "@/components/ocean/geometry";
 import { linesFor } from "@/components/ocean/linework";
 import { MeetingCay } from "@/components/ocean/MeetingCay";
 import {
@@ -20,7 +21,7 @@ import {
   waterVertex,
 } from "@/components/ocean/shaders";
 import { CargoShip } from "@/components/ocean/CargoShip";
-import { drawAmount, finaleBlend, sampleFlight, scenicCays, shipMotion, shipTrack, stopPresence } from "@/lib/ocean-flight";
+import { drawAmount, estateAnchor, estateReveal, finaleBlend, sampleFlight, scenicCays, shipMotion, shipTrack, stopPresence } from "@/lib/ocean-flight";
 import { journeyPath } from "@/src/journey/path";
 
 const GOLD = new THREE.Color("#e6d2a8");
@@ -56,10 +57,24 @@ export function OceanWorld({
       .map((stop) => {
         const scale = islandScale(stop.size, stop.kind);
         const detail = scale.radius < 30 ? 72 : scale.radius > 200 ? 176 : segs;
+        let ledge: CliffLedge | undefined;
+        if (stop.id === journeyPath.cliffLedge.stop) {
+          const anchor = estateAnchor(stop.id);
+          if (anchor) {
+            ledge = {
+              x: anchor.x - stop.x,
+              z: anchor.z - stop.z,
+              yaw: anchor.bearing,
+              width: journeyPath.cliffLedge.width,
+              length: journeyPath.cliffLedge.length,
+              pad: anchor.y,
+            };
+          }
+        }
         return {
           stop,
           scale,
-          geometry: makeIsland(scale.radius, scale.peak, scale.stretch, detail, scale.form),
+          geometry: makeIsland(scale.radius, scale.peak, scale.stretch, detail, scale.form, ledge),
           lines: oceanStops.includes(stop) && stop.size !== "private" ? linesFor(stop.kind, scale.radius) : null,
         };
       });
@@ -188,28 +203,6 @@ export function OceanWorld({
     return map;
   }, [islands]);
 
-  const plates = useMemo(() => {
-    if (!draft) return [] as Array<{ id: string; mesh: THREE.Mesh }>;
-    const loader = new THREE.TextureLoader();
-    return oceanStops.flatMap((stop) => {
-      if (!stop.plate) return [];
-      const scale = islandScale(stop.size, stop.kind);
-      const texture = loader.load(`/concept/${stop.plate}-1280.webp`);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-        toneMapped: true,
-      });
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(scale.radius * 0.72, scale.radius * 0.4), material);
-      mesh.position.set(stop.x, Math.max(8, scale.peak * 0.85), stop.z);
-      mesh.renderOrder = 3;
-      return [{ id: stop.id, mesh }];
-    });
-  }, [draft]);
-
   const palm = useMemo(() => {
     const geometry = makePalm();
     const material = new THREE.MeshBasicMaterial({ vertexColors: true });
@@ -305,11 +298,7 @@ export function OceanWorld({
     for (const island of islands) island.geometry.dispose();
     for (const island of islands) island.lines?.dispose();
     for (const material of lineMaterials.values()) material.dispose();
-    for (const plate of plates) {
-      plate.mesh.geometry.dispose();
-      (plate.mesh.material as THREE.Material).dispose();
-    }
-  }, [birds.geometry, canopyMat, canopyTex, depthMaterial, islands, land, lineMaterials, masses.geometry, normal, palm.geometry, palm.material, plates, shadowPlaceholder, sky, terrain, water]);
+  }, [birds.geometry, canopyMat, canopyTex, depthMaterial, islands, land, lineMaterials, masses.geometry, normal, palm.geometry, palm.material, shadowPlaceholder, sky, terrain, water]);
 
   const { camera, scene, size, gl } = useThree();
   const look = useMemo(() => new THREE.Vector3(), []);
@@ -340,29 +329,18 @@ export function OceanWorld({
       texture.anisotropy = max;
       texture.needsUpdate = true;
     }
-    for (const plate of plates) {
-      const map = (plate.mesh.material as THREE.MeshBasicMaterial).map;
-      if (!map) continue;
-      map.anisotropy = max;
-      map.magFilter = THREE.LinearFilter;
-      map.minFilter = THREE.LinearMipmapLinearFilter;
-      map.generateMipmaps = true;
-      map.needsUpdate = true;
-    }
-  }, [canopyTex, gl, normal, plates, terrain]);
+  }, [canopyTex, gl, normal, terrain]);
 
   useEffect(() => {
     scene.add(hemi);
     scene.add(sunLight);
     scene.add(sunLight.target);
-    for (const plate of plates) scene.add(plate.mesh);
     return () => {
       scene.remove(hemi);
       scene.remove(sunLight);
       scene.remove(sunLight.target);
-      for (const plate of plates) scene.remove(plate.mesh);
     };
-  }, [hemi, plates, scene, sunLight]);
+  }, [hemi, scene, sunLight]);
 
   useFrame(({ clock }, delta) => {
     const flight = sampleFlight(progressRef.current);
@@ -443,18 +421,10 @@ export function OceanWorld({
       material.uniforms.uDraw.value = drawAmount(progressRef.current, index);
       material.uniforms.uNight.value = flight.night;
       material.uniforms.uWash.value = stop.kind === "construction" ? presence : 0;
-      material.uniforms.uFade.value = stop.plate ? 1 - Math.min(1, Math.max(0, (presence - 0.55) / 0.3)) : 1;
+      const carved = stop.id === "design-build" || stop.id === "engineering";
+      material.uniforms.uFade.value = draft && carved ? 1 - estateReveal(progressRef.current, stop.id) : 1;
       (material.uniforms.uResolution.value as THREE.Vector2).copy(resolution);
     });
-    for (const plate of plates) {
-      const index = oceanStops.findIndex((stop) => stop.id === plate.id);
-      const presence = index < 0 ? 0 : stopPresence(progressRef.current, index);
-      const descend = THREE.MathUtils.smoothstep(presence, 0.18, 0.72);
-      const yieldToPlate = 1 - THREE.MathUtils.smoothstep(presence, 0.62, 0.9);
-      const material = plate.mesh.material as THREE.MeshBasicMaterial;
-      material.opacity = descend * yieldToPlate;
-      plate.mesh.lookAt(camera.position.x, plate.mesh.position.y + 12, camera.position.z);
-    }
     if (birdMesh.current) {
       for (let i = 0; i < birds.count; i += 1) {
         const ang = time * 0.12 + i;
@@ -576,6 +546,7 @@ export function OceanWorld({
       {oceanStops.filter((stop) => stop.id === "contact").map((stop) => (
         <MeetingCay key={stop.id} x={stop.x} z={stop.z} />
       ))}
+      <EstateFlyIns progressRef={progressRef} draft={draft} />
       <CargoShip progressRef={progressRef} />
     </>
   );

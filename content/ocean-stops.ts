@@ -22,7 +22,7 @@ export type OceanStop = {
 /**
  * One island per service, in the owner's order, with Arrival and Contact at the ends.
  * Positions follow the v2 archipelago so the path can sweep, bank, and change heading.
- * Estate photographs are landing moments on Design and Developments only.
+ * Design and Build resolves into the Grand Beachfront estate. Engineering resolves into the cliffside study. Developments keeps its gold linework.
  */
 export const oceanStops: OceanStop[] = [
   {

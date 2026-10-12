@@ -1,4 +1,5 @@
 import { oceanStops, type OceanStop } from "@/content/ocean-stops";
+import { getEstateCameraPath, type EstateCameraFrame } from "@/lib/estate-drop";
 import { journeyPath } from "@/src/journey/path";
 
 export type Vec3 = [number, number, number];
@@ -140,6 +141,94 @@ export function shipTrack(progress: number) {
   return 1 - smooth((f - DW) / 0.28);
 }
 
+type FlyShot = { back: number; height: number; side: number; lookHeight: number };
+type FlyIn = {
+  bearing: number;
+  shore: number;
+  side: number;
+  base: number;
+  rest: FlyShot;
+  close: FlyShot;
+};
+
+export function estateAnchor(stopId: string) {
+  const fly = (journeyPath.camera.estateFlyIn as Record<string, FlyIn>)[stopId];
+  const stop = oceanStops.find((item) => item.id === stopId);
+  if (!fly || !stop) return null;
+  const bearing = (fly.bearing * Math.PI) / 180;
+  const rightX = Math.cos(bearing);
+  const rightZ = -Math.sin(bearing);
+  return {
+    x: stop.x + Math.sin(bearing) * fly.shore + rightX * fly.side,
+    y: fly.base,
+    z: stop.z + Math.cos(bearing) * fly.shore + rightZ * fly.side,
+    bearing,
+    fly,
+  };
+}
+
+/** Local estate metres (sea on +Z) into world metres. */
+export function estateWorld(stopId: string, local: Vec3): Vec3 | null {
+  const anchor = estateAnchor(stopId);
+  if (!anchor) return null;
+  const c = Math.cos(anchor.bearing);
+  const s = Math.sin(anchor.bearing);
+  return [
+    anchor.x + local[0] * c + local[2] * s,
+    anchor.y + local[1],
+    anchor.z - local[0] * s + local[2] * c,
+  ];
+}
+
+function approachPose(stop: OceanStop, orbit: number): { pos: Vec3; look: Vec3 } {
+  const view = VIEWS[stop.id];
+  const bearing = ((view.bearing + orbit * view.orbit) * Math.PI) / 180;
+  const height = view.height * (1.06 - 0.06 * orbit);
+  const ahead = view.lookAhead * view.distance;
+  return {
+    pos: [stop.x + Math.sin(bearing) * view.distance, height, stop.z + Math.cos(bearing) * view.distance],
+    look: [stop.x - Math.sin(bearing) * ahead, 3 + height * 0.02, stop.z - Math.cos(bearing) * ahead],
+  };
+}
+
+function estateShot(stopId: string, shot: FlyShot): { pos: Vec3; look: Vec3 } {
+  const anchor = estateAnchor(stopId);
+  if (!anchor) return { pos: [0, 0, 0], look: [0, 0, 0] };
+  const s = Math.sin(anchor.bearing);
+  const c = Math.cos(anchor.bearing);
+  const rightX = Math.cos(anchor.bearing);
+  const rightZ = -Math.sin(anchor.bearing);
+  return {
+    pos: [anchor.x + s * shot.back + rightX * shot.side, shot.height, anchor.z + c * shot.back + rightZ * shot.side],
+    look: [anchor.x, shot.lookHeight, anchor.z],
+  };
+}
+
+function sampleEstateFrames(stopId: string, frames: EstateCameraFrame[], t: number): { pos: Vec3; look: Vec3 } | null {
+  let i = 0;
+  while (i < frames.length - 2 && t > frames[i + 1].t) i += 1;
+  const a = frames[i];
+  const b = frames[Math.min(frames.length - 1, i + 1)];
+  const span = Math.max(1e-4, b.t - a.t);
+  const u = smooth((t - a.t) / span);
+  const pos = estateWorld(stopId, lerp3(a.position, b.position, u));
+  const look = estateWorld(stopId, lerp3(a.target, b.target, u));
+  if (!pos || !look) return null;
+  return { pos, look };
+}
+
+/** A delivered camera path bends the middle of the fly-in. Both ends stay on the authored pose. */
+function withEstatePath(stopId: string, orbit: number, pose: { pos: Vec3; look: Vec3 }) {
+  const frames = getEstateCameraPath(stopId);
+  if (!frames) return pose;
+  const t = clamp((orbit + 1) / 2, 0, 1);
+  const blend = smooth(clamp(Math.min(t, 1 - t) / 0.18, 0, 1));
+  if (blend <= 0) return pose;
+  const cad = sampleEstateFrames(stopId, frames, t);
+  if (!cad) return pose;
+  return { pos: lerp3(pose.pos, cad.pos, blend), look: lerp3(pose.look, cad.look, blend) };
+}
+
 function viewPose(index: number, orbit: number): { pos: Vec3; look: Vec3 } {
   const stop = oceanStops[index];
   if (stop.id === "arrival") {
@@ -166,14 +255,31 @@ function viewPose(index: number, orbit: number): { pos: Vec3; look: Vec3 } {
       look: [stop.x + fx * lookAlong, journeyPath.camera.materials.lookHeight, stop.z + fz * lookAlong],
     };
   }
-  const view = VIEWS[stop.id];
-  const bearing = ((view.bearing + orbit * view.orbit) * Math.PI) / 180;
-  const height = view.height * (1.06 - 0.06 * orbit);
-  const ahead = view.lookAhead * view.distance;
-  return {
-    pos: [stop.x + Math.sin(bearing) * view.distance, height, stop.z + Math.cos(bearing) * view.distance],
-    look: [stop.x - Math.sin(bearing) * ahead, 3 + view.height * 0.02, stop.z - Math.cos(bearing) * ahead],
-  };
+  const fly = (journeyPath.camera.estateFlyIn as Record<string, FlyIn>)[stop.id];
+  if (fly) {
+    const rest = estateShot(stop.id, fly.rest);
+    const close = estateShot(stop.id, fly.close);
+    const pose = orbit <= 0
+      ? { pos: lerp3(approachPose(stop, orbit).pos, rest.pos, smooth(orbit + 1)), look: lerp3(approachPose(stop, orbit).look, rest.look, smooth(orbit + 1)) }
+      : { pos: lerp3(rest.pos, close.pos, smooth(orbit)), look: lerp3(rest.look, close.look, smooth(orbit)) };
+    return withEstatePath(stop.id, orbit, pose);
+  }
+  return approachPose(stop, orbit);
+}
+
+/** 0 at the start of the arrival into the stop, 1 at the end of its dwell, and it keeps climbing after. */
+export function estateFlyT(progress: number, stopId: string) {
+  const index = oceanStops.findIndex((stop) => stop.id === stopId);
+  if (index < 0) return 0;
+  const rel = clamp01(progress) * (N - 1) - index;
+  return (rel + DW) / (2 * DW);
+}
+
+/** The built form is up by the chapter and stays on the island afterwards. */
+export function estateReveal(progress: number, stopId: string) {
+  const t = estateFlyT(progress, stopId);
+  if (t <= 0) return 0;
+  return smooth(Math.min(1, t * 1.65));
 }
 
 /** Sunrise azimuth. Local +Z on the meeting cay points at the sun. */

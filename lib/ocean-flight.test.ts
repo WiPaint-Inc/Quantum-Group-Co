@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { oceanStops } from "../content/ocean-stops.ts";
-import { contactReveal, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
+import { applyCliffLedge, sampleIslandHeight } from "../components/ocean/geometry.ts";
+import { parseEstateCameraPath, setEstateCameraPath } from "./estate-drop.ts";
+import { contactReveal, estateAnchor, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
+import { journeyPath } from "../src/journey/path.ts";
+import * as THREE from "three";
 
 function heading(sample: ReturnType<typeof sampleFlight>) {
   return Math.atan2(sample.look[0] - sample.pos[0], sample.look[2] - sample.pos[2]);
@@ -72,6 +76,100 @@ test("the opening stays high and the contact finale settles at eye level without
   assert.equal(contactReveal(0), 0);
   assert.equal(contactReveal(seam), 0);
   assert.ok(contactReveal(1) > 0.98);
+});
+
+test("design and engineering fly in without a cut, and developments stays aerial", () => {
+  const n = oceanStops.length;
+  const dwell = 0.17;
+  const design = oceanStops.findIndex((stop) => stop.id === "design-build");
+  const engineering = oceanStops.findIndex((stop) => stop.id === "engineering");
+  const developments = oceanStops.findIndex((stop) => stop.id === "developments");
+  const designAerial = sampleFlight(stopProgress(design) - dwell / (n - 1));
+  const designRest = sampleFlight(stopProgress(design));
+  const designClose = sampleFlight(stopProgress(design) + dwell / (n - 1));
+  assert.ok(designAerial.pos[1] > 150, `design aerial ${designAerial.pos[1]}`);
+  assert.ok(designRest.pos[1] > 40 && designRest.pos[1] < 80, `design rest ${designRest.pos[1]}`);
+  assert.ok(designClose.pos[1] > 14 && designClose.pos[1] < 32, `design close ${designClose.pos[1]}`);
+  const designMoved = Math.hypot(
+    designRest.pos[0] - designClose.pos[0],
+    designRest.pos[1] - designClose.pos[1],
+    designRest.pos[2] - designClose.pos[2],
+  );
+  assert.ok(designMoved > 40, `design move ${designMoved}`);
+  const engineeringAerial = sampleFlight(stopProgress(engineering) - dwell / (n - 1));
+  const engineeringRest = sampleFlight(stopProgress(engineering));
+  const engineeringClose = sampleFlight(stopProgress(engineering) + dwell / (n - 1));
+  assert.ok(engineeringAerial.pos[1] > 110, `engineering aerial ${engineeringAerial.pos[1]}`);
+  assert.ok(engineeringRest.pos[1] > 24 && engineeringRest.pos[1] < 50, `engineering rest ${engineeringRest.pos[1]}`);
+  assert.ok(engineeringClose.pos[1] > 16 && engineeringClose.pos[1] < 28, `engineering close ${engineeringClose.pos[1]}`);
+  const developmentsRest = sampleFlight(stopProgress(developments));
+  assert.ok(developmentsRest.pos[1] > 140 && developmentsRest.pos[1] < 170, `developments ${developmentsRest.pos[1]}`);
+  const seam = sampleFlight(stopProgress(design) + dwell / (n - 1));
+  const after = sampleFlight(stopProgress(design) + dwell / (n - 1) + 1e-4);
+  const jump = Math.hypot(seam.pos[0] - after.pos[0], seam.pos[1] - after.pos[1], seam.pos[2] - after.pos[2]);
+  assert.ok(jump < 2, `design departure ${jump}`);
+});
+
+test("a delivered camera path bends the middle of the fly-in and leaves the ends", () => {
+  const design = oceanStops.findIndex((stop) => stop.id === "design-build");
+  const dwell = 0.17;
+  const n = oceanStops.length;
+  const before = sampleFlight(stopProgress(design));
+  const aerialBefore = sampleFlight(stopProgress(design) - dwell / (n - 1));
+  const closeBefore = sampleFlight(stopProgress(design) + dwell / (n - 1));
+  setEstateCameraPath("design-build", [
+    { t: 0, position: [0, 80, 220], target: [0, 4, 0] },
+    { t: 1, position: [24, 6, 36], target: [0, 3, 0] },
+  ]);
+  try {
+    const mid = sampleFlight(stopProgress(design));
+    const aerial = sampleFlight(stopProgress(design) - dwell / (n - 1));
+    const close = sampleFlight(stopProgress(design) + dwell / (n - 1));
+    const moved = Math.hypot(mid.pos[0] - before.pos[0], mid.pos[1] - before.pos[1], mid.pos[2] - before.pos[2]);
+    assert.ok(moved > 8, `path bend ${moved}`);
+    const aerialJump = Math.hypot(aerial.pos[0] - aerialBefore.pos[0], aerial.pos[1] - aerialBefore.pos[1], aerial.pos[2] - aerialBefore.pos[2]);
+    const closeJump = Math.hypot(close.pos[0] - closeBefore.pos[0], close.pos[1] - closeBefore.pos[1], close.pos[2] - closeBefore.pos[2]);
+    assert.ok(aerialJump < 0.5, `aerial hold ${aerialJump}`);
+    assert.ok(closeJump < 0.5, `close hold ${closeJump}`);
+  } finally {
+    setEstateCameraPath("design-build", null);
+  }
+});
+
+test("the cliff ledge flattens only the terrace", () => {
+  const anchor = estateAnchor("engineering");
+  assert.ok(anchor);
+  const stop = oceanStops.find((item) => item.id === "engineering");
+  assert.ok(stop);
+  const scale = { radius: 310, peak: 34, stretch: 1.12, form: "lagoon" as const };
+  const ledge = {
+    x: anchor.x - stop.x,
+    z: anchor.z - stop.z,
+    yaw: anchor.bearing,
+    width: journeyPath.cliffLedge.width,
+    length: journeyPath.cliffLedge.length,
+    pad: anchor.y,
+  };
+  const position = new THREE.BufferAttribute(new Float32Array([
+    ledge.x, 28, ledge.z,
+    ledge.x + 400, 12, ledge.z,
+  ]), 3);
+  const farBefore = sampleIslandHeight(scale.form, ledge.x + 400, ledge.z, scale.radius, scale.peak, scale.stretch);
+  position.setY(1, farBefore);
+  applyCliffLedge(position, ledge);
+  assert.ok(Math.abs(position.getY(0) - ledge.pad) < 0.2, `pad ${position.getY(0)}`);
+  assert.ok(Math.abs(position.getY(1) - farBefore) < 0.01, `far ${position.getY(1)}`);
+});
+
+test("camera path json parses local frames", () => {
+  const frames = parseEstateCameraPath({
+    frames: [
+      { t: 0, position: [0, 10, 20], target: [0, 2, 0] },
+      { t: 1, position: [4, 3, 8], lookAt: [0, 1, 0] },
+    ],
+  });
+  assert.equal(frames?.length, 2);
+  assert.equal(parseEstateCameraPath({ frames: [] }), null);
 });
 
 test("materials runs alongside the ship, then the track lets go", () => {
