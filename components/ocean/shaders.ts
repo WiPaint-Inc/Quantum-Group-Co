@@ -224,14 +224,14 @@ export const waterFragment = /* glsl */ `
     vec3 sunDir = normalize(uSun);
     vec3 moonDir = normalize(uMoon);
     float lowSun = (1.0 - uNight) * (1.0 - smoothstep(0.04, 0.32, sunDir.y)) * smoothstep(-0.05, 0.1, sunDir.y);
-    float sunGlint = glitter(normal, viewDir, sunDir, mix(0.045, 0.11, lowSun), mix(0.72, 1.45, lowSun));
-    float sunSpark = pow(max(dot(refl, sunDir), 0.0), mix(48.0, 28.0, lowSun));
-    float sparkMask = step(mix(0.82, 0.62, lowSun), hash(floor(vWorld.xz * 0.55 + uTime * 0.4)));
+    float sunGlint = glitter(normal, viewDir, sunDir, mix(0.04, 0.1, lowSun), mix(0.05, 0.9, lowSun));
+    float sunSpark = pow(max(dot(refl, sunDir), 0.0), mix(64.0, 28.0, lowSun));
+    float sparkMask = step(mix(0.9, 0.7, lowSun), hash(floor(vWorld.xz * 0.55 + uTime * 0.4)));
     float moonPath = glitter(normal, viewDir, moonDir, 0.2, 1.1);
     float moonSpark = step(0.68, hash(floor(vWorld.xz * 0.22 + vec2(uTime * 0.12, 1.7)))) * pow(max(dot(normal, normalize(moonDir * 0.35 + viewDir)), 0.0), 8.0);
     vec3 col = mix(water, reflected, fres * (0.32 + 0.35 * (1.0 - shallows)));
-    col += uSunColor * sunGlint * (1.15 + lowSun * 2.4) * (1.0 - uNight) * smoothstep(-0.08, 0.12, sunDir.y);
-    col += uSunColor * sunSpark * sparkMask * (1.6 + lowSun * 1.4) * (1.0 - uNight);
+    col += uSunColor * sunGlint * lowSun * 1.15 * (1.0 - uNight) * smoothstep(-0.08, 0.12, sunDir.y);
+    col += uSunColor * sunSpark * sparkMask * lowSun * 1.35 * (1.0 - uNight);
     col += vec3(0.78, 0.86, 1.0) * (moonPath * 0.7 + moonSpark * 0.85) * uNight;
     col += vec3(0.04, 0.07, 0.12) * uNight;
     float crest = smoothstep(1.4, 3.2, vWorld.y) * 0.18;
@@ -265,6 +265,10 @@ export const islandFragment = /* glsl */ `
   uniform vec3 uCamera;
   uniform float uNight;
   uniform sampler2D uCanopy;
+  uniform sampler2D uTerrain;
+  uniform sampler2DShadow uShadowMap;
+  uniform mat4 uShadowMatrix;
+  uniform float uShadowOn;
   in vec3 vColor;
   in vec3 vNormal;
   in vec3 vWorld;
@@ -274,13 +278,33 @@ export const islandFragment = /* glsl */ `
     vec3 n = normalize(vNormal);
     vec3 sunDir = normalize(uSun);
     float veg = smoothstep(0.02, 0.16, vColor.g - vColor.r * 0.85);
-    vec3 canopy = texture(uCanopy, vWorld.xz * 0.012).rgb;
+    vec3 canopy = texture(uCanopy, vWorld.xz * 0.018).rgb;
+    canopy = mix(canopy, texture(uCanopy, vWorld.xz * 0.07).rgb, 0.42);
+    vec3 grain = texture(uTerrain, vWorld.xz * 0.05).rgb;
     vec3 albedo = mix(vColor, canopy, veg);
+    albedo *= mix(vec3(0.86), grain, 0.5);
     float wrap = max(dot(n, sunDir), 0.0) * 0.78 + 0.22;
     float moon = max(dot(n, normalize(uMoon)), 0.0);
     float wet = smoothstep(1.8, 0.15, vWorld.y) * smoothstep(0.05, 0.2, vColor.r - vColor.g);
     albedo = mix(albedo, albedo * vec3(0.92, 0.88, 0.8), wet * 0.22);
-    vec3 col = albedo * uSunColor * wrap * (1.0 - uNight * 0.42);
+    float shadow = 1.0;
+    if (uShadowOn > 0.5) {
+      vec4 shadowClip = uShadowMatrix * vec4(vWorld, 1.0);
+      vec3 shadowUv = shadowClip.xyz / shadowClip.w;
+      float bias = max(0.0028 * (1.0 - clamp(dot(n, sunDir), 0.0, 1.0)), 0.0008);
+      bool inside = shadowUv.x > 0.0 && shadowUv.x < 1.0 && shadowUv.y > 0.0 && shadowUv.y < 1.0 && shadowUv.z < 1.0;
+      if (inside) {
+        vec2 texel = vec2(1.0 / 2048.0);
+        shadow = 0.0;
+        for (int sx = -1; sx <= 1; sx++) {
+          for (int sy = -1; sy <= 1; sy++) {
+            shadow += texture(uShadowMap, vec3(shadowUv.xy + vec2(float(sx), float(sy)) * texel, shadowUv.z - bias));
+          }
+        }
+        shadow /= 9.0;
+      }
+    }
+    vec3 col = albedo * uSunColor * wrap * mix(1.0, shadow, 1.0 - uNight) * (1.0 - uNight * 0.42);
     col += albedo * vec3(0.62, 0.7, 0.84) * (moon * 0.9 + 0.28) * uNight;
     col += albedo * 0.08;
     float lowSun = (1.0 - uNight) * smoothstep(0.28, 0.0, sunDir.y) * smoothstep(-0.04, 0.1, sunDir.y);
@@ -372,6 +396,9 @@ export const canopyFragment = /* glsl */ `
   uniform vec3 uSunColor;
   uniform float uNight;
   uniform sampler2D uCanopy;
+  uniform sampler2DShadow uShadowMap;
+  uniform mat4 uShadowMatrix;
+  uniform float uShadowOn;
   in vec2 vUv;
   in vec3 vNormal;
   in vec3 vWorld;
@@ -380,7 +407,15 @@ export const canopyFragment = /* glsl */ `
     vec3 n = normalize(vNormal);
     float ndl = max(dot(n, normalize(uSun)), 0.0);
     vec3 tex = texture(uCanopy, vUv).rgb;
-    vec3 col = tex * (0.22 + 0.9 * ndl) * uSunColor * (1.0 - uNight * 0.72);
+    float shadow = 1.0;
+    if (uShadowOn > 0.5) {
+      vec4 shadowClip = uShadowMatrix * vec4(vWorld, 1.0);
+      vec3 shadowUv = shadowClip.xyz / shadowClip.w;
+      if (shadowUv.x > 0.0 && shadowUv.x < 1.0 && shadowUv.y > 0.0 && shadowUv.y < 1.0 && shadowUv.z < 1.0) {
+        shadow = texture(uShadowMap, vec3(shadowUv.xy, shadowUv.z - 0.0015));
+      }
+    }
+    vec3 col = tex * (0.22 + 0.9 * ndl * mix(1.0, shadow, 1.0 - uNight)) * uSunColor * (1.0 - uNight * 0.72);
     col += tex * vec3(0.12, 0.18, 0.24) * uNight;
     float rim = pow(1.0 - clamp(n.y, 0.0, 1.0), 1.5);
     col += vec3(0.18, 0.42, 0.48) * rim * uNight;

@@ -9,6 +9,7 @@ import { PlateBlueprint } from "@/components/ocean/PlateBlueprint";
 import { oceanStops } from "@/content/ocean-stops";
 import { company } from "@/content/site";
 import { contactReveal, nearestStop, stopPresence, stopProgress } from "@/lib/ocean-flight";
+import { journeyPath } from "@/src/journey/path";
 
 function subscribeMounted() {
   return () => {};
@@ -99,20 +100,11 @@ export function OceanJourney({ draft }: { draft: boolean }) {
   const track = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
-  const [quality, setQuality] = useState<"high" | "low">("high");
   const capture = useSyncExternalStore(
     () => () => {},
     () => new URLSearchParams(window.location.search).get("capture") === "1",
     () => false,
   );
-
-  useEffect(() => {
-    const mobile = window.matchMedia("(max-width: 767px)");
-    const apply = () => setQuality(mobile.matches ? "low" : "high");
-    apply();
-    mobile.addEventListener("change", apply);
-    return () => mobile.removeEventListener("change", apply);
-  }, []);
 
   useEffect(() => {
     const filming = new URLSearchParams(window.location.search).get("capture") === "1";
@@ -226,11 +218,11 @@ export function OceanJourney({ draft }: { draft: boolean }) {
   const hero = 1 - Math.min(1, progress / 0.045);
 
   return (
-    <div ref={track} className="relative h-[1100vh]" data-capture={capture ? "1" : undefined} data-journey="ocean">
+    <div ref={track} className="relative" style={{ height: `${journeyPath.timing.scrollTrackVh}vh` }} data-capture={capture ? "1" : undefined} data-journey="ocean">
       <div className="sticky top-0 h-dvh overflow-hidden bg-ink">
         <div className="absolute inset-0" style={{ opacity: ready ? 1 : 0 }}>
           {showScene ? (
-            <OceanCanvas progressRef={progressRef} introRef={introRef} quality={quality} draft={draft} reportFps={capture} onReady={() => setReady(true)} />
+            <OceanCanvas progressRef={progressRef} introRef={introRef} draft={draft} reportFps={capture} onReady={() => setReady(true)} />
           ) : null}
         </div>
         {ready ? null : (
@@ -245,7 +237,7 @@ export function OceanJourney({ draft }: { draft: boolean }) {
           <p className="text-[0.62rem] tracking-[0.28em] text-gold-2 uppercase">{phaseLabel(progress)}</p>
           <OceanSound />
         </div>
-        <div className="pointer-events-none absolute bottom-28 left-6 z-20 max-w-3xl md:left-12" style={{ opacity: hero }}>
+        <div className="pointer-events-none absolute bottom-28 left-6 z-20 max-w-3xl pr-14 md:left-12 md:pr-0" style={{ opacity: hero }}>
           <p className="kicker">{company.name}</p>
           <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.9] text-sand sm:text-7xl md:text-8xl">{company.heroTitle}</h1>
           <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
@@ -288,8 +280,8 @@ export function OceanJourney({ draft }: { draft: boolean }) {
             </div>
           );
         })}
-        <nav aria-label="Journey" className="absolute top-1/2 right-4 z-20 hidden -translate-y-1/2 md:block">
-          <ol className="space-y-2">
+        <nav aria-label="Journey" className="absolute top-1/2 right-3 z-20 -translate-y-1/2 md:right-6">
+          <ol className="flex flex-col items-end gap-3">
             {oceanStops.map((stop, index) => {
               const current = index === active;
               return (
@@ -298,25 +290,16 @@ export function OceanJourney({ draft }: { draft: boolean }) {
                     type="button"
                     onClick={() => seek(stopProgress(index))}
                     aria-current={current ? "step" : undefined}
-                    className={`flex items-center gap-3 text-[0.58rem] tracking-[0.16em] uppercase ${current ? "text-sand" : "text-sand/45"}`}
+                    className="flex items-center justify-end gap-2.5"
                   >
-                    <span className={`block h-1.5 w-1.5 rounded-full ${current ? "bg-gold" : "bg-sand/30"}`} />
-                    {stop.short}
+                    <span className={`text-[0.58rem] tracking-[0.18em] uppercase ${current ? "text-gold" : "hidden text-gold-2/80 md:inline"}`}>
+                      {stop.short}
+                    </span>
+                    <span className={`block shrink-0 rounded-full ${current ? "h-2 w-2 bg-gold shadow-[0_0_8px_rgba(198,163,106,0.9)]" : "h-1.5 w-1.5 bg-gold-2/50"}`} />
                   </button>
                 </li>
               );
             })}
-          </ol>
-        </nav>
-        <nav aria-label="Journey" className="absolute right-4 bottom-4 left-4 z-20 md:hidden">
-          <ol className="flex gap-2 overflow-x-auto pb-1">
-            {oceanStops.map((stop, index) => (
-              <li key={stop.id}>
-                <button type="button" onClick={() => seek(stopProgress(index))} aria-current={index === active ? "step" : undefined} className={`border px-3 py-2 text-[0.58rem] tracking-[0.14em] uppercase ${index === active ? "border-gold text-sand" : "border-gold/25 text-sand/50"}`}>
-                  {stop.short}
-                </button>
-              </li>
-            ))}
           </ol>
         </nav>
       </div>

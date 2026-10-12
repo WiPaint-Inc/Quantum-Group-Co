@@ -171,20 +171,34 @@ export function makePalm() {
   return geo;
 }
 
+function finishRepeat(texture: THREE.Texture) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.anisotropy = 16;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 export function makeCanopyTexture() {
+  const size = 2048;
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext("2d");
-  if (!ctx) return new THREE.CanvasTexture(canvas);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  if (!ctx) return finishRepeat(texture);
   ctx.fillStyle = "#1a432c";
-  ctx.fillRect(0, 0, 512, 512);
-  const greens = ["#2f6b3c", "#3e7d49", "#173c28", "#4d8b54", "#245536", "#10281c"];
-  for (let i = 0; i < 220; i += 1) {
-    const x = Math.random() * 512;
-    const y = Math.random() * 512;
-    const r = 16 + Math.random() * 52;
-    const paint = ctx.createRadialGradient(x, y, 2, x, y, r);
+  ctx.fillRect(0, 0, size, size);
+  const greens = ["#2f6b3c", "#3e7d49", "#173c28", "#4d8b54", "#245536", "#10281c", "#6ea36a", "#143221"];
+  for (let i = 0; i < 1400; i += 1) {
+    const x = Math.random() * size;
+    const y = Math.random() * size;
+    const r = 10 + Math.random() * 70;
+    const paint = ctx.createRadialGradient(x, y, 1, x, y, r);
     paint.addColorStop(0, greens[i % greens.length]);
     paint.addColorStop(1, "rgba(16, 40, 28, 0)");
     ctx.fillStyle = paint;
@@ -192,12 +206,74 @@ export function makeCanopyTexture() {
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
   }
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
+  return finishRepeat(texture);
+}
+
+/** World-space grain for sand and canopy so the islands are not flat vertex colour. */
+export function makeTerrainTexture(size = 2048) {
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const n = hash(x * 0.37 + y * 1.91) * 0.62 + hash(x * 0.07 - y * 0.11 + 8.2) * 0.38;
+      const warm = 0.72 + n * 0.46;
+      const i = (y * size + x) * 4;
+      data[i] = Math.min(255, warm * 255);
+      data[i + 1] = Math.min(255, (warm * 0.96 + 0.02) * 255);
+      data[i + 2] = Math.min(255, (warm * 0.86) * 255);
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
-  return texture;
+  return finishRepeat(texture);
+}
+
+/** 2048 sea normal. R and G are the X/Z tilt, matching the water shader. */
+export function makeWaterNormal(size = 2048) {
+  const heights = new Float32Array(size * size);
+  for (let y = 0; y < size; y += 1) {
+    const v = y / size;
+    for (let x = 0; x < size; x += 1) {
+      const u = x / size;
+      heights[y * size + x] = Math.sin((u * 40 + v * 16) * Math.PI * 2) * 0.5
+        + Math.sin((u * 18 - v * 33) * Math.PI * 2) * 0.28
+        + Math.sin((u * 86 + v * 64) * Math.PI * 2) * 0.12
+        + Math.sin((u * 7 + v * 5) * Math.PI * 2) * 0.22;
+    }
+  }
+  const data = new Uint8Array(size * size * 4);
+  const strength = 2.6;
+  for (let y = 0; y < size; y += 1) {
+    const y0 = (y - 1 + size) % size;
+    const y1 = (y + 1) % size;
+    for (let x = 0; x < size; x += 1) {
+      const x0 = (x - 1 + size) % size;
+      const x1 = (x + 1) % size;
+      const dx = (heights[y * size + x1] - heights[y * size + x0]) * strength;
+      const dz = (heights[y1 * size + x] - heights[y0 * size + x]) * strength;
+      const inv = 1 / Math.hypot(-dx, 1, -dz);
+      const i = (y * size + x) * 4;
+      data[i] = ((-dx) * inv * 0.5 + 0.5) * 255;
+      data[i + 1] = ((-dz) * inv * 0.5 + 0.5) * 255;
+      data[i + 2] = (inv * 0.5 + 0.5) * 255;
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  texture.colorSpace = THREE.NoColorSpace;
+  return finishRepeat(texture);
+}
+
+export function enableSolidShadows(root: THREE.Object3D | null) {
+  root?.traverse((obj) => {
+    const mesh = obj as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const material = mesh.material as THREE.Material | THREE.Material[] | undefined;
+    const list = Array.isArray(material) ? material : material ? [material] : [];
+    if (list.some((item) => item.transparent || item.depthWrite === false || (item as THREE.ShaderMaterial).isShaderMaterial)) return;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+  });
 }
 
 export function makeCanopyDome() {

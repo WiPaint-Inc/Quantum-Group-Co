@@ -24,7 +24,8 @@ export function Header() {
 
   return (
     <header className={`fixed inset-x-0 top-0 z-50 ${paper ? "border-b border-[#c5a059]/50 bg-[#f3efe6]/95" : ""}`}>
-      <div className="flex items-center justify-between px-6 py-5 md:px-12">
+      {paper ? null : <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[130px] bg-gradient-to-b from-black/60 via-black/25 to-transparent" />}
+      <div className="relative flex items-center justify-between px-6 py-5 md:px-12" style={paper ? undefined : { textShadow: "0 1px 2px rgba(0,0,0,0.72), 0 0 14px rgba(0,0,0,0.35)" }}>
         <Link href="/" className={`font-serif text-lg tracking-[0.18em] uppercase ${ink}`} onClick={() => setOpen(false)}>
           {company.name}
         </Link>
@@ -35,7 +36,7 @@ export function Header() {
             </Link>
             {servicesOpen ? (
               <div className="absolute top-full left-0 z-50 pt-3">
-                <ul className={`w-80 border p-4 normal-case ${paper ? "border-[#c5a059] bg-[#f3efe6]" : "border-line bg-ink/95"}`}>
+                <ul className={`w-80 border p-4 normal-case ${paper ? "border-[#c5a059] bg-[#f3efe6]" : "border-line bg-ink/95"}`} style={{ textShadow: "none" }}>
                   {services.map((service) => (
                     <li key={service.slug}>
                       <Link href={`/services/${service.slug}`} className={`block py-2 tracking-normal hover:text-[#8d7344] ${paper ? "text-[#1a1a1a]" : "text-sand"}`} onClick={() => setServicesOpen(false)}>
@@ -95,7 +96,8 @@ export function Header() {
 export function HeaderFallback() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-6 py-5 md:px-12">
-      <span className="font-serif text-lg tracking-[0.18em] text-sand uppercase">{company.name}</span>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[130px] bg-gradient-to-b from-black/60 via-black/25 to-transparent" />
+      <span className="relative font-serif text-lg tracking-[0.18em] text-sand uppercase" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.72)" }}>{company.name}</span>
     </header>
   );
 }

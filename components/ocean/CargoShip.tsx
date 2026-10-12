@@ -4,6 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { buildLines } from "@/components/ocean/linework";
+import { enableSolidShadows } from "@/components/ocean/geometry";
 import { lineFragment, lineVertex } from "@/components/ocean/shaders";
 import { oceanStops } from "@/content/ocean-stops";
 import { drawAmount, SHIP_HEADING, SHIP_LENGTH, shipMotion } from "@/lib/ocean-flight";
@@ -84,29 +85,34 @@ function makeHull() {
 }
 
 function paintContainers() {
+  const width = 512;
+  const height = 1024;
   const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 256;
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext("2d");
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
   if (!ctx) return texture;
   ctx.fillStyle = "#f2f2f0";
-  ctx.fillRect(0, 0, 128, 256);
-  for (let x = 0; x < 128; x += 8) {
-    ctx.fillStyle = x % 16 === 0 ? "#d5d3ce" : "#f7f6f3";
-    ctx.fillRect(x, 0, 4, 256);
+  ctx.fillRect(0, 0, width, height);
+  for (let x = 0; x < width; x += 32) {
+    ctx.fillStyle = x % 64 === 0 ? "#d5d3ce" : "#f7f6f3";
+    ctx.fillRect(x, 0, 16, height);
   }
   ctx.strokeStyle = "rgba(28, 24, 20, 0.55)";
-  ctx.lineWidth = 10;
-  ctx.strokeRect(5, 6, 118, 244);
+  ctx.lineWidth = 28;
+  ctx.strokeRect(20, 24, width - 40, height - 48);
   ctx.fillStyle = "rgba(70, 48, 32, 0.18)";
-  ctx.fillRect(0, 214, 128, 42);
+  ctx.fillRect(0, height - 168, width, 168);
   ctx.fillStyle = "rgba(40, 36, 32, 0.12)";
-  for (let y = 18; y < 240; y += 46) ctx.fillRect(8, y, 112, 2);
+  for (let y = 72; y < height - 80; y += 184) ctx.fillRect(32, y, width - 64, 8);
   texture.needsUpdate = true;
   return texture;
 }
@@ -309,6 +315,9 @@ export function CargoShip({ progressRef }: { progressRef: { current: number } })
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    enableSolidShadows(rig.current);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
   }, [boxes]);
 
   useEffect(() => () => {

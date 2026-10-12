@@ -1,16 +1,6 @@
-export type IslandKind =
-  | "arrival"
-  | "design"
-  | "plans"
-  | "construction"
-  | "engineering"
-  | "developments"
-  | "materials"
-  | "signal"
-  | "contact";
+import { islandPosition, islandScaleFor, type IslandForm, type IslandKind, type IslandSize } from "@/src/journey/path";
 
-export type IslandSize = "none" | "private" | "bar" | "cay" | "mid" | "large" | "peninsula";
-export type IslandForm = "volcano" | "ridge" | "headland" | "lagoon" | "peninsula" | "cay" | "bar" | "private";
+export type { IslandForm, IslandKind, IslandSize };
 
 export type OceanStop = {
   id: string;
@@ -45,8 +35,7 @@ export const oceanStops: OceanStop[] = [
     cta: "The company",
     kind: "arrival",
     size: "none",
-    x: 0,
-    z: 900,
+    ...islandPosition("arrival"),
   },
   {
     id: "design-build",
@@ -61,8 +50,7 @@ export const oceanStops: OceanStop[] = [
     size: "large",
     plate: "mega-estate-aerial",
     plateCaption: "The Grand Beachfront Estate",
-    x: -620,
-    z: 180,
+    ...islandPosition("design-build"),
   },
   {
     id: "plans",
@@ -74,8 +62,7 @@ export const oceanStops: OceanStop[] = [
     cta: "Plans and renderings",
     kind: "plans",
     size: "mid",
-    x: -2300,
-    z: -1180,
+    ...islandPosition("plans"),
   },
   {
     id: "construction",
@@ -87,8 +74,7 @@ export const oceanStops: OceanStop[] = [
     cta: "Construction",
     kind: "construction",
     size: "mid",
-    x: -3680,
-    z: 420,
+    ...islandPosition("construction"),
   },
   {
     id: "engineering",
@@ -100,8 +86,7 @@ export const oceanStops: OceanStop[] = [
     cta: "Engineering",
     kind: "engineering",
     size: "mid",
-    x: -2860,
-    z: -2680,
+    ...islandPosition("engineering"),
   },
   {
     id: "developments",
@@ -115,8 +100,7 @@ export const oceanStops: OceanStop[] = [
     size: "peninsula",
     plate: "peninsula-development-big-beach",
     plateCaption: "Peninsula Development",
-    x: 980,
-    z: -2100,
+    ...islandPosition("developments"),
   },
   {
     id: "materials",
@@ -128,8 +112,7 @@ export const oceanStops: OceanStop[] = [
     cta: "Materials",
     kind: "materials",
     size: "none",
-    x: 2920,
-    z: -720,
+    ...islandPosition("materials"),
   },
   {
     id: "build-live",
@@ -142,8 +125,7 @@ export const oceanStops: OceanStop[] = [
     secondary: { href: "/how-we-work", label: "How we work" },
     kind: "signal",
     size: "cay",
-    x: 1680,
-    z: -3480,
+    ...islandPosition("build-live"),
   },
   {
     id: "contact",
@@ -155,20 +137,10 @@ export const oceanStops: OceanStop[] = [
     cta: "Start a conversation",
     kind: "contact",
     size: "private",
-    x: 3480,
-    z: 260,
+    ...islandPosition("contact"),
   },
 ];
 
 export function islandScale(size: IslandSize, kind?: IslandKind) {
-  if (size === "large") return { radius: 430, peak: 78, stretch: 1.16, form: "volcano" as const };
-  if (size === "peninsula") return { radius: 560, peak: 44, stretch: 2.45, form: "peninsula" as const };
-  if (size === "mid" && kind === "construction") return { radius: 260, peak: 64, stretch: 1.22, form: "headland" as const };
-  if (size === "mid" && kind === "engineering") return { radius: 310, peak: 34, stretch: 1.12, form: "lagoon" as const };
-  if (size === "mid" && kind === "plans") return { radius: 280, peak: 68, stretch: 1.32, form: "ridge" as const };
-  if (size === "mid") return { radius: 250, peak: 42, stretch: 1.18, form: "ridge" as const };
-  if (size === "private") return { radius: 16, peak: 0.55, stretch: 1.08, form: "private" as const };
-  if (size === "cay") return { radius: 64, peak: 8, stretch: 1.06, form: "cay" as const };
-  if (size === "bar") return { radius: 120, peak: 1.15, stretch: 1.85, form: "bar" as const };
-  return { radius: 0, peak: 0, stretch: 1, form: "cay" as const };
+  return islandScaleFor(size, kind);
 }

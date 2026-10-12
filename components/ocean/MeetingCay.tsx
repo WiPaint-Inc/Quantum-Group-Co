@@ -2,9 +2,9 @@
 
 import { ContactShadows } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { makePalm, sampleIslandHeight } from "@/components/ocean/geometry";
+import { enableSolidShadows, makePalm, sampleIslandHeight } from "@/components/ocean/geometry";
 import { contactYaw } from "@/lib/ocean-flight";
 
 const SAND = sampleIslandHeight("private", 0, 0.7, 16, 0.55, 1.08);
@@ -19,6 +19,7 @@ function tumbler() {
 }
 
 export function MeetingCay({ x, z }: { x: number; z: number }) {
+  const root = useRef<THREE.Group>(null);
   const { scene, gl } = useThree();
   const palm = useMemo(() => makePalm(), []);
   const glassGeo = useMemo(() => tumbler(), []);
@@ -102,8 +103,12 @@ export function MeetingCay({ x, z }: { x: number; z: number }) {
     warmer.dispose();
   }, [citrus, glass, glassGeo, palm, warmer, wood]);
 
+  useEffect(() => {
+    enableSolidShadows(root.current);
+  }, []);
+
   return (
-    <group position={[x, 0, z]} rotation={[0, contactYaw, 0]}>
+    <group ref={root} position={[x, 0, z]} rotation={[0, contactYaw, 0]}>
       <group position={[0, SAND, 0]}>
         <TeakChair side={-1} material={wood} />
         <TeakChair side={1} material={wood} />

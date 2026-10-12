@@ -4,7 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { islandScale, oceanStops } from "@/content/ocean-stops";
-import { hash, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, sampleIslandHeight } from "@/components/ocean/geometry";
+import { enableSolidShadows, hash, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, makeTerrainTexture, makeWaterNormal, sampleIslandHeight } from "@/components/ocean/geometry";
 import { linesFor } from "@/components/ocean/linework";
 import { MeetingCay } from "@/components/ocean/MeetingCay";
 import {
@@ -21,39 +21,41 @@ import {
 } from "@/components/ocean/shaders";
 import { CargoShip } from "@/components/ocean/CargoShip";
 import { drawAmount, finaleBlend, sampleFlight, scenicCays, shipMotion, shipTrack, stopPresence } from "@/lib/ocean-flight";
+import { journeyPath } from "@/src/journey/path";
 
 const GOLD = new THREE.Color("#e6d2a8");
 
 export function OceanWorld({
   progressRef,
   introRef,
-  quality,
   draft,
   reportFps,
 }: {
   progressRef: { current: number };
   introRef: { current: number };
-  quality: "high" | "low";
   draft: boolean;
   reportFps?: boolean;
 }) {
-  const normal = useMemo(() => {
-    const texture = new THREE.TextureLoader().load("/textures/waternormals.jpg");
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.colorSpace = THREE.NoColorSpace;
-    return texture;
-  }, []);
-
+  const normal = useMemo(() => makeWaterNormal(2048), []);
   const canopyTex = useMemo(() => makeCanopyTexture(), []);
+  const terrain = useMemo(() => makeTerrainTexture(2048), []);
+  const shadowPlaceholder = useMemo(() => {
+    const tex = new THREE.DepthTexture(4, 4, THREE.UnsignedIntType);
+    tex.format = THREE.DepthFormat;
+    tex.compareFunction = THREE.LessEqualCompare;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }, []);
+  const depthMaterial = useMemo(() => new THREE.MeshDepthMaterial(), []);
 
   const islands = useMemo(() => {
-    const segs = quality === "high" ? 80 : 40;
+    const segs = 144;
     return [...oceanStops, ...scenicCays]
       .filter((stop) => stop.size !== "none")
       .map((stop) => {
         const scale = islandScale(stop.size, stop.kind);
-        const detail = scale.radius < 30 ? Math.min(segs, 48) : scale.radius > 200 ? Math.max(segs, 96) : segs;
+        const detail = scale.radius < 30 ? 72 : scale.radius > 200 ? 176 : segs;
         return {
           stop,
           scale,
@@ -61,7 +63,7 @@ export function OceanWorld({
           lines: oceanStops.includes(stop) && stop.size !== "private" ? linesFor(stop.kind, scale.radius) : null,
         };
       });
-  }, [quality]);
+  }, []);
 
   const islandUniform = useMemo(() => {
     const values = Array.from({ length: 16 }, () => new THREE.Vector4());
@@ -130,11 +132,15 @@ export function OceanWorld({
           uCamera: { value: new THREE.Vector3() },
           uNight: { value: 0 },
           uCanopy: { value: canopyTex },
+          uTerrain: { value: terrain },
+          uShadowMap: { value: shadowPlaceholder },
+          uShadowMatrix: { value: new THREE.Matrix4() },
+          uShadowOn: { value: 0 },
         },
         vertexShader: islandVertex,
         fragmentShader: islandFragment,
       }),
-    [canopyTex],
+    [canopyTex, shadowPlaceholder, terrain],
   );
 
   const canopyMat = useMemo(
@@ -147,11 +153,14 @@ export function OceanWorld({
           uSunColor: { value: new THREE.Color("#ffe0b0") },
           uNight: { value: 0 },
           uCanopy: { value: canopyTex },
+          uShadowMap: { value: shadowPlaceholder },
+          uShadowMatrix: { value: new THREE.Matrix4() },
+          uShadowOn: { value: 0 },
         },
         vertexShader: canopyVertex,
         fragmentShader: canopyFragment,
       }),
-    [canopyTex],
+    [canopyTex, shadowPlaceholder],
   );
 
   const lineMaterials = useMemo(() => {
@@ -217,9 +226,7 @@ export function OceanWorld({
     const spots: Array<{ x: number; y: number; z: number; rot: number; scale: number }> = [];
     for (const island of islands) {
       if (island.scale.radius < 22) continue;
-      const budget = quality === "high"
-        ? island.scale.radius > 200 ? 14 : island.scale.radius > 80 ? 8 : 4
-        : island.scale.radius > 80 ? 4 : 2;
+      const budget = island.scale.radius > 200 ? 14 : island.scale.radius > 80 ? 8 : 4;
       for (let i = 0; i < budget; i += 1) {
         const seed = hash(island.stop.x * 0.01 + island.stop.z * 0.013 + i * 17.3);
         const seed2 = hash(seed * 9.1 + 2);
@@ -239,16 +246,14 @@ export function OceanWorld({
       }
     }
     return { geometry, material, spots };
-  }, [islands, quality]);
+  }, [islands]);
 
   const masses = useMemo(() => {
     const geometry = makeCanopyDome();
     const spots: Array<{ x: number; y: number; z: number; sx: number; sy: number; sz: number; rot: number }> = [];
     for (const island of islands) {
       if (island.scale.radius < 40) continue;
-      const budget = quality === "high"
-        ? island.scale.radius > 200 ? 28 : island.scale.radius > 80 ? 14 : 5
-        : island.scale.radius > 80 ? 8 : 3;
+      const budget = island.scale.radius > 200 ? 28 : island.scale.radius > 80 ? 14 : 5;
       for (let i = 0; i < budget; i += 1) {
         const seed = hash(island.stop.x * 0.02 + i * 3.1 + island.stop.z * 0.01);
         const seed2 = hash(seed * 4.2 + 8);
@@ -271,7 +276,7 @@ export function OceanWorld({
       }
     }
     return { geometry, spots };
-  }, [islands, quality]);
+  }, [islands]);
 
   const birds = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
@@ -279,13 +284,16 @@ export function OceanWorld({
       0, 0, 0, -1.1, 0.04, -0.35, -1, 0, 0.12,
       0, 0, 0, 1.1, 0.04, -0.35, 1, 0, 0.12,
     ], 3));
-    const count = quality === "high" ? 14 : 5;
+    const count = 14;
     return { geometry, count };
-  }, [quality]);
+  }, []);
 
   useEffect(() => () => {
     normal.dispose();
     canopyTex.dispose();
+    terrain.dispose();
+    shadowPlaceholder.dispose();
+    depthMaterial.dispose();
     water.dispose();
     sky.dispose();
     land.dispose();
@@ -301,19 +309,47 @@ export function OceanWorld({
       plate.mesh.geometry.dispose();
       (plate.mesh.material as THREE.Material).dispose();
     }
-  }, [birds.geometry, canopyMat, canopyTex, islands, land, lineMaterials, masses.geometry, normal, palm.geometry, palm.material, plates, sky, water]);
+  }, [birds.geometry, canopyMat, canopyTex, depthMaterial, islands, land, lineMaterials, masses.geometry, normal, palm.geometry, palm.material, plates, shadowPlaceholder, sky, terrain, water]);
 
   const { camera, scene, size, gl } = useThree();
   const look = useMemo(() => new THREE.Vector3(), []);
   const desired = useMemo(() => new THREE.Vector3(), []);
   const desiredLook = useMemo(() => new THREE.Vector3(), []);
   const fps = useRef(60);
+  const lowFor = useRef(0);
   const birdMesh = useRef<THREE.InstancedMesh>(null);
   const skyMesh = useRef<THREE.Mesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const resolution = useMemo(() => new THREE.Vector2(1280, 720), []);
   const hemi = useMemo(() => new THREE.HemisphereLight("#c5d7ea", "#1c3a32", 0.55), []);
-  const sunLight = useMemo(() => new THREE.DirectionalLight("#fff1d2", 1.5), []);
+  const sunLight = useMemo(() => {
+    const light = new THREE.DirectionalLight("#fff1d2", 1.5);
+    light.castShadow = true;
+    light.shadow.mapSize.set(2048, 2048);
+    light.shadow.bias = -0.00035;
+    light.shadow.normalBias = 0.45;
+    const shadowCamera = light.shadow.camera as THREE.OrthographicCamera;
+    shadowCamera.near = 1;
+    shadowCamera.far = 2200;
+    return light;
+  }, []);
+
+  useEffect(() => {
+    const max = gl.capabilities.getMaxAnisotropy();
+    for (const texture of [normal, canopyTex, terrain]) {
+      texture.anisotropy = max;
+      texture.needsUpdate = true;
+    }
+    for (const plate of plates) {
+      const map = (plate.mesh.material as THREE.MeshBasicMaterial).map;
+      if (!map) continue;
+      map.anisotropy = max;
+      map.magFilter = THREE.LinearFilter;
+      map.minFilter = THREE.LinearMipmapLinearFilter;
+      map.generateMipmaps = true;
+      map.needsUpdate = true;
+    }
+  }, [canopyTex, gl, normal, plates, terrain]);
 
   useEffect(() => {
     scene.add(hemi);
@@ -344,8 +380,9 @@ export function OceanWorld({
     desired.z += motion.dz * track;
     desiredLook.x += motion.dx * track;
     desiredLook.z += motion.dz * track;
-    const floor = descending || flight.pos[1] < 55 ? 1.15 : 55;
-    desired.y = Math.min(310, Math.max(floor, desired.y));
+    const floorLimit = journeyPath.camera.cruiseFloor;
+    const floor = descending || flight.pos[1] < floorLimit ? journeyPath.camera.descentFloor : floorLimit;
+    desired.y = Math.min(journeyPath.camera.cruiseCeiling, Math.max(floor, desired.y));
     const damp = 1 - Math.exp(-2.4 * delta);
     camera.position.lerp(desired, damp);
     look.lerp(desiredLook, damp);
@@ -438,6 +475,37 @@ export function OceanWorld({
     }
     const instant = 1 / Math.max(delta, 1e-4);
     fps.current = fps.current * 0.9 + instant * 0.1;
+    const span = THREE.MathUtils.clamp(Math.max(40, camera.position.y * 1.8), 40, 900);
+    const shadowCamera = sunLight.shadow.camera as THREE.OrthographicCamera;
+    shadowCamera.left = -span;
+    shadowCamera.right = span;
+    shadowCamera.top = span;
+    shadowCamera.bottom = -span;
+    shadowCamera.updateProjectionMatrix();
+    const depth = sunLight.shadow.map?.depthTexture;
+    if (depth && sunLight.castShadow) {
+      land.uniforms.uShadowMap.value = depth;
+      canopyMat.uniforms.uShadowMap.value = depth;
+      (land.uniforms.uShadowMatrix.value as THREE.Matrix4).copy(sunLight.shadow.matrix);
+      (canopyMat.uniforms.uShadowMatrix.value as THREE.Matrix4).copy(sunLight.shadow.matrix);
+      land.uniforms.uShadowOn.value = 1;
+      canopyMat.uniforms.uShadowOn.value = 1;
+    }
+    if (!reportFps) {
+      if (fps.current < 24) lowFor.current += delta;
+      else lowFor.current = Math.max(0, lowFor.current - delta);
+      if (lowFor.current > 2.8) {
+        const current = gl.getPixelRatio();
+        const next = current > 2.4 ? 2 : current > 1.7 ? 1.5 : current > 1.05 ? 1 : current;
+        if (next < current - 0.04) gl.setPixelRatio(next);
+        else if (current <= 1.05 && fps.current < 16 && sunLight.castShadow) {
+          sunLight.castShadow = false;
+          land.uniforms.uShadowOn.value = 0;
+          canopyMat.uniforms.uShadowOn.value = 0;
+        }
+        lowFor.current = 0;
+      }
+    }
     if (reportFps) {
       const view = desiredLook.clone().sub(camera.position);
       const align = (flight.sun[0] * view.x + flight.sun[2] * view.z) / (Math.hypot(flight.sun[0], flight.sun[2]) * Math.hypot(view.x, view.z) || 1);
@@ -448,23 +516,24 @@ export function OceanWorld({
         sunY: Number(flight.sun[1].toFixed(2)),
         bank: Number(flight.bank.toFixed(3)),
         align: Number(align.toFixed(2)),
+        dpr: Number(gl.getPixelRatio().toFixed(2)),
       };
     }
   });
 
-  const oceanSeg = quality === "high" ? 110 : 56;
+  const oceanSeg = 168;
 
   return (
     <>
       <mesh ref={skyMesh} material={sky} frustumCulled={false}>
-        <sphereGeometry args={[6000, 32, 20]} />
+        <sphereGeometry args={[6000, 64, 40]} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-200, 0, -1100]} material={water} frustumCulled={false}>
         <planeGeometry args={[28000, 22000, oceanSeg, oceanSeg]} />
       </mesh>
       {islands.map((island) => (
         <group key={island.stop.id} position={[island.stop.x, 0, island.stop.z]}>
-          <mesh geometry={island.geometry} material={land} />
+          <mesh geometry={island.geometry} material={land} castShadow receiveShadow customDepthMaterial={depthMaterial} />
           {island.lines ? (
             <mesh geometry={island.lines} material={lineMaterials.get(island.stop.id)} position={[0, 0.6, 0]} />
           ) : null}
@@ -483,6 +552,8 @@ export function OceanWorld({
           node.instanceMatrix.needsUpdate = true;
         }}
         args={[masses.geometry, canopyMat, masses.spots.length]}
+        castShadow
+        customDepthMaterial={depthMaterial}
       />
       <instancedMesh
         ref={(node) => {
@@ -495,6 +566,7 @@ export function OceanWorld({
             node.setMatrixAt(index, dummy.matrix);
           });
           node.instanceMatrix.needsUpdate = true;
+          enableSolidShadows(node);
         }}
         args={[palm.geometry, palm.material, palm.spots.length]}
       />
