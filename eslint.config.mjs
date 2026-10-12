@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
-    files: ["components/experience/**/*.{ts,tsx}", "components/journey/**/*.{ts,tsx}", "components/ocean/**/*.{ts,tsx}", "components/concept/**/*.{ts,tsx}"],
+    files: ["components/experience/**/*.{ts,tsx}", "components/journey/**/*.{ts,tsx}", "components/ocean/**/*.{ts,tsx}", "components/concept/**/*.{ts,tsx}", "components/estates/**/*.{ts,tsx}"],
     rules: {
       // React Three Fiber updates cameras, materials, and fog by mutating
       // Three.js objects inside useFrame. That is the scene graph, not React state.

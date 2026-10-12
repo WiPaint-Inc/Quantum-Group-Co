@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PlateBlueprint } from "@/components/ocean/PlateBlueprint";
+import { EstateWalk3d } from "@/components/estates/EstateWalk3d";
 import { WalkthroughVideo } from "@/components/estates/WalkthroughVideo";
 import { WHATSAPP_ENQUIRY_NUMBER, conceptPlate, estates, type EstateRecord, type EstateSpecs } from "@/content/estates";
 
@@ -169,6 +170,7 @@ export function EstatePage({ estate, draft }: { estate: EstateRecord; draft: boo
         {draft ? (
           <div className="mt-16">
             <WalkthroughVideo src={estate.video} poster={plate.src} />
+            {estate.walkthrough3d ? <EstateWalk3d config={estate.walkthrough3d} /> : null}
           </div>
         ) : null}
 

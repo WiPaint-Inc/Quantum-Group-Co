@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { estateSceneModules } from "../components/estates/scene-modules.ts";
 import { WHATSAPP_ENQUIRY_NUMBER, estates } from "./estates.ts";
 
 const EMPTY = [
@@ -42,6 +43,7 @@ test("the other four estates stay empty for later drawings", () => {
     assert.equal(estate.video, null);
     assert.deepEqual(estate.plans, []);
     assert.equal(estate.walkthrough3d, undefined);
+    assert.deepEqual(Object.keys(estateSceneModules), []);
     assert.ok(estate.materials.length > 0);
     assert.ok(estate.landscape.length > 0);
   }
