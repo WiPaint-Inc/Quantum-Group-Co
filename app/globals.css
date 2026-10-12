@@ -3,6 +3,7 @@
 @theme inline {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-bodoni), Georgia, "Times New Roman", serif;
   --color-ink: #071014;
   --color-sand: #f4efe6;
   --color-sand-dim: #c9c2b4;
@@ -39,10 +40,6 @@ body {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: #e6d2a8;
-}
-
-.font-display {
-  font-family: var(--font-display), Georgia, "Times New Roman", serif;
 }
 
 .paper {

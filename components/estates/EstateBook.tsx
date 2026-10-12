@@ -121,7 +121,7 @@ function Schedule() {
 
 export function EstateIndex({ draft }: { draft: boolean }) {
   return (
-    <main id="content" className="paper px-6 pt-28 pb-24 md:px-14">
+    <main id="content" className="paper min-h-dvh bg-[#f3efe6] px-6 pt-28 pb-24 text-[#1a1a1a] md:px-14">
       <p className="paper-kicker">The collection</p>
       <h1 className="mt-4 max-w-3xl font-display text-6xl leading-[0.92] text-[#1a1a1a] md:text-8xl">Five estates.</h1>
       <p className="mt-6 max-w-xl text-base leading-relaxed text-[#4a453c]">
@@ -158,7 +158,7 @@ export function EstatePage({ estate, draft }: { estate: EstateRecord; draft: boo
   const previous = estates[(index + estates.length - 1) % estates.length];
   const next = estates[(index + 1) % estates.length];
   return (
-    <main id="content" className="paper pb-24">
+    <main id="content" className="paper min-h-dvh bg-[#f3efe6] pb-24 text-[#1a1a1a]">
       <Hero estate={estate} draft={draft} />
       <article className="px-6 py-20 md:px-14">
         <section id="specs" className="grid gap-12 border-t border-[#c5a059] pt-12 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,26rem)] lg:gap-20">

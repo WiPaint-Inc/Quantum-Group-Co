@@ -142,25 +142,68 @@ Human pages `/client/portal` and `/client/homes/{slug}` require the placeholder 
 
 ## Hosting
 
-Do not use a static export. Cache Components need a Node.js runtime.
+Cloudflare Workers, free plan, via the OpenNext adapter. Cache Components stay on, so the feature flags are read per request. Static export is not used. `wrangler.jsonc` is the config Workers Builds imports. It has no account id and no secrets. No R2 bucket and no Images binding.
 
-Cloudflare Workers, free plan, via OpenNext:
+`npm run build` is the Next.js build. `npm run build:cloudflare` is the same command Workers Builds runs.
 
-```bash
-npm run build:cloudflare
-```
+Workers Builds, connected to this Git repository:
 
-That runs `opennextjs-cloudflare build`. Wrangler config is `wrangler.jsonc`. Worker name `quantum-group-co`. Compatibility date `2026-10-11`. Flags `nodejs_compat` and `global_fetch_strictly_public`. No R2 bucket and no Images binding, so the free plan does not need those products.
+| Setting | Value |
+| --- | --- |
+| Worker name | `quantum-group-co` |
+| Production branch | `main` |
+| Root directory | repository root |
+| Build command | `npx opennextjs-cloudflare build` |
+| Deploy command | `npx opennextjs-cloudflare deploy -- --keep-vars` |
+| Non-production branch deploy command | `npx wrangler versions upload` |
+| Compatibility date | `2026-10-11` |
+| Compatibility flags | `nodejs_compat`, `global_fetch_strictly_public` |
 
-Workers Builds, connected to GitHub:
+`preview_urls` is true, so a non-production upload receives a `workers.dev` preview URL. `--keep-vars` leaves dashboard variables in place on production deploys. The worker entry is `.open-next/worker.js`. Static files come from `.open-next/assets` on the `ASSETS` binding. `WORKER_SELF_REFERENCE` points at `quantum-group-co`.
 
-- Production branch: `main`
-- Root directory: repository root
-- Build command: `npx opennextjs-cloudflare build`
-- Deploy command: `npx opennextjs-cloudflare deploy`
-- Non-production branch deploy command: `npx wrangler versions upload`
+### Environment variables
 
-`DRAFT_CONTENT`, `PAYMENTS_ENABLED`, `ROBOTICS_ENABLED`, `AI_FEATURES_ENABLED`, and `AGENT_API_ENABLED` default to false. Set them as build variables if a preview should turn one on. `NEXT_PUBLIC_SITE_URL` defaults to `https://quantum-group.example` when unset.
+Set these in the Workers Builds dashboard. Production and Preview are separate. Leave secrets empty until they are real. Do not commit them.
+
+`NEXT_PUBLIC_*` values are inlined when Next builds, so they must be present for that build. Server flags are also read on the request. An unset flag is off, because each flag is enabled only by the exact string `true`. `SHOW_VIVID_PRODUCT_LINES` stays on unless it is `false`.
+
+For a preview that shows the concept plates, set `DRAFT_CONTENT` to `true` on the Preview environment only. Leave it unset or `false` on Production.
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Public origin for metadata, sitemap, JSON-LD, and Open Graph. Unset falls back to `https://quantum-group.example`. |
+| `NEXT_PUBLIC_REOWN_PROJECT_ID` | Wallet connection. Unset hides the connection UI. QR and address still work. |
+| `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` | Hosted card link (`https://buy.stripe.com/...`). Empty until used. |
+| `NEXT_PUBLIC_COINBASE_COMMERCE_URL` | Hosted checkout (`https://commerce.coinbase.com/...`). Empty until used. |
+| `NEXT_PUBLIC_SHOW_PLACEHOLDERS` | Set `true` to show `[PLACEHOLDER]` and `[CONFIRM]` notes on a production build. |
+| `PAYMENTS_ENABLED` | Master switch. Leave `false`. |
+| `AI_FEATURES_ENABLED` | Leave `false`. Hides the future figure, its line, and its API field. |
+| `ROBOTICS_ENABLED` | Leave `false`. `/services/robotics` stays 404. |
+| `AGENT_API_ENABLED` | Leave `false`. `/llms.txt`, `/api/openapi`, `/api/openapi.json`, `/api`, and `/api/auth/agent` stay 404. |
+| `DRAFT_CONTENT` | `false` on Production. `true` on Preview, so concept plates show on the non-production preview. |
+| `SHOW_VIVID_PRODUCT_LINES` | Leave unset to keep the product-line name. |
+| `AGENT_API_KEY` | Secret for `X-Quantum-Agent-Key`. Empty until a key should succeed. |
+| `PAY_QUANTUM_BUSINESS_NAME` | Quantum profile name. |
+| `PAY_QUANTUM_BASE_ADDRESS` | Quantum Base receiving address. |
+| `PAY_QUANTUM_ETHEREUM_ADDRESS` | Quantum Ethereum receiving address. |
+| `PAY_QUANTUM_SOLANA_ADDRESS` | Quantum Solana receiving address. |
+| `PAY_BASE_ADDRESS` | Alias of the Quantum Base address. |
+| `PAY_ETHEREUM_ADDRESS` | Alias of the Quantum Ethereum address. |
+| `PAY_SOLANA_ADDRESS` | Alias of the Quantum Solana address. |
+| `PAY_BOT_BUSINESS_NAME` | Other profile name. |
+| `PAY_BOT_BASE_ADDRESS` | Other profile Base address. |
+| `PAY_BOT_ETHEREUM_ADDRESS` | Other profile Ethereum address. |
+| `PAY_BOT_SOLANA_ADDRESS` | Other profile Solana address. |
+| `ANONYMOUS_TIP_CAP_USD` | Tips above this need a name and email. Default 1000. |
+| `PAY_FIAT_ENABLED` | Leave `false`. Card links only, never a secret key. |
+| `SANCTIONS_API_URL` | Optional address screen. Unset. |
+| `SANCTIONS_API_KEY` | Secret for that screen. Unset. |
+| `PAYMENT_LOG_WEBHOOK_URL` | Optional HTTPS log destination. Unset means the server console. |
+| `PAY_SOLANA_RPC_URL` | Optional Solana RPC. Unset uses the public mainnet endpoint. |
+
+### Preview deployments
+
+`main` uses the deploy command and the Production variables. Every other branch uses `npx wrangler versions upload` and the Preview variables. With `preview_urls` on, that upload gets a `workers.dev` preview address. Set `DRAFT_CONTENT=true` on Preview and leave `PAYMENTS_ENABLED`, `AI_FEATURES_ENABLED`, `ROBOTICS_ENABLED`, and `AGENT_API_ENABLED` false in both environments. Set `NEXT_PUBLIC_SITE_URL` per environment when the preview or production hostname should appear in metadata. Unset, it stays `https://quantum-group.example`.
 
 ## Phase 2
 
@@ -169,7 +212,7 @@ Workers Builds, connected to GitHub:
 - Chain verification of payment logs, still without holding keys in the repo.
 - Actual NFT or Bitcoin Ordinal issuance for plan sets and render plates, aimed at private buyers.
 - Per-home applications mounted at `/client/homes/[slug]`. The slot and its contract are already there. Nothing is mounted.
-- A final domain in `NEXT_PUBLIC_SITE_URL`, and a chosen host (Vercel or Cloudflare OpenNext).
+- A final domain in `NEXT_PUBLIC_SITE_URL` on the Cloudflare Worker.
 
 ## Not in this phase
 

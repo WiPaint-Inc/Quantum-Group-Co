@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default function Page({ params }: { params: Promise<{ slug: string }> }) {
   return (
-    <Suspense fallback={<main id="content" className="paper px-6 pt-32"><p className="paper-kicker">Concept</p></main>}>
+    <Suspense fallback={<main id="content" className="paper min-h-dvh bg-[#f3efe6] px-6 pt-32 text-[#1a1a1a]"><p className="paper-kicker">Concept</p></main>}>
       <EstateBody params={params} />
     </Suspense>
   );

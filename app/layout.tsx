@@ -29,7 +29,7 @@ const display = Cormorant_Garamond({
 const paperFace = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-display",
+  variable: "--font-bodoni",
   display: "swap",
 });
 
