@@ -1,3 +1,7 @@
+/**
+ * Working extract. Estate pages do not read this file.
+ * Published areas live in content/estates.ts: 9 buildings, 4,570 m², 49,191 ft² enclosed gross.
+ */
 export const megaBuildings = [
   {
     "code": "A",
@@ -38,22 +42,22 @@ export const megaBuildings = [
     "code": "E",
     "name": "Pool Pavilion",
     "storeys": "1",
-    "sqm": "40",
-    "sqft": "431"
+    "sqm": "90",
+    "sqft": "969"
   },
   {
     "code": "F1",
     "name": "West Forecourt Cottage (guest)",
     "storeys": "1",
-    "sqm": "84",
-    "sqft": "904"
+    "sqm": "108",
+    "sqft": "1,163"
   },
   {
     "code": "F2",
     "name": "East Forecourt Cottage (estate office & security)",
     "storeys": "1",
-    "sqm": "84",
-    "sqft": "904"
+    "sqm": "108",
+    "sqft": "1,163"
   },
   {
     "code": "G",
@@ -61,13 +65,6 @@ export const megaBuildings = [
     "storeys": "2",
     "sqm": "720",
     "sqft": "7,750"
-  },
-  {
-    "code": "H",
-    "name": "Sports Pavilion (padel clubhouse & cart garage)",
-    "storeys": "1",
-    "sqm": "104",
-    "sqft": "1,119"
   }
 ] as const;
 

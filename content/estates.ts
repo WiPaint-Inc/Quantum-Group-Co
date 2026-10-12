@@ -3,6 +3,26 @@ import { assertNoPricesOrExternalUrls } from "@/lib/public-copy";
 export type EstatePiece = { id: string; label: string };
 export type EstateZone = { name: string; intent: string };
 
+export type EstateBuilding = {
+  code: string;
+  name: string;
+  sqm: number;
+  sqft: number;
+};
+
+/** Enclosed gross from an area schedule. Null until that schedule exists. */
+export type EstateSpecs = {
+  enclosedSqm: number;
+  enclosedSqft: number;
+  buildingCount: number;
+  buildings: EstateBuilding[];
+};
+
+export type EstatePlan = { src: string; label: string };
+
+/** Public GLB path, or a scene-module key registered for the estate walkthrough. */
+export type Walkthrough3d = { glb: string } | { scene: string };
+
 export type EstateRecord = {
   slug: string;
   number: string;
@@ -14,8 +34,15 @@ export type EstateRecord = {
   hero: string;
   zones: EstateZone[];
   pieces: EstatePiece[];
-  specified: boolean;
+  specs: EstateSpecs | null;
+  video: string | null;
+  plans: EstatePlan[];
+  walkthrough3d?: Walkthrough3d;
 };
+
+function unpublished(): { specs: null; video: null; plans: EstatePlan[] } {
+  return { specs: null, video: null, plans: [] };
+}
 
 const pieces = (rows: [string, string][]): EstatePiece[] => rows.map(([id, label]) => ({ id, label }));
 
@@ -28,11 +55,31 @@ export const estates: EstateRecord[] = [
     concept:
       "A Caribbean Georgian estate of white lime-render, pale hipped roofs and a two-tier veranda, set between an arrival allée and the sea. The main house keeps a great hall, a library and a primary suite, with family and guest villas, a wellness pavilion and a pool pavilion across the grounds.",
     materials:
-      "White lime-render walls and white trim, slender square columns, powder-blue louvred shutters, and pale silver-grey hipped roofs. Great-hall doors are tall mahogany leaves in white casings. The pool terrace is coral stone.",
+      "Ivory coral stone, cream limestone and lime-white columns; honey teak and dark mahogany; brushed brass; soft shutter blue as the single cool note; turquoise sea and deep blue-hour sky.",
     landscape:
-      "Arrive beneath a sweeping avenue of palms to a residence designed around its own private fruit forest. Beyond the lawns and the long infinity pool, shaded groves are planned for mango, breadfruit, avocado and star apple, with soursop, sugar apple and Antigua's famed black pineapple beneath them. Fragrant kitchen courtyards of lime, lemongrass and island herbs are steps from the chef's kitchen, and passionfruit vines drape the pergolas. Toward the sea, native sea grape, buttonwood and silver thatch palms soften the breeze and frame the beach.",
+      "A formal estate orchard is planned in rows on the leeward side of the windbreak, between the lawns and the inland scrub. The canopy is mango, sapodilla, tamarind, breadfruit, coconut, genip, avocado and star apple. The sub-canopy is soursop, sugar apple, guava and key lime.",
     hero: "mega-estate-aerial",
-    specified: true,
+    specs: {
+      enclosedSqm: 4570,
+      enclosedSqft: 49191,
+      buildingCount: 9,
+      buildings: [
+        { code: "A", name: "Main House", sqm: 2336, sqft: 25144 },
+        { code: "B", name: "West Family Villa", sqm: 336, sqft: 3617 },
+        { code: "C1", name: "East Guest Villa", sqm: 300, sqft: 3229 },
+        { code: "C2", name: "Wellness Pavilion", sqm: 320, sqft: 3444 },
+        { code: "D", name: "Beach Guest Villa", sqm: 252, sqft: 2713 },
+        { code: "E", name: "Pool Pavilion", sqm: 90, sqft: 969 },
+        { code: "F1", name: "West Forecourt Cottage (guest)", sqm: 108, sqft: 1163 },
+        { code: "F2", name: "East Forecourt Cottage (estate office & security)", sqm: 108, sqft: 1163 },
+        { code: "G", name: "Service & Staff Building", sqm: 720, sqft: 7750 },
+      ],
+    },
+    video: "/estates/mega-estate-aerial/walkthrough.mp4",
+    plans: [
+      { src: "/estates/mega-estate-aerial/plans/teaser-site.png", label: "Site" },
+      { src: "/estates/mega-estate-aerial/plans/teaser-ground.png", label: "Ground floor" },
+    ],
     zones: [
       { name: "Arrival orchard allée", intent: "A formal palm allée with a clipped edible understorey at the forecourt." },
       { name: "Dune and back-dune", intent: "Low groundcovers and a silver native shrub band, with the view to the sea kept open." },
@@ -75,11 +122,11 @@ export const estates: EstateRecord[] = [
     concept:
       "Pavilions step down a headland in cream coral stone and honey stacked walls, with planted roofs and a cantilevered pool. The great room is dark timber, woven reed and rattan, open to the sea at dusk.",
     materials:
-      "Cream coral rubble and honey stacked stone, sand lime plaster, dark-stained beams inside and silver-weathered timber outside, woven reed ceilings, rattan and aged brass. Bougainvillea on the terraces, and a deep teal pool.",
+      "Rough coral stone in honey and cream, sand lime plaster, dark-oiled greenheart beams, woven reed ceilings, rattan and aged brass; bougainvillea magenta and leaf green on the terraces; deep teal pool.",
     landscape:
-      "Set high above the Caribbean, this hillside retreat is designed around its own terraced fruit forest. Stone walls step down the leeward slope, planned for mango, tamarind and sapodilla above soursop, sugar apple and lime, with Antigua's sweet black pineapple tucked into sunny pockets. Walled kitchen courtyards of lemongrass, island thyme and peppers sit beside the pavilions, while passionfruit and dragon fruit climb the warm stone. Along the crest, native sea grape, buttonwood and whitewood are planned to temper the trade winds, and planted roofs move in the breeze.",
+      "The fruit forest is planned on the leeward slope, in terraces held by the dry-stone walls. Tamarind, sapodilla and genip take the upper edges. Mango sits on the main terraces. Breadfruit, soursop and banana are planned for the lowest, best-watered terraces.",
     hero: "rustic-modern-aerial",
-    specified: false,
+    ...unpublished(),
     zones: [
       { name: "Orchard allée", intent: "A rustic avenue of fruit trees along the arrival drive." },
       { name: "Crest windbreak", intent: "Native trees temper the trades before they reach the terraces." },
@@ -120,11 +167,11 @@ export const estates: EstateRecord[] = [
     concept:
       "A two-storey house of coursed coral stone and pale teak louvres sits just behind the beach, with a long pool at sand level and planting along the roof edge. The fruit forest is set out in rows on the arrival axis.",
     materials:
-      "Pale cream coral stone in coursed blocks, warm-white lime plaster, pale teak louvres, white cedar ceilings and dark bronze frames. Crystal water, white sand, and greenery spilling from the roof edges.",
+      "Honed coral limestone in warm ivory, warm-white lime plaster, pale teak louvres, white cedar ceilings, champagne bronze frames; crystal turquoise water and white sand; greenery spilling from the roof edges.",
     landscape:
-      "Approached along an avenue of palms and clipped lime trees, this beachfront residence is designed with its own orderly fruit forest. Behind the house, groves set out in rows are planned for mango, sapodilla and tamarind, with soursop, guava and Antigua's celebrated black pineapple in the alleys between. A walled kitchen courtyard of citrus, lemongrass and island herbs sits steps from the kitchen. Toward the water, sculptural silver thatch palms, agave and clipped sea grape frame the shore.",
+      "The fruit forest is planned as a grid of single-species rows behind the windbreak and the house. Coconut, sapodilla, mango, tamarind and breadfruit form the canopy. Pineapple, lemongrass and sweet potato are planned as repeating bands in the alleys.",
     hero: "beachfront-from-water",
-    specified: false,
+    ...unpublished(),
     zones: [
       { name: "Orchard allée", intent: "A double row of coconut palms, with key lime and pineapple between them." },
       { name: "Dune", intent: "A low sweep of a single species, so the view from the water stays clear." },
@@ -164,11 +211,11 @@ export const estates: EstateRecord[] = [
     concept:
       "Separate pavilions of rubble stone and round-log trusses gather around a reflecting pool. Charcoal shingle roofs flare at the eaves. Lantern light doubles in the water at blue hour.",
     materials:
-      "Grey-brown rubble stone piers, honey round-log trusses, dark charcoal shingles with flared eaves, timber decks and grey-brown flagstones. Teak, rattan and bronze lanterns against a deep blue dusk.",
+      "Rubble coral stone in honey and cream, dark-oiled greenheart trusses, wallaba shingle roofs, teak and rattan furniture, bronze lanterns; deep blue dusk sky, sea-green reflecting pool, warm 2200K glow.",
     landscape:
-      "As dusk settles over the water, lantern light warms stone and timber pavilions arranged around a glassy pool, all designed within their own fruit forest. Landward of the terrace, a rustic grove is planned for mango, sapodilla, tamarind and breadfruit, sheltering soursop, sugar apple, lime and Antigua's sweet black pineapple. A shaded kitchen courtyard of lemongrass, island thyme and passionfruit sits beside the guest pavilion, while an avenue of coconut and sapodilla welcomes you home. At the water's edge, native sea grape, buttonwood and beach morning glory soften the shore.",
+      "An informal fruit grove is planned landward of the pavilions, grading inland from the windbreak. Coconut, sapodilla and tamarind hold the windward edge. Mango, genip and breadfruit sit in the sheltered interior.",
     hero: "rustic-modern-pavilion-dusk",
-    specified: false,
+    ...unpublished(),
     zones: [
       { name: "Orchard allée", intent: "Coconut and sapodilla, with cocoplum hedges and lemongrass at the edge." },
       { name: "Shore band", intent: "Low natives bind the sand and gravel in front of the terrace." },
@@ -204,11 +251,11 @@ export const estates: EstateRecord[] = [
     concept:
       "Dark volcanic stone and teak step down a cliff above the surf. Three pools catch the sunset, and a fire pit sits on a lower terrace. The fruit forest is planned on walled terraces inland of the wind.",
     materials:
-      "Dark charcoal volcanic dry-stack stone, warm teak soffits, weathered timber decks, honed limestone floors and low-iron glass, with aged bronze. Sunset gold on the sea, and aqua pools against dark rock.",
+      "Warm dry-stack stone in honey and buff, honed coral limestone, plantation teak soffits, greenheart, low-iron glass, aged bronze; sunset gold on the sea, aqua pools, dark rock and white surf below.",
     landscape:
-      "Poised above the sea on a dramatic volcanic cliff, this residence is designed with its own sheltered fruit forest. Behind the house, stone-walled terraces are planned for mango, sapodilla, tamarind and genip, with soursop, sugar apple, lime and pomegranate below them and Antigua's sweet black pineapple in sunny pockets. A kitchen courtyard of lemongrass, island thyme and peppers sits steps from the kitchen, beneath a passionfruit pergola. A frangipani crowns the pool terraces, and native agave and sea grape are intended to cling to the cliff edge, sculpted by the wind.",
+      "The fruit forest is planned landward of the house, in walled terraces and courtyards. Sapodilla and tamarind hold the outer wall. Mango and genip sit in the sheltered courtyard. No fruit trees are planned on the seaward face.",
     hero: "rustic-modern-cliffside",
-    specified: false,
+    ...unpublished(),
     zones: [
       { name: "Orchard allée", intent: "A short avenue of wind-firm fruit trees and a clipped hedge." },
       { name: "Cliff edge", intent: "Low, wind-sculpted natives on the rock. No fruit trees." },
@@ -253,24 +300,7 @@ export function conceptPlate(name: string) {
   };
 }
 
-export const megaPlans = [
-  { src: "/estates/mega-estate-aerial/plans/site.webp", label: "Site plan" },
-  { src: "/estates/mega-estate-aerial/plans/ground.webp", label: "Main house, ground floor" },
-  { src: "/estates/mega-estate-aerial/plans/upper.webp", label: "Main house, upper floor" },
-  { src: "/estates/mega-estate-aerial/plans/elevations.webp", label: "Elevations and section" },
-  { src: "/estates/mega-estate-aerial/plans/villas-sports.webp", label: "Guest villas, pavilions and sports pavilion" },
-  { src: "/estates/mega-estate-aerial/plans/villas.webp", label: "Guest villas and pavilions" },
-  { src: "/estates/mega-estate-aerial/plans/cottages.webp", label: "Forecourt cottages and service building" },
-] as const;
-
-export const megaKeySpecs = [
-  { label: "Site area", value: "5.1 ha" },
-  { label: "Enclosed area", value: "4,576 m²" },
-  { label: "Buildings", value: "10" },
-  { label: "Bedrooms", value: "14" },
-  { label: "Pools", value: "2" },
-] as const;
+/** Digits only, country code included. Replace this one value when the enquiry number is assigned. */
+export const WHATSAPP_ENQUIRY_NUMBER = "0000000000";
 
 assertNoPricesOrExternalUrls(estates, "estates");
-assertNoPricesOrExternalUrls(megaPlans, "estate plans");
-assertNoPricesOrExternalUrls(megaKeySpecs, "estate specs");
