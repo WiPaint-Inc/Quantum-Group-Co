@@ -25,10 +25,10 @@ const glassFragment = /* glsl */ `
   out vec4 fragColor;
   void main() {
     vec3 viewDir = normalize(uCamera - vWorld);
-    float fresnel = pow(1.0 - abs(dot(normalize(vNormal), viewDir)), 2.35);
-    float alpha = (0.04 + fresnel * 0.7) * uReveal;
-    vec3 col = mix(vec3(0.45, 0.62, 0.74), vec3(0.94, 0.97, 1.0), fresnel);
-    if (alpha < 0.02) discard;
+    float fresnel = pow(1.0 - abs(dot(normalize(vNormal), viewDir)), 4.4);
+    float alpha = (0.012 + fresnel * 0.58) * uReveal;
+    vec3 col = mix(vec3(0.55, 0.72, 0.84), vec3(1.0), fresnel);
+    if (alpha < 0.01) discard;
     fragColor = vec4(col, alpha);
   }
 `;
@@ -64,7 +64,8 @@ function GlbModel({
         glslVersion: THREE.GLSL3,
         transparent: true,
         depthWrite: false,
-        side: THREE.DoubleSide,
+        toneMapped: false,
+        side: THREE.FrontSide,
         uniforms: {
           uCamera: { value: new THREE.Vector3() },
           uReveal: { value: 1 },

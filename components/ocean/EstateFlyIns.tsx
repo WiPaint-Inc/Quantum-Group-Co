@@ -30,10 +30,10 @@ const glassFragment = /* glsl */ `
   out vec4 fragColor;
   void main() {
     vec3 viewDir = normalize(uCamera - vWorld);
-    float fresnel = pow(1.0 - abs(dot(normalize(vNormal), viewDir)), 2.35);
-    float alpha = (0.045 + fresnel * 0.72) * uReveal;
-    vec3 col = mix(vec3(0.62, 0.78, 0.9), vec3(0.96, 0.98, 1.0), fresnel);
-    if (alpha < 0.015) discard;
+    float fresnel = pow(1.0 - abs(dot(normalize(vNormal), viewDir)), 4.4);
+    float alpha = (0.012 + fresnel * 0.58) * uReveal;
+    vec3 col = mix(vec3(0.55, 0.72, 0.84), vec3(1.0), fresnel);
+    if (alpha < 0.01) discard;
     fragColor = vec4(col, alpha);
   }
 `;
@@ -44,6 +44,8 @@ function lineMaterial(color: string, halfPx: number, additive: boolean) {
     transparent: true,
     depthWrite: false,
     blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+    toneMapped: false,
+    depthTest: true,
     uniforms: {
       uDraw: { value: 0 },
       uWash: { value: 0 },
@@ -153,6 +155,7 @@ function Flow({
         depthWrite: false,
         blending: THREE.AdditiveBlending,
         sizeAttenuation: true,
+        toneMapped: false,
       }),
     [color, size],
   );
@@ -180,17 +183,18 @@ export function CliffStudy({
   const lines = useMemo(() => buildCliffsideLines(), []);
   const plant = useMemo(() => buildCliffsidePlant(), []);
   const rock = useMemo(() => buildRockFace(journeyPath.cliffLedge.width + 8, journeyPath.cliffLedge.face + 4), []);
-  const structure = useMemo(() => lineMaterial("#f3d7a0", 2.15, true), []);
-  const plumbing = useMemo(() => lineMaterial("#3eb6ff", 2.6, true), []);
-  const hvac = useMemo(() => lineMaterial("#f4f8fc", 2.8, true), []);
-  const electrical = useMemo(() => lineMaterial("#e6c36a", 1.8, true), []);
+  const structure = useMemo(() => lineMaterial("#f3d7a0", 3.4, true), []);
+  const plumbing = useMemo(() => lineMaterial("#3eb6ff", 4.6, true), []);
+  const hvac = useMemo(() => lineMaterial("#f7fbff", 4.2, true), []);
+  const electrical = useMemo(() => lineMaterial("#ffd56a", 3.6, true), []);
   const glass = useMemo(
     () =>
       new THREE.ShaderMaterial({
         glslVersion: THREE.GLSL3,
         transparent: true,
         depthWrite: false,
-        side: THREE.DoubleSide,
+        toneMapped: false,
+        side: THREE.FrontSide,
         uniforms: {
           uCamera: { value: new THREE.Vector3() },
           uReveal: { value: 0 },
@@ -271,7 +275,7 @@ export function CliffStudy({
       gearNode.visible = !found?.mep;
       if (!found?.mep) gearNode.scale.y = 0.04 + 0.96 * gear;
     }
-    if (light.current) light.current.intensity = 3 + night * 18;
+    if (light.current) light.current.intensity = 1.4 + night * 4.5;
     if (!anchor) return;
     const next = camera.position.distanceTo(new THREE.Vector3(anchor.x, anchor.y, anchor.z));
     setDistance((current) => (Math.abs(current - next) > 40 ? next : current));
@@ -300,9 +304,9 @@ export function CliffStudy({
       <mesh geometry={lines.electrical} material={electrical} renderOrder={5} />
       {found?.mep ? null : (
         <>
-          <Flow strokes={lines.flows.plumbing} count={28} color="#8fd4ff" size={0.72} speed={0.28} drawRef={{ get current() { return draws.current.plumbing; } }} />
-          <Flow strokes={lines.flows.hvac} count={36} color="#f7fbff" size={0.38} speed={0.42} drawRef={{ get current() { return draws.current.hvac; } }} />
-          <Flow strokes={lines.flows.electrical} count={22} color="#ffe09a" size={0.28} speed={0.85} drawRef={{ get current() { return draws.current.electrical; } }} />
+          <Flow strokes={lines.flows.plumbing} count={28} color="#8fd4ff" size={1.15} speed={0.28} drawRef={{ get current() { return draws.current.plumbing; } }} />
+          <Flow strokes={lines.flows.hvac} count={36} color="#f7fbff" size={0.72} speed={0.42} drawRef={{ get current() { return draws.current.hvac; } }} />
+          <Flow strokes={lines.flows.electrical} count={22} color="#ffe09a" size={0.55} speed={0.85} drawRef={{ get current() { return draws.current.electrical; } }} />
         </>
       )}
       <primitive object={plant} />

@@ -173,8 +173,6 @@ export function stepFlow(strokes: Stroke[], seeds: Float32Array, position: THREE
 function box(w: number, h: number, d: number, x: number, y: number, z: number, material: THREE.Material) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
   mesh.position.set(x, y, z);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
   return mesh;
 }
 
@@ -182,7 +180,6 @@ function cylinder(r: number, h: number, x: number, y: number, z: number, materia
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 16), material);
   mesh.position.set(x, y, z);
   if (axis === "z") mesh.rotation.x = Math.PI / 2;
-  mesh.castShadow = true;
   return mesh;
 }
 
@@ -191,15 +188,15 @@ export function buildCliffsidePlant() {
     color: "#f4f1ea",
     roughness: 0.42,
     metalness: 0.08,
-    emissive: "#f7f4ee",
-    emissiveIntensity: 0.55,
+    emissive: "#fffaf2",
+    emissiveIntensity: 0.8,
   });
   const gold = new THREE.MeshStandardMaterial({
     color: "#d7b56a",
     roughness: 0.35,
     metalness: 0.4,
-    emissive: "#e6c36a",
-    emissiveIntensity: 0.7,
+    emissive: "#ffd56a",
+    emissiveIntensity: 0.95,
   });
   const silver = new THREE.MeshStandardMaterial({
     color: "#d5dbe2",
@@ -219,8 +216,8 @@ export function buildCliffsidePlant() {
     color: "#1d6a42",
     roughness: 0.86,
     metalness: 0,
-    emissive: "#1a8a52",
-    emissiveIntensity: 0.42,
+    emissive: "#3dce78",
+    emissiveIntensity: 0.85,
   });
 
   const root = new THREE.Group();
