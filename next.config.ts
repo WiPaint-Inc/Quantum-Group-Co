@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Supported by @opennextjs/cloudflare on the Node.js runtime (composable cache and PPR).
   // The request gate stays in middleware.ts, because proxy.ts is Node-only and the adapter does not run it.
   cacheComponents: true,

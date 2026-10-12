@@ -8,9 +8,9 @@ import { WHATSAPP_ENQUIRY_NUMBER, conceptPlate, estates, type EstateRecord, type
 const GOLD = {
   fill: "none" as const,
   stroke: "#E3CB98",
-  strokeWidth: 1.7,
+  strokeWidth: 2.6,
   strokeLinejoin: "round" as const,
-  style: { filter: "drop-shadow(0 0 4px rgba(227,203,152,.85))" },
+  style: { filter: "drop-shadow(0 0 5px rgba(80,50,10,.9)) drop-shadow(0 0 2px rgba(227,203,152,1))" },
 };
 
 const LINEWORK: Record<string, string[]> = {
@@ -54,12 +54,16 @@ function enquiryHref(title: string) {
 
 function GoldOverlay({ slug }: { slug: string }) {
   if (slug === "mega-estate-aerial") {
-    return <PlateBlueprint plate="mega-estate-aerial" draw={1} />;
+    return (
+      <div className="pointer-events-none absolute inset-0 z-10">
+        <PlateBlueprint plate="mega-estate-aerial" draw={1} weight={2.8} />
+      </div>
+    );
   }
   const lines = LINEWORK[slug];
   if (!lines) return null;
   return (
-    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 z-10 h-full w-full" aria-hidden="true">
       {lines.map((points) => (
         <polyline key={points} points={points} {...GOLD} />
       ))}

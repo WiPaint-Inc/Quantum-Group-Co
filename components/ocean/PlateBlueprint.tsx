@@ -43,12 +43,12 @@ const PENINSULA = [
   "1104,625 1426,660 1426,694 1104,660 1104,625",
 ];
 
-export function PlateBlueprint({ plate, draw }: { plate: "mega-estate-aerial" | "peninsula-development-big-beach"; draw: number }) {
+export function PlateBlueprint({ plate, draw, weight = 1.7 }: { plate: "mega-estate-aerial" | "peninsula-development-big-beach"; draw: number; weight?: number }) {
   const offset = 1 - Math.min(1, Math.max(0, draw));
   const stroke = {
     fill: "none" as const,
     stroke: "#E3CB98",
-    strokeWidth: 1.7,
+    strokeWidth: weight,
     pathLength: 1,
     style: { strokeDasharray: 1, strokeDashoffset: offset, filter: "drop-shadow(0 0 4px rgba(227,203,152,.85))" },
   };
