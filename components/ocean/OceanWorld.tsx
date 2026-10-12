@@ -19,7 +19,8 @@ import {
   waterFragment,
   waterVertex,
 } from "@/components/ocean/shaders";
-import { drawAmount, finaleBlend, sampleFlight, scenicCays, stopPresence } from "@/lib/ocean-flight";
+import { CargoShip } from "@/components/ocean/CargoShip";
+import { drawAmount, finaleBlend, sampleFlight, scenicCays, shipMotion, shipTrack, stopPresence } from "@/lib/ocean-flight";
 
 const GOLD = new THREE.Color("#e6d2a8");
 
@@ -86,6 +87,9 @@ export function OceanWorld({
           uNight: { value: 0 },
           uIslands: { value: islandUniform },
           uIslandCount: { value: Math.min(16, islands.length) },
+          uShip: { value: new THREE.Vector2() },
+          uShipHeading: { value: 0 },
+          uShipLive: { value: 1 },
         },
         vertexShader: waterVertex,
         fragmentShader: waterFragment,
@@ -333,8 +337,15 @@ export function OceanWorld({
       flight.pos[1] + (descending ? 0 : intro * 30),
       flight.pos[2] + (descending ? 0 : intro * 220),
     );
-    desired.y = descending ? Math.max(1.15, desired.y) : Math.min(310, Math.max(55, desired.y));
     desiredLook.set(flight.look[0], flight.look[1], flight.look[2]);
+    const motion = shipMotion(clock.elapsedTime);
+    const track = shipTrack(progressRef.current);
+    desired.x += motion.dx * track;
+    desired.z += motion.dz * track;
+    desiredLook.x += motion.dx * track;
+    desiredLook.z += motion.dz * track;
+    const floor = descending || flight.pos[1] < 55 ? 1.15 : 55;
+    desired.y = Math.min(310, Math.max(floor, desired.y));
     const damp = 1 - Math.exp(-2.4 * delta);
     camera.position.lerp(desired, damp);
     look.lerp(desiredLook, damp);
@@ -347,6 +358,11 @@ export function OceanWorld({
     (sky.uniforms.uCamera.value as THREE.Vector3).copy(camera.position);
     water.uniforms.uTime.value = time;
     water.uniforms.uCamera.value.copy(camera.position);
+    const materialsStop = oceanStops.find((stop) => stop.id === "materials");
+    if (materialsStop) {
+      (water.uniforms.uShip.value as THREE.Vector2).set(materialsStop.x + motion.dx, materialsStop.z + motion.dz);
+      water.uniforms.uShipHeading.value = motion.heading;
+    }
     canopyMat.uniforms.uTime.value = time;
     const palmShader = palm.material.userData.shader as { uniforms: { uTime: { value: number } } } | undefined;
     if (palmShader) palmShader.uniforms.uTime.value = time;
@@ -488,6 +504,7 @@ export function OceanWorld({
       {oceanStops.filter((stop) => stop.id === "contact").map((stop) => (
         <MeetingCay key={stop.id} x={stop.x} z={stop.z} />
       ))}
+      <CargoShip progressRef={progressRef} />
     </>
   );
 }

@@ -123,6 +123,9 @@ export const waterFragment = /* glsl */ `
   uniform float uNight;
   uniform vec4 uIslands[16];
   uniform int uIslandCount;
+  uniform vec2 uShip;
+  uniform float uShipHeading;
+  uniform float uShipLive;
   in vec2 vUv;
   in vec3 vWorld;
   out vec4 fragColor;
@@ -199,6 +202,21 @@ export const waterFragment = /* glsl */ `
         bottom = shade;
       }
     }
+    float wakeFoam = 0.0;
+    if (uShipLive > 0.5) {
+      vec2 fwd = vec2(sin(uShipHeading), cos(uShipHeading));
+      vec2 right = vec2(fwd.y, -fwd.x);
+      vec2 rel = vWorld.xz - uShip;
+      float along = dot(rel, fwd);
+      float side = dot(rel, right);
+      float bowWave = exp(-pow((along - 118.0) / 16.0, 2.0)) * exp(-pow(abs(side) / 22.0, 2.0));
+      float flank = exp(-pow((abs(side) - 16.5) / 5.0, 2.0)) * smoothstep(124.0, 30.0, along) * smoothstep(-130.0, -60.0, along);
+      float behind = -112.0 - along;
+      float wakeWidth = 8.0 + behind * 0.16;
+      float wake = exp(-behind / 340.0) * exp(-pow(side / wakeWidth, 2.0)) * step(1.0, behind);
+      float kelvin = exp(-pow((abs(side) - behind * 0.19) / 6.0, 2.0)) * step(4.0, behind) * exp(-behind / 420.0);
+      wakeFoam = bowWave * 1.15 + flank * 0.72 + wake * 0.62 + kelvin * 1.05;
+    }
     vec3 deep = mix(vec3(0.015, 0.05, 0.1), vec3(0.02, 0.055, 0.1), uNight);
     float shallows = 1.0 - smoothstep(0.72, 1.0, best);
     vec3 water = mix(deep, bottom, shallows);
@@ -217,7 +235,7 @@ export const waterFragment = /* glsl */ `
     col += vec3(0.78, 0.86, 1.0) * (moonPath * 0.7 + moonSpark * 0.85) * uNight;
     col += vec3(0.04, 0.07, 0.12) * uNight;
     float crest = smoothstep(1.4, 3.2, vWorld.y) * 0.18;
-    col = mix(col, vec3(0.95, 0.96, 0.94), clamp(foam + crest, 0.0, 1.0) * 0.82);
+    col = mix(col, vec3(0.95, 0.96, 0.94), clamp(foam + crest + wakeFoam, 0.0, 1.0) * 0.82);
     float bio = smoothstep(0.68, 0.9, noise(vWorld.xz * 0.07)) * smoothstep(0.12, 0.4, best) * (1.0 - smoothstep(0.62, 0.86, best));
     col += vec3(0.12, 0.72, 0.6) * bio * 0.28 * uNight;
     float haze = smoothstep(2200.0, 11000.0, distance(uCamera.xz, vWorld.xz));

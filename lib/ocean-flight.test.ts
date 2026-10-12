@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { oceanStops } from "../content/ocean-stops.ts";
-import { contactReveal, sampleFlight, stopProgress } from "./ocean-flight.ts";
+import { contactReveal, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
 
 function heading(sample: ReturnType<typeof sampleFlight>) {
   return Math.atan2(sample.look[0] - sample.pos[0], sample.look[2] - sample.pos[2]);
@@ -62,4 +62,25 @@ test("the opening stays high and the contact finale settles at eye level without
   assert.equal(contactReveal(0), 0);
   assert.equal(contactReveal(seam), 0);
   assert.ok(contactReveal(1) > 0.98);
+});
+
+test("materials runs alongside the ship, then the track lets go", () => {
+  const materials = oceanStops.findIndex((stop) => stop.id === "materials");
+  const pose = sampleFlight(stopProgress(materials));
+  assert.ok(pose.pos[1] > 18 && pose.pos[1] < 48, `alongside ${pose.pos[1]}`);
+  const stop = oceanStops[materials];
+  const hx = Math.sin(heading(pose));
+  const hz = Math.cos(heading(pose));
+  const toward = Math.hypot(stop.x - pose.pos[0], stop.z - pose.pos[2]) || 1;
+  const facing = ((stop.x - pose.pos[0]) * hx + (stop.z - pose.pos[2]) * hz) / toward;
+  assert.ok(facing > 0.75, `facing ${facing}`);
+  const moved = shipMotion(12);
+  assert.ok(Math.hypot(moved.dx, moved.dz) > 80);
+  assert.ok(Math.abs(moved.pitch) < 0.03 && Math.abs(moved.roll) < 0.04);
+  assert.ok(shipTrack(stopProgress(materials)) > 0.95);
+  assert.equal(shipTrack(0), 0);
+  assert.equal(shipTrack(1), 0);
+  const peel = sampleFlight(stopProgress(materials) + 0.39 / (oceanStops.length - 1));
+  assert.ok(peel.pos[1] > pose.pos[1] + 40, `peel ${peel.pos[1]}`);
+  assert.ok(shipTrack(stopProgress(materials) + 0.39 / (oceanStops.length - 1)) < 0.35);
 });

@@ -32,7 +32,6 @@ const VIEWS: Record<string, View> = {
   construction: { bearing: 86, distance: 390, height: 72, orbit: 8, lookAhead: 0.78 },
   engineering: { bearing: 315, distance: 460, height: 120, orbit: 10, lookAhead: 0.55 },
   developments: { bearing: 250, distance: 1680, height: 155, orbit: 6, lookAhead: 0.42 },
-  materials: { bearing: 330, distance: 400, height: 116, orbit: 10, lookAhead: 0.58 },
   "build-live": { bearing: 240, distance: 140, height: 64, orbit: 12, lookAhead: 0.4 },
 };
 
@@ -136,12 +135,54 @@ function catmull(p0: Vec3, p1: Vec3, p2: Vec3, p3: Vec3, t: number): Vec3 {
   return out;
 }
 
+/** The materials ship steams this heading. Local +Z is the bow. */
+export const SHIP_HEADING = (48 * Math.PI) / 180;
+export const SHIP_SPEED = 8;
+export const SHIP_LENGTH = 248;
+
+export function shipMotion(time: number) {
+  const along = time * SHIP_SPEED;
+  return {
+    dx: Math.sin(SHIP_HEADING) * along,
+    dz: Math.cos(SHIP_HEADING) * along,
+    heading: SHIP_HEADING,
+    pitch: Math.sin(time * 0.33) * 0.012,
+    roll: Math.sin(time * 0.46 + 1.1) * 0.02,
+  };
+}
+
+/** 1 while the camera rides with the ship, then falls away on the peel. */
+export function shipTrack(progress: number) {
+  const index = oceanStops.findIndex((stop) => stop.id === "materials");
+  if (index < 0) return 0;
+  const f = clamp01(progress) * (N - 1) - index;
+  if (f < -0.28 || f > 0.52) return 0;
+  if (f < -0.08) return smooth((f + 0.28) / 0.2);
+  if (f <= DW) return 1;
+  return 1 - smooth((f - DW) / 0.28);
+}
+
 function viewPose(index: number, orbit: number): { pos: Vec3; look: Vec3 } {
   const stop = oceanStops[index];
   if (stop.id === "arrival") {
     return {
       pos: [420 - orbit * 25, 278 - orbit * 6, 980 - orbit * 70],
       look: [40, 6, -260],
+    };
+  }
+  if (stop.id === "materials") {
+    const side = SHIP_HEADING + Math.PI / 2;
+    const alongside = 76 - orbit * 8;
+    const fore = 28 + orbit * 34;
+    const height = 32 - orbit * 5;
+    const fx = Math.sin(SHIP_HEADING);
+    const fz = Math.cos(SHIP_HEADING);
+    const sx = Math.sin(side);
+    const sz = Math.cos(side);
+    const lookAlong = fore - 72;
+    return {
+      pos: [stop.x + fx * fore + sx * alongside, height, stop.z + fz * fore + sz * alongside],
+      look: [stop.x + fx * lookAlong, 9, stop.z + fz * lookAlong],
     };
   }
   const view = VIEWS[stop.id];
@@ -222,7 +263,8 @@ function camAt(progressStops: number): { pos: Vec3; look: Vec3 } {
   const cruiseLook: Vec3 = [pos[0] + tangent[0] * 1100, 0, pos[2] + tangent[2] * 1100];
   const eased = t * t * (3 - 2 * t);
   const look = lerp3(lerp3(start.look, end.look, eased), cruiseLook, Math.pow(Math.sin(Math.PI * t), 1.5) * 0.8);
-  pos[1] = clamp(pos[1], 55, 310);
+  const low = Math.min(start.pos[1], end.pos[1]);
+  pos[1] = clamp(pos[1], low < 55 ? low : 55, 310);
   return { pos, look };
 }
 
