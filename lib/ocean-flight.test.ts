@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { oceanStops } from "../content/ocean-stops.ts";
+import { company } from "../content/site.ts";
 import { applyCliffLedge, sampleIslandHeight } from "../components/ocean/geometry.ts";
 import { parseEstateCameraPath, setEstateCameraPath } from "./estate-drop.ts";
 import { contactReveal, estateAnchor, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
@@ -42,6 +43,39 @@ test("the sun stays world-fixed while the heading turns into it at sunset", () =
   assert.ok(dawn.night < 0.08);
   assert.ok(dawn.sun[1] > 0);
   assert.deepEqual(day.moon, night.moon);
+});
+
+test("the launch line and the chapter lineup", () => {
+  assert.equal(company.heroTitle, "Every detail, considered.");
+  assert.equal(company.heroAccent, "Every estate, a legacy.");
+  assert.equal(company.heroQuiet, "Enjoy the journey.");
+  assert.equal(
+    company.heroSub,
+    "Renderings, design, engineering and plans, construction, finishing and materials, all under one company in Antigua and Barbuda.",
+  );
+  assert.deepEqual(
+    oceanStops.map((stop) => stop.id),
+    ["arrival", "design-build", "construction", "engineering", "developments", "materials", "build-live", "contact"],
+  );
+  assert.deepEqual(
+    journeyPath.sun.map((key) => key.stop),
+    oceanStops.map((stop) => stop.id),
+  );
+  assert.deepEqual(
+    oceanStops.filter((stop) => stop.id !== "arrival").map((stop) => stop.short),
+    [
+      "Full Design & Build",
+      "Construction",
+      "Engineering, Plans & Rendering",
+      "Developments & Hotels",
+      "Advanced Materials Distribution",
+      "Your Build, Live",
+      "Contact",
+    ],
+  );
+  const live = oceanStops.find((stop) => stop.id === "build-live");
+  assert.equal(live?.tag, "Enjoy the journey · Live 24/7");
+  assert.equal(JSON.stringify(oceanStops).includes("One Company. Every Detail."), false);
 });
 
 test("the contact card copy is locked", () => {

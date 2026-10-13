@@ -23,8 +23,9 @@ export default function OpenGraphImage() {
           ANTIGUA AND BARBUDA
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 86, lineHeight: 0.9, fontFamily: "Georgia" }}>
-            One Company. Every Detail.
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 64, lineHeight: 0.95, fontFamily: "Georgia" }}>
+            <div style={{ display: "flex" }}>Every detail, considered.</div>
+            <div style={{ display: "flex", fontStyle: "italic", color: "#d9b878" }}>Every estate, a legacy.</div>
           </div>
           <div style={{ display: "flex", marginTop: 28, fontSize: 28, color: "#c9c2b4" }}>
             Quantum Group Co

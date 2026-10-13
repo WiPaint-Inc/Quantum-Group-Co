@@ -29,6 +29,8 @@ The opening does not orbit an island. Later stops use the approach rows in `jour
 
 The scroll track is `1100vh`. Each stop-to-stop span holds the stop pose for the first `dwell` (`0.17`) of the span, travels on a cubic bezier, then settles into the next pose for the last `0.17`. The bezier is lifted toward the 285 m cruise. The website eases the parameter with a smootherstep blend (`0.25` linear + `0.75` smootherstep). That ease is part of the spline.
 
+Chapters, after Arrival: Full Design & Build, Construction, Engineering, Plans & Rendering, Developments & Hotels, Advanced Materials Distribution, Your Build, Live, Contact. The plans ridge stays in the water. It is not a chapter. The right-hand legend lists those chapters and not Arrival.
+
 ## Estate fly-in
 
 **Hard requirement.** The scroll flies into an estate as one continuous camera move. It does not cut, and it does not crossfade to a still photograph. The camera never rests on a flat picture. Parallax continues for the whole move.
@@ -147,7 +149,6 @@ Positions are metres on the XZ plane. Radius, peak, and stretch come from `journ
 | --- | ---: | ---: | --- | --- |
 | arrival | 0 | 900 | none | arrival |
 | design-build | −620 | 180 | large | design |
-| plans | −2300 | −1180 | mid | plans |
 | construction | −3680 | 420 | mid | construction |
 | engineering | −2860 | −2680 | mid | engineering |
 | developments | 980 | −2100 | peninsula | developments |
@@ -155,7 +156,7 @@ Positions are metres on the XZ plane. Radius, peak, and stretch come from `journ
 | build-live | 1680 | −3480 | cay | signal |
 | contact | 3480 | 260 | private | contact |
 
-Scenic cays in `journeyPath.scenic` are dressing. They are not stops and have no camera keys.
+Scenic cays in `journeyPath.scenic` are dressing. They are not stops and have no camera keys. The plans ridge (`plans`, −2300, −1180, mid) is in that list.
 
 | Scale key | Radius | Peak | Stretch | Form |
 | --- | ---: | ---: | ---: | --- |

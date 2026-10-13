@@ -10,9 +10,11 @@ export const company = {
   market: "Antigua and Barbuda",
   marketCountryCode: "AG",
   tagline: "Design · Engineer · Build · Finish",
-  heroTitle: "One Company. Every Detail.",
+  heroTitle: "Every detail, considered.",
+  heroAccent: "Every estate, a legacy.",
   heroSub:
     "Renderings, design, engineering and plans, construction, finishing and materials, all under one company in Antigua and Barbuda.",
+  heroQuiet: "Enjoy the journey.",
   heroAlts: ["Design. Engineer. Build. Finish.", "The Future of Luxury Building in Antigua."],
   description:
     "Renderings, design, engineering and plans, construction, finishing and in-house materials, under one company. Quantum Group Co designs, engineers, builds and finishes exceptional homes in Antigua and Barbuda.",

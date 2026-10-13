@@ -101,7 +101,6 @@ export const journeyPath = {
   sun: [
     { stop: "arrival", elev: 38, az: 164, night: 0 },
     { stop: "design-build", elev: 26, az: 215, night: 0 },
-    { stop: "plans", elev: 9, az: 248, night: 0 },
     { stop: "construction", elev: 1.2, az: 266, night: 0.04 },
     { stop: "engineering", elev: -10, az: 285, night: 0.9 },
     { stop: "developments", elev: -18, az: 330, night: 1 },
@@ -157,7 +156,6 @@ export const journeyPath = {
   islands: [
     { id: "arrival", x: 0, z: 900, size: "none", kind: "arrival" },
     { id: "design-build", x: -620, z: 180, size: "large", kind: "design" },
-    { id: "plans", x: -2300, z: -1180, size: "mid", kind: "plans" },
     { id: "construction", x: -3680, z: 420, size: "mid", kind: "construction" },
     { id: "engineering", x: -2860, z: -2680, size: "mid", kind: "engineering" },
     { id: "developments", x: 980, z: -2100, size: "peninsula", kind: "developments" },
@@ -166,6 +164,7 @@ export const journeyPath = {
     { id: "contact", x: 3480, z: 260, size: "private", kind: "contact" },
   ],
   scenic: [
+    { id: "plans", x: -2300, z: -1180, size: "mid", kind: "plans" },
     { id: "cay-a", x: 200, z: 1400, size: "bar", kind: "arrival" },
     { id: "cay-b", x: -1600, z: 900, size: "cay", kind: "arrival" },
     { id: "cay-c", x: 1400, z: 400, size: "bar", kind: "arrival" },
@@ -178,7 +177,7 @@ export const journeyPath = {
 
 export type JourneyIsland = (typeof journeyPath.islands)[number];
 export type IslandSize = JourneyIsland["size"] | (typeof journeyPath.scenic)[number]["size"];
-export type IslandKind = JourneyIsland["kind"];
+export type IslandKind = JourneyIsland["kind"] | (typeof journeyPath.scenic)[number]["kind"];
 export type IslandForm = (typeof journeyPath.scales)[keyof typeof journeyPath.scales]["form"];
 
 export function islandPosition(id: string) {

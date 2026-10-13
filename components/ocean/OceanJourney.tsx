@@ -28,11 +28,26 @@ function prefersReducedMotion() {
 }
 
 function phaseLabel(progress: number) {
-  if (progress < 0.18) return "Morning";
-  if (progress < 0.4) return "Day";
-  if (progress < 0.55) return "Sunset";
-  if (progress < 0.86) return "Night";
+  const scaled = progress * (oceanStops.length - 1);
+  if (scaled < 1.15) return "Morning";
+  if (scaled < 2.15) return "Day";
+  if (scaled < 3.05) return "Sunset";
+  if (scaled < 6.15) return "Night";
   return "Dawn";
+}
+
+function HeroLockup({ heading = "h1" }: { heading?: "h1" | "h2" }) {
+  const Title = heading;
+  return (
+    <>
+      <p className="kicker">{company.name}</p>
+      <Title className="mt-4 max-w-4xl font-serif text-5xl leading-[0.92] text-sand sm:text-7xl md:text-8xl">
+        {company.heroTitle} <em className="text-gold italic">{company.heroAccent}</em>
+      </Title>
+      <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
+      <p className="mt-4 text-sm font-light tracking-wide text-sand/50">{company.heroQuiet}</p>
+    </>
+  );
 }
 
 function OceanSound() {
@@ -194,13 +209,15 @@ export function OceanJourney({ draft }: { draft: boolean }) {
             <div className={index > 6 ? "still-space" : "still-ocean"} />
             <div className="still-horizon" />
             <div className="relative z-10 max-w-xl">
-              <p className="kicker">{stop.tag}</p>
               {index === 0 ? (
-                <h1 className="mt-4 font-serif text-5xl leading-[0.9] text-sand sm:text-7xl">{stop.title}</h1>
+                <HeroLockup />
               ) : (
-                <h2 className="mt-4 font-serif text-5xl leading-[0.9] text-sand sm:text-6xl">{stop.title}</h2>
+                <>
+                  <p className="kicker">{stop.tag}</p>
+                  <h2 className="mt-4 font-serif text-5xl leading-[0.9] text-sand sm:text-6xl">{stop.title}</h2>
+                  <p className="mt-5 max-w-md text-sand/80">{stop.line}</p>
+                </>
               )}
-              <p className="mt-5 max-w-md text-sand/80">{stop.line}</p>
               <div className="mt-6 flex flex-wrap gap-5">
                 <Link href={stop.href} className="border-b border-gold pb-1 text-[0.68rem] tracking-[0.22em] text-sand uppercase">{stop.cta}</Link>
                 {stop.secondary ? <Link href={stop.secondary.href} className="text-[0.68rem] tracking-[0.22em] text-gold-2 uppercase">{stop.secondary.label}</Link> : null}
@@ -236,9 +253,7 @@ export function OceanJourney({ draft }: { draft: boolean }) {
           <OceanSound />
         </div>
         <div className="pointer-events-none absolute bottom-28 left-6 z-20 max-w-3xl pr-14 md:left-12 md:pr-0" style={{ opacity: hero }}>
-          <p className="kicker">{company.name}</p>
-          <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.9] text-sand sm:text-7xl md:text-8xl">{company.heroTitle}</h1>
-          <p className="mt-6 max-w-xl text-base text-sand/80 md:text-lg">{company.heroSub}</p>
+          <HeroLockup />
         </div>
         <p className="pointer-events-none absolute bottom-10 left-1/2 z-20 -translate-x-1/2 text-[0.62rem] tracking-[0.28em] text-gold-2 uppercase" style={{ opacity: hero }}>
           Scroll to begin the journey
@@ -251,6 +266,27 @@ export function OceanJourney({ draft }: { draft: boolean }) {
             : draft && stop.id === "engineering"
               ? "Engineering study · The Cliffside Residence"
               : null;
+          if (stop.id === "contact") {
+            return (
+              <div key={stop.id} style={{ opacity: presence }} aria-hidden={presence < 0.4}>
+                <div
+                  className="pointer-events-none absolute inset-0 z-10"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(4,6,12,0.34) 0%, rgba(4,6,12,0.08) 18%, rgba(4,6,12,0) 36%, rgba(4,6,12,0) 64%, rgba(4,6,12,0.42) 100%)",
+                  }}
+                />
+                <article className="pointer-events-none absolute inset-x-0 top-[14%] z-20 px-6 text-center md:top-[16%]">
+                  <p className="kicker">{stop.tag}</p>
+                  <h2 className="mx-auto mt-3 max-w-xl font-serif text-4xl leading-none text-sand md:text-5xl">{stop.title}</h2>
+                  <p className="mx-auto mt-4 max-w-md text-sm text-sand/80 md:text-base">{stop.line}</p>
+                </article>
+                <div className="absolute inset-x-0 bottom-8 z-20 flex justify-center px-6">
+                  <Link href={stop.href} className="pointer-events-auto text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase">{stop.cta}</Link>
+                </div>
+              </div>
+            );
+          }
           return (
             <div key={stop.id}>
               <article
@@ -276,7 +312,8 @@ export function OceanJourney({ draft }: { draft: boolean }) {
         })}
         <nav aria-label="Journey" className="absolute top-1/2 right-3 z-20 -translate-y-1/2 md:right-6">
           <ol className="flex flex-col items-end gap-3">
-            {oceanStops.map((stop, index) => {
+            {oceanStops.filter((stop) => stop.id !== "arrival").map((stop) => {
+              const index = oceanStops.findIndex((item) => item.id === stop.id);
               const current = index === active;
               return (
                 <li key={stop.id}>
