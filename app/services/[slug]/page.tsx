@@ -53,6 +53,7 @@ async function ServiceBody({ params }: { params: Promise<{ slug: string }> }) {
           shot={conceptShots.development}
           draft={draftContentEnabled()}
           caption="Peninsula Development"
+          blueprint
           className="mt-10 h-[52vh] min-h-80 max-w-5xl"
           sizes="(min-width: 768px) 80vw, 100vw"
         />

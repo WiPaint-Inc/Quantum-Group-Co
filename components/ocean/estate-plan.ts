@@ -1,4 +1,4 @@
-/** Site-plan strokes traced from the Grand Beachfront aerial. The fly-in massing builds from these. Photographs stay clear of them. */
+/** Site-plan strokes traced from the Grand Beachfront aerial. Shared by the page overlay and the fly-in massing. */
 
 export const ESTATE_PLAN = [
   "350,195 458,143 670,141 818,192 350,195",

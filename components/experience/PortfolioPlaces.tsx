@@ -147,6 +147,7 @@ export function PortfolioPlaces({ places }: { places: Place[] }) {
         <Canvas camera={{ position: [0, 1.05, 4.6], fov: 38 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false }}>
           <Places places={places} progressRef={progressRef} />
         </Canvas>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/25" />
         {current ? (
           <div className="absolute bottom-24 left-6 max-w-lg md:left-12">
             <p className="kicker">

@@ -4,7 +4,7 @@
 
 The pages, renders, walkthroughs, plans, finishes, planting notes, and the WhatsApp enquiry render only when `DRAFT_CONTENT` is the exact string `true`. With the flag off, a page keeps its title and the line “Specifications in preparation”.
 
-Images are labelled **Concept render**, as plain text under the photograph. The photograph itself has no gold frame, corner marks, or linework. Video and the 3D slot are labelled **Concept walkthrough**. These are concept studies. They are not built projects. The pages do not show prices.
+Images are labelled **Concept render**. Video and the 3D slot are labelled **Concept walkthrough**. These are concept studies. They are not built projects. The pages do not show prices.
 
 Records live in `content/estates.ts`. One placeholder, `WHATSAPP_ENQUIRY_NUMBER`, is the enquiry number. The page builds the WhatsApp link from that value and a message that names the estate. Replace the digits when a real number is assigned. Do not put the link in the content file.
 
