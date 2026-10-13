@@ -76,6 +76,52 @@ test("the launch line and the chapter lineup", () => {
   const live = oceanStops.find((stop) => stop.id === "build-live");
   assert.equal(live?.tag, "Enjoy the journey · Live 24/7");
   assert.equal(JSON.stringify(oceanStops).includes("One Company. Every Detail."), false);
+  const cards: Record<string, { tag: string; title: string; line: string; cta: string }> = {
+    "design-build": {
+      tag: "Design · Engineer · Build · Finish",
+      title: "One vision, from first sketch to final key.",
+      line: "We design, engineer, build and finish your estate under one roof, so nothing is lost between the idea and the place you live.",
+      cta: "Explore Full Design & Build",
+    },
+    construction: {
+      tag: "Build · Renovate",
+      title: "Estates and commercial projects, built to last.",
+      line: "Full estate and commercial construction and renovation services, delivered to the same exacting standard from groundbreaking to handover.",
+      cta: "Explore Construction",
+    },
+    engineering: {
+      tag: "Engineer · Plan · Render",
+      title: "See your estate before the first stone is laid.",
+      line: "Structural engineering, full permit-ready plans and photoreal renders, so every decision is made with certainty before anything is built.",
+      cta: "Explore Engineering & Plans",
+    },
+    developments: {
+      tag: "Develop · Build at scale",
+      title: "Resorts, residences and hotels, built to last generations.",
+      line: "Large-scale construction delivered to the same exacting standard as a private estate, from master plan to the final room key.",
+      cta: "Explore Developments & Hotels",
+    },
+    materials: {
+      tag: "Source · Exclusive",
+      title: "Materials you won't find anywhere else in the Caribbean.",
+      line: "Exclusive distribution rights to specialised, high-performance materials, shipped direct to your site and available only through Quantum.",
+      cta: "Explore Advanced Materials",
+    },
+    "build-live": {
+      tag: "Enjoy the journey · Live 24/7",
+      title: "Your estate, open to you around the clock.",
+      line: "Our exceptional backend gives you and your representatives 24/7 access to live progress, schedules, approvals and documents. Manage every detail from overseas, cut project-manager travel costs, and let building your estate feel as effortless as this journey.",
+      cta: "Explore Your Build, Live",
+    },
+  };
+  for (const [id, card] of Object.entries(cards)) {
+    const stop = oceanStops.find((item) => item.id === id);
+    assert.ok(stop, id);
+    assert.equal(stop.tag, card.tag, id);
+    assert.equal(stop.title, card.title, id);
+    assert.equal(stop.line, card.line, id);
+    assert.equal(stop.cta, card.cta, id);
+  }
 });
 
 test("the contact card copy is locked", () => {
