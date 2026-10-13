@@ -1,47 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PlateBlueprint } from "@/components/ocean/PlateBlueprint";
 import { EstateWalk3d } from "@/components/estates/EstateWalk3d";
 import { WalkthroughVideo } from "@/components/estates/WalkthroughVideo";
 import { WHATSAPP_ENQUIRY_NUMBER, conceptPlate, estates, type EstateRecord, type EstateSpecs } from "@/content/estates";
-
-const GOLD = {
-  fill: "none" as const,
-  stroke: "#E3CB98",
-  strokeWidth: 2.6,
-  strokeLinejoin: "round" as const,
-  style: { filter: "drop-shadow(0 0 5px rgba(80,50,10,.9)) drop-shadow(0 0 2px rgba(227,203,152,1))" },
-};
-
-const LINEWORK: Record<string, string[]> = {
-  "rustic-modern-aerial": [
-    "380,210 720,160 1040,230 860,310 380,210",
-    "410,250 410,430 980,430 980,270",
-    "160,470 340,420 520,490 300,540 160,470",
-    "620,500 920,460 1180,540 860,610 620,500",
-    "40,640 420,700 860,790 1180,880",
-  ],
-  "beachfront-from-water": [
-    "260,300 560,250 980,250 1280,310 1180,390 360,390 260,300",
-    "400,320 400,470 1140,470 1140,330",
-    "180,520 420,490 760,520 1100,490 1400,540",
-    "80,640 480,700 980,760 1400,840",
-  ],
-  "rustic-modern-pavilion-dusk": [
-    "430,240 700,180 980,250 760,340 430,240",
-    "470,280 470,460 900,460 900,300",
-    "1040,320 1240,280 1420,340 1240,420 1040,320",
-    "180,400 300,350 460,400 320,470 180,400",
-    "200,620 640,680 1080,760 1460,860",
-  ],
-  "rustic-modern-cliffside": [
-    "520,180 860,140 1180,210 1040,290 520,180",
-    "560,230 560,390 1080,390 1080,250",
-    "280,360 480,320 700,380 460,450 280,360",
-    "760,470 1080,440 1320,510 1040,560 760,470",
-    "60,560 400,640 820,740 1240,880",
-  ],
-};
 
 function group(value: number) {
   return value.toLocaleString("en-US");
@@ -52,45 +13,23 @@ function enquiryHref(title: string) {
   return `https://wa.me/${WHATSAPP_ENQUIRY_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
-function GoldOverlay({ slug }: { slug: string }) {
-  if (slug === "mega-estate-aerial") {
-    return (
-      <div className="pointer-events-none absolute inset-0 z-10">
-        <PlateBlueprint plate="mega-estate-aerial" draw={1} weight={2.8} />
-      </div>
-    );
-  }
-  const lines = LINEWORK[slug];
-  if (!lines) return null;
-  return (
-    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 z-10 h-full w-full" aria-hidden="true">
-      {lines.map((points) => (
-        <polyline key={points} points={points} {...GOLD} />
-      ))}
-    </svg>
-  );
-}
-
 function Hero({ estate, draft }: { estate: EstateRecord; draft: boolean }) {
   const plate = conceptPlate(estate.hero);
   return (
-    <figure className="relative">
+    <figure>
       <div className="relative h-[78vh] min-h-[520px] w-full bg-[#ebe4d6]">
         {draft ? (
-          <>
-            <Image src={plate.src} alt="Concept render" fill priority className="object-cover" sizes="100vw" />
-            <GoldOverlay slug={estate.slug} />
-          </>
+          <Image src={plate.src} alt="Concept render" fill priority className="object-cover" sizes="100vw" />
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="paper-kicker">Concept</p>
           </div>
         )}
       </div>
-      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent px-6 pt-24 pb-8 text-white md:px-14 md:pb-12">
-        <p className="text-[0.68rem] tracking-[0.32em] text-[#e6d2a8] uppercase">{estate.number}</p>
-        <h1 className="mt-3 max-w-4xl font-display text-5xl leading-[0.95] md:text-7xl">{estate.title}</h1>
-        {draft ? <p className="mt-4 text-[0.68rem] tracking-[0.28em] text-[#e6d2a8] uppercase">Concept render</p> : null}
+      <figcaption className="px-6 pt-8 md:px-14">
+        <p className="paper-kicker">{estate.number}</p>
+        <h1 className="mt-3 max-w-4xl font-display text-5xl leading-[0.95] text-[#1a1a1a] md:text-7xl">{estate.title}</h1>
+        {draft ? <p className="paper-kicker mt-4">Concept render</p> : null}
       </figcaption>
     </figure>
   );
@@ -197,7 +136,7 @@ export function EstatePage({ estate, draft }: { estate: EstateRecord; draft: boo
             <div className="mt-8 grid gap-8 md:grid-cols-2">
               {estate.plans.slice(0, 2).map((plan) => (
                 <figure key={plan.src}>
-                  <div className="relative aspect-[4/3] overflow-hidden border border-[#c5a059]/50 bg-white">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-white">
                     <Image src={plan.src} alt="Concept" fill className="scale-125 object-cover blur-md" sizes="(min-width: 768px) 40vw, 100vw" />
                   </div>
                   <figcaption className="paper-kicker mt-3">Concept · Full plans on request</figcaption>

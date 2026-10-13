@@ -25,7 +25,7 @@ export function Gallery({ images }: { images: PortfolioImage[] }) {
         {images.map((image) => (
           <li key={image.src}>
             <button type="button" className="block w-full text-left" onClick={() => setIndex(images.indexOf(image))}>
-              <span className="relative block aspect-[4/3] overflow-hidden border border-line">
+              <span className="relative block aspect-[4/3] overflow-hidden">
                 <Image src={image.src} alt={image.caption} fill className="object-cover" sizes="(min-width: 1024px) 30vw, 100vw" />
               </span>
               <span className="mt-3 block text-sm text-sand/70">{image.caption}</span>
@@ -44,7 +44,7 @@ export function Gallery({ images }: { images: PortfolioImage[] }) {
           <button type="button" className="absolute top-1/2 right-4 -translate-y-1/2 text-[0.68rem] tracking-[0.2em] text-gold-2 uppercase" onClick={(event) => { event.stopPropagation(); setIndex((current) => (current === null ? current : (current + 1) % images.length)); }}>
             Next
           </button>
-          <figure className="max-h-[85dvh] max-w-5xl border border-gold/40 p-3" onClick={(event) => event.stopPropagation()}>
+          <figure className="max-h-[85dvh] max-w-5xl" onClick={(event) => event.stopPropagation()}>
             <Image src={open.src} alt={open.caption} width={open.width} height={open.height} className="max-h-[75dvh] w-auto object-contain" />
             <figcaption className="mt-4 flex items-baseline justify-between gap-4 text-sm text-sand/75">
               <span>{open.caption}</span>

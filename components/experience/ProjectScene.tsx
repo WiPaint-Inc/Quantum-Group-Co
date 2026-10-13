@@ -87,14 +87,14 @@ export function ProjectScene({
 
   if (reduced) {
     return (
-      <div className={`relative overflow-hidden border border-line bg-ink ${className}`}>
+      <div className={`relative overflow-hidden bg-ink ${className}`}>
         {lead ? <Image src={lead.src} alt={lead.caption} fill className="object-cover" sizes="(min-width: 768px) 80vw, 100vw" /> : null}
       </div>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden border border-line bg-ink ${className}`}>
+    <div className={`relative overflow-hidden bg-ink ${className}`}>
       <Canvas camera={{ position: [0, 0.55, 4.4], fov: 36 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: false }}>
         <Scene images={images} model={model} />
       </Canvas>
