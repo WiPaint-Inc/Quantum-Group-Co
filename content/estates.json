@@ -1,0 +1,10 @@
+{
+  "schema": "qgc-estates/1",
+  "note": "One entry per island stop. Swap an asset by editing its entry; no code or scroll changes. type: glb | render | frames.",
+  "design-build": { "type": "glb", "asset": "mega-estate-aerial", "dir": "/estates/mega-estate/web", "scale": 2.2, "animation": ["build"], "plate": "mega-estate-aerial" },
+  "engineering":  { "type": "glb", "asset": "beachfront-from-water", "label": "Shoreline House", "dir": "/estates/beachfront-from-water/web", "scale": 1, "animation": ["xray", "mep", "finished"] },
+  "construction": { "type": "glb", "asset": "rustic-modern-cliffside", "dir": "/estates/cliffside/web", "yaw_deg": 168.37, "scale": 1, "animation": ["excavation", "foundations", "structure", "finish"] },
+  "developments": { "type": "render", "asset": "developments-bluehour", "file": "renders/hires/developments-bluehour_4x.png", "frames_dir": "/estates/developments-island/web", "fallback": "render" },
+  "materials":    { "type": "glb", "asset": "container-ship" },
+  "build-live":   { "type": "render", "asset": "your-build-live" }
+}

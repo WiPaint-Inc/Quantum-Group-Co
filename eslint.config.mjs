@@ -1,0 +1,31 @@
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    ".open-next/**",
+    ".wrangler/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+  {
+    files: ["components/experience/**/*.{ts,tsx}", "components/journey/**/*.{ts,tsx}", "components/ocean/**/*.{ts,tsx}", "components/concept/**/*.{ts,tsx}", "components/estates/**/*.{ts,tsx}"],
+    rules: {
+      // React Three Fiber updates cameras, materials, and fog by mutating
+      // Three.js objects inside useFrame. That is the scene graph, not React state.
+      "react/no-unknown-property": "off",
+      "react-hooks/immutability": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/preserve-manual-memoization": "off",
+    },
+  },
+]);
+
+export default eslintConfig;

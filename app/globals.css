@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-bodoni), Georgia, "Times New Roman", serif;
+  --color-ink: #071014;
+  --color-sand: #f4efe6;
+  --color-sand-dim: #c9c2b4;
+  --color-gold: #c6a36a;
+  --color-gold-2: #e6d2a8;
+  --color-tide: #8fd4cb;
+  --color-line: rgba(244, 239, 230, 0.16);
+}
+
+html {
+  background: #071014;
+  color: #f4efe6;
+}
+
+body {
+  min-height: 100dvh;
+  background: #071014;
+  color: #f4efe6;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: #c6a36a;
+  color: #071014;
+}
+
+:focus-visible {
+  outline: 1px solid #c6a36a;
+  outline-offset: 3px;
+}
+
+.kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #e6d2a8;
+}
+
+.paper {
+  background: #f3efe6;
+  color: #1a1a1a;
+}
+
+.paper-kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8d7344;
+}
+
+body[data-sheet="paper"] {
+  background: #f3efe6;
+  color: #1a1a1a;
+}
+
+body[data-sheet="paper"] footer {
+  background: #f3efe6;
+  border-color: rgba(197, 160, 89, 0.55);
+}
+
+body[data-sheet="paper"] footer p,
+body[data-sheet="paper"] footer a {
+  color: #1a1a1a;
+}
+
+body[data-sheet="paper"] footer p.text-gold-2 {
+  color: #8d7344;
+}
+
+.crawlable-index {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: normal;
+  border: 0;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(244, 239, 230, 0.045), rgba(7, 16, 20, 0.35));
+  border: 1px solid rgba(230, 210, 168, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.neutral-plate {
+  background:
+    radial-gradient(720px 320px at 72% 78%, rgba(201, 169, 110, 0.2), transparent 62%),
+    linear-gradient(180deg, #0c1014 0%, #14110e 58%, #1a1714 100%);
+}
+
+.still-ocean,
+.still-space {
+  position: absolute;
+  inset: 0;
+}
+
+.still-ocean {
+  background:
+    radial-gradient(900px 420px at 78% 78%, rgba(176, 112, 58, 0.5), transparent 60%),
+    radial-gradient(640px 360px at 16% 82%, rgba(122, 92, 58, 0.42), transparent 58%),
+    radial-gradient(700px 500px at 48% 68%, rgba(42, 112, 104, 0.32), transparent 55%),
+    linear-gradient(#12110e 0%, #1a302c 40%, #3d4a40 68%, #6b5340 100%);
+}
+
+.still-space {
+  background:
+    radial-gradient(2px 2px at 12% 22%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 28% 68%, #e6d2a8, transparent),
+    radial-gradient(1.5px 1.5px at 62% 30%, #fff, transparent),
+    radial-gradient(2px 2px at 80% 74%, #8fd4cb, transparent),
+    radial-gradient(1px 1px at 44% 48%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 90% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 18% 40%, #fff, transparent),
+    radial-gradient(1px 1px at 52% 16%, #fff, transparent),
+    radial-gradient(420px 280px at 30% 40%, rgba(198, 163, 106, 0.16), transparent 70%),
+    radial-gradient(380px 260px at 72% 58%, rgba(90, 140, 180, 0.16), transparent 70%),
+    #07080f;
+}
+
+.still-horizon {
+  position: absolute;
+  right: 0;
+  bottom: 22%;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230, 210, 168, 0.85), transparent);
+}
+
+.veil {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background:
+    radial-gradient(circle at 50% 46%, transparent 0 10%, rgba(230, 210, 168, 0.5) 11.2%, transparent 13%),
+    #071014;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.veil-on {
+  opacity: 1;
+}
+
+.glass-panel {
+  border: 1px solid rgba(230, 210, 168, 0.22);
+  background: linear-gradient(160deg, rgba(244, 239, 230, 0.06), rgba(244, 239, 230, 0.02));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.loader-bar {
+  width: 0;
+  animation: load 1.8s ease forwards;
+}
+
+@keyframes load {
+  from {
+    width: 0;
+  }
+  to {
+    width: 86%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-bar,
+  .veil {
+    animation: none;
+    transition: none;
+  }
+
+  .loader-bar {
+    width: 86%;
+  }
+}
