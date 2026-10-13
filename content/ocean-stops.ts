@@ -20,10 +20,10 @@ export type OceanStop = {
 };
 
 /**
- * Arrival opens the flight. The chapters then run: Full Design & Build, Construction,
- * Engineering, Plans & Rendering, Developments & Hotels, Advanced Materials Distribution,
+ * Arrival opens the flight. The chapters then run: Full Design & Build, Engineering, Plans & Rendering
+ * (Shoreline House, X-ray + MEP), Construction (cliffside, build stages), Developments & Hotels, Advanced Materials Distribution,
  * Your Build, Live, Contact. The plans ridge stays in the water as scenery, not a stop.
- * Design and Build resolves into the Grand Beachfront estate. Engineering resolves into the cliffside study. Developments keeps its gold linework.
+ * Design and Build resolves into the Grand Beachfront estate. Engineering resolves into Shoreline House; Construction into the cliffside build. Developments keeps its gold linework.
  */
 export const oceanStops: OceanStop[] = [
   {
@@ -54,18 +54,6 @@ export const oceanStops: OceanStop[] = [
     ...islandPosition("design-build"),
   },
   {
-    id: "construction",
-    short: "Construction",
-    tag: "Build · Renovate",
-    title: "Estates and commercial projects, built to last.",
-    line: "Full estate and commercial construction and renovation services, delivered to the same exacting standard from groundbreaking to handover.",
-    href: "/services/construction",
-    cta: "Explore Construction",
-    kind: "construction",
-    size: "mid",
-    ...islandPosition("construction"),
-  },
-  {
     id: "engineering",
     short: "Engineering, Plans & Rendering",
     tag: "Engineer · Plan · Render",
@@ -76,6 +64,18 @@ export const oceanStops: OceanStop[] = [
     kind: "engineering",
     size: "mid",
     ...islandPosition("engineering"),
+  },
+  {
+    id: "construction",
+    short: "Construction",
+    tag: "Build · Renovate",
+    title: "Estates and commercial projects, built to last.",
+    line: "Full estate and commercial construction and renovation services, delivered to the same exacting standard from groundbreaking to handover.",
+    href: "/services/construction",
+    cta: "Explore Construction",
+    kind: "construction",
+    size: "mid",
+    ...islandPosition("construction"),
   },
   {
     id: "developments",

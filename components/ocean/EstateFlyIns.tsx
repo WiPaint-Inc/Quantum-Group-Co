@@ -179,7 +179,7 @@ export function CliffStudy({
   placed?: boolean;
   forceNight?: number;
 }) {
-  const anchor = estateAnchor("engineering");
+  const anchor = estateAnchor("construction");
   const lines = useMemo(() => buildCliffsideLines(), []);
   const plant = useMemo(() => buildCliffsidePlant(), []);
   const rock = useMemo(() => buildRockFace(journeyPath.cliffLedge.width + 8, journeyPath.cliffLedge.face + 4), []);
@@ -238,7 +238,7 @@ export function CliffStudy({
   }, [electrical, glass, hvac, lines, plant, plumbing, rock, structure]);
 
   useFrame(() => {
-    const t = estateFlyT(progressRef.current, "engineering");
+    const t = estateFlyT(progressRef.current, "construction");
     const night = forceNight ?? sampleFlight(progressRef.current).night;
     const shell = beat(t, 0.02, 0.26);
     const structureDraw = beat(t, 0.0, 0.34);

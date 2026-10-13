@@ -22,8 +22,8 @@ function align(sample: ReturnType<typeof sampleFlight>) {
 test("the cruise sits near 285 m and approaches drop into the 60–160 m band", () => {
   const arrival = sampleFlight(0);
   assert.ok(arrival.pos[1] > 250 && arrival.pos[1] < 310, `arrival ${arrival.pos[1]}`);
-  const construction = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "construction")));
-  assert.ok(construction.pos[1] > 55 && construction.pos[1] < 120, `construction ${construction.pos[1]}`);
+  const engineering = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "engineering")));
+  assert.ok(engineering.pos[1] > 55 && engineering.pos[1] < 140, `engineering ${engineering.pos[1]}`);
   const cruise = sampleFlight(stopProgress(1) + (stopProgress(2) - stopProgress(1)) * 0.5);
   assert.ok(cruise.pos[1] > 240 && cruise.pos[1] < 310, `cruise ${cruise.pos[1]}`);
 });
@@ -55,7 +55,7 @@ test("the launch line and the chapter lineup", () => {
   );
   assert.deepEqual(
     oceanStops.map((stop) => stop.id),
-    ["arrival", "design-build", "construction", "engineering", "developments", "materials", "build-live", "contact"],
+    ["arrival", "design-build", "engineering", "construction", "developments", "materials", "build-live", "contact"],
   );
   assert.deepEqual(
     journeyPath.sun.map((key) => key.stop),
@@ -65,8 +65,8 @@ test("the launch line and the chapter lineup", () => {
     oceanStops.filter((stop) => stop.id !== "arrival").map((stop) => stop.short),
     [
       "Full Design & Build",
-      "Construction",
       "Engineering, Plans & Rendering",
+      "Construction",
       "Developments & Hotels",
       "Advanced Materials Distribution",
       "Your Build, Live",
@@ -158,11 +158,11 @@ test("the opening stays high and the contact finale settles at eye level without
   assert.ok(contactReveal(1) > 0.98);
 });
 
-test("design and engineering fly in without a cut, and developments stays aerial", () => {
+test("design and construction fly in without a cut, and developments stays aerial", () => {
   const n = oceanStops.length;
   const dwell = 0.17;
   const design = oceanStops.findIndex((stop) => stop.id === "design-build");
-  const engineering = oceanStops.findIndex((stop) => stop.id === "engineering");
+  const construction = oceanStops.findIndex((stop) => stop.id === "construction");
   const developments = oceanStops.findIndex((stop) => stop.id === "developments");
   const designAerial = sampleFlight(stopProgress(design) - dwell / (n - 1));
   const designRest = sampleFlight(stopProgress(design));
@@ -176,12 +176,13 @@ test("design and engineering fly in without a cut, and developments stays aerial
     designRest.pos[2] - designClose.pos[2],
   );
   assert.ok(designMoved > 40, `design move ${designMoved}`);
-  const engineeringAerial = sampleFlight(stopProgress(engineering) - dwell / (n - 1));
-  const engineeringRest = sampleFlight(stopProgress(engineering));
-  const engineeringClose = sampleFlight(stopProgress(engineering) + dwell / (n - 1));
-  assert.ok(engineeringAerial.pos[1] > 110, `engineering aerial ${engineeringAerial.pos[1]}`);
-  assert.ok(engineeringRest.pos[1] > 24 && engineeringRest.pos[1] < 50, `engineering rest ${engineeringRest.pos[1]}`);
-  assert.ok(engineeringClose.pos[1] > 16 && engineeringClose.pos[1] < 28, `engineering close ${engineeringClose.pos[1]}`);
+  const constructionAerial = sampleFlight(stopProgress(construction) - dwell / (n - 1));
+  const constructionRest = sampleFlight(stopProgress(construction));
+  const constructionClose = sampleFlight(stopProgress(construction) + dwell / (n - 1));
+  assert.ok(constructionAerial.pos[1] > 60, // construction stop view height is 72 m (engineering was 120)
+    `construction aerial ${constructionAerial.pos[1]}`);
+  assert.ok(constructionRest.pos[1] > 24 && constructionRest.pos[1] < 50, `construction rest ${constructionRest.pos[1]}`);
+  assert.ok(constructionClose.pos[1] > 16 && constructionClose.pos[1] < 28, `construction close ${constructionClose.pos[1]}`);
   const developmentsRest = sampleFlight(stopProgress(developments));
   assert.ok(developmentsRest.pos[1] > 140 && developmentsRest.pos[1] < 170, `developments ${developmentsRest.pos[1]}`);
   const seam = sampleFlight(stopProgress(design) + dwell / (n - 1));
@@ -217,11 +218,11 @@ test("a delivered camera path bends the middle of the fly-in and leaves the ends
 });
 
 test("the cliff ledge flattens only the terrace", () => {
-  const anchor = estateAnchor("engineering");
+  const anchor = estateAnchor("construction");
   assert.ok(anchor);
-  const stop = oceanStops.find((item) => item.id === "engineering");
+  const stop = oceanStops.find((item) => item.id === "construction");
   assert.ok(stop);
-  const scale = { radius: 310, peak: 34, stretch: 1.12, form: "lagoon" as const };
+  const scale = { radius: 260, peak: 64, stretch: 1.22, form: "headland" as const };
   const ledge = {
     x: anchor.x - stop.x,
     z: anchor.z - stop.z,

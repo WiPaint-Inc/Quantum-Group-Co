@@ -67,9 +67,10 @@ export const journeyPath = {
         rest: { back: 168, height: 56, side: 78, lookHeight: 6 },
         close: { back: 72, height: 22, side: 24, lookHeight: 4.5 },
       },
-      engineering: {
-        bearing: 315,
-        shore: 188,
+      /** Cliffside (with build stages) seats on the Construction headland; Engineering is Shoreline House. */
+      construction: {
+        bearing: 86,
+        shore: 160,
         side: 8,
         base: 16,
         rest: { back: 64, height: 34, side: 36, lookHeight: 20 },
@@ -77,9 +78,9 @@ export const journeyPath = {
       },
     },
   },
-  /** Terrace cut into the engineering island. The rest of that island is unchanged. */
+  /** Terrace cut into the construction headland for the cliffside. The rest of that island is unchanged. */
   cliffLedge: {
-    stop: "engineering",
+    stop: "construction",
     width: 44,
     length: 30,
     face: 12,
@@ -101,8 +102,8 @@ export const journeyPath = {
   sun: [
     { stop: "arrival", elev: 38, az: 164, night: 0 },
     { stop: "design-build", elev: 26, az: 215, night: 0 },
-    { stop: "construction", elev: 1.2, az: 266, night: 0.04 },
     { stop: "engineering", elev: -10, az: 285, night: 0.9 },
+    { stop: "construction", elev: 1.2, az: 266, night: 0.04 },
     { stop: "developments", elev: -18, az: 330, night: 1 },
     { stop: "materials", elev: -18, az: 380, night: 1 },
     { stop: "build-live", elev: -4, az: 440, night: 0.42 },

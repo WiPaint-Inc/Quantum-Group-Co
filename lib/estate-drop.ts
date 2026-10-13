@@ -62,8 +62,9 @@ export const MEGA_ESTATE_DROP: EstateDrop = {
   },
 };
 
+/** Construction: the cliffside with its build stages. */
 export const CLIFFSIDE_DROP: EstateDrop = {
-  id: "engineering",
+  id: "construction",
   publicDir: "/estates/cliffside/web",
   cadDir: "quantum-group-co/estates/cliffside/web",
   files: {
@@ -74,6 +75,22 @@ export const CLIFFSIDE_DROP: EstateDrop = {
     vegetation: "cliffside_vegetation.json",
     cameraPath: "cliffside_camera_path.json",
     mep: "cliffside_mep.glb",
+  },
+};
+
+/** Engineering: Shoreline House (beachfront) with the X-ray structure and MEP. */
+export const SHORELINE_DROP: EstateDrop = {
+  id: "engineering",
+  publicDir: "/estates/beachfront-from-water/web",
+  cadDir: "quantum-group-co/estates/beachfront-from-water/web/v2",
+  files: {
+    web: "beachfront-from-water_web.glb",
+    lod1: "beachfront-from-water_web_lod1.glb",
+    lod2: "beachfront-from-water_web_lod2.glb",
+    wireframe: "beachfront-from-water_wireframe.glb",
+    vegetation: "beachfront-from-water_vegetation.json",
+    cameraPath: "beachfront-from-water_camera_path.json",
+    mep: "beachfront_mep.glb",
   },
 };
 

@@ -421,7 +421,7 @@ export function OceanWorld({
       material.uniforms.uDraw.value = drawAmount(progressRef.current, index);
       material.uniforms.uNight.value = flight.night;
       material.uniforms.uWash.value = stop.kind === "construction" ? presence : 0;
-      const carved = stop.id === "design-build" || stop.id === "engineering";
+      const carved = stop.id === "design-build" || stop.id === "construction";
       material.uniforms.uFade.value = draft && carved ? 1 - estateReveal(progressRef.current, stop.id) : 1;
       (material.uniforms.uResolution.value as THREE.Vector2).copy(resolution);
     });

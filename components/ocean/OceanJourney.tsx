@@ -263,8 +263,8 @@ export function OceanJourney({ draft }: { draft: boolean }) {
           const presence = stop.id === "contact" ? contactReveal(progress) : stopPresence(progress, index);
           const study = draft && stop.id === "design-build"
             ? "Concept walkthrough · The Grand Beachfront Estate"
-            : draft && stop.id === "engineering"
-              ? "Engineering study · The Cliffside Residence"
+            : draft && stop.id === "construction"
+              ? "Construction study · The Cliffside Residence"
               : null;
           if (stop.id === "contact") {
             return (
