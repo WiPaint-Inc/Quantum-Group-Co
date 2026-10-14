@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { islandScale, oceanStops } from "@/content/ocean-stops";
 import { EstateFlyIns } from "@/components/ocean/EstateFlyIns";
-import { enableSolidShadows, hash, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, makeTerrainTexture, makeWaterNormal, sampleIslandHeight, type CliffLedge } from "@/components/ocean/geometry";
+import { enableSolidShadows, hash, islandMeshSegments, makeCanopyDome, makeCanopyTexture, makeIsland, makePalm, makeTerrainTexture, makeWaterNormal, sampleIslandHeight, type CliffLedge } from "@/components/ocean/geometry";
 import { linesFor } from "@/components/ocean/linework";
 import { MeetingCay } from "@/components/ocean/MeetingCay";
 import {
@@ -51,12 +51,11 @@ export function OceanWorld({
   const depthMaterial = useMemo(() => new THREE.MeshDepthMaterial(), []);
 
   const islands = useMemo(() => {
-    const segs = 144;
     return [...oceanStops, ...scenicCays]
       .filter((stop) => stop.size !== "none")
       .map((stop) => {
         const scale = islandScale(stop.size, stop.kind);
-        const detail = scale.radius < 30 ? 72 : scale.radius > 200 ? 176 : segs;
+        const detail = islandMeshSegments(scale.radius, scale.form);
         let ledge: CliffLedge | undefined;
         if (stop.id === journeyPath.cliffLedge.stop) {
           const anchor = estateAnchor(stop.id);

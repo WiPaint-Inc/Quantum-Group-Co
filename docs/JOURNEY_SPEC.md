@@ -56,7 +56,7 @@ Metres, Y-up. The origin is the estate centre at ground level. Sea is **+Z**. FO
 
 ### Engineering
 
-The engineering stop is the night island. The camera flies into the Cliffside Residence: a green roof on a ledge cut into the slope, with an added rock face behind it. The rest of the island is unchanged. The ledge is `journeyPath.cliffLedge`.
+Engineering is Shoreline House, the Jumby beachfront estate. Its island is a spit (`mid:engineering`, form `beachfront`, 96 segments), not the live office atoll. The cliffside residence sits on Construction. The ledge cut into that headland is `journeyPath.cliffLedge`. The rest of the construction island is unchanged.
 
 The view is an engineering study, not a photograph. A ghosted glass shell shows the structure, with faint fresnel edges and thin gold slab and column lines. Inside it, the services trace in sequence and then keep moving:
 
@@ -121,13 +121,16 @@ One key per stop. The sun is world-fixed: only these keys are interpolated, so a
 | --- | ---: | ---: | ---: |
 | Arrival | 38° | 164° | 0 |
 | Design | 26° | 215° | 0 |
-| Plans | 9° | 248° | 0 |
-| Construction | 1.2° | 266° | 0.04 |
-| Engineering | −10° | 285° | 0.9 |
-| Developments | −18° | 330° | 1 |
-| Materials | −18° | 380° | 1 |
-| Your build | −4° | 440° | 0.42 |
+| Engineering | 14° | 242° | 0.05 |
+| Construction | 1.6° | 274° | 0.2 |
+| Developments | −8° | 332° | 0.72 |
+| Materials | −11° | 382° | 0.76 |
+| Your build | −1.5° | 428° | 0.34 |
 | Contact | 2.8° | 471° | 0 |
+
+Azimuth only increases. The day runs through Engineering, the sun meets the horizon at Construction, night holds over Developments and Materials, and Contact is the locked sunrise. Night water is lifted to at least `#05304a` once night passes about 0.28, so the crossing from Engineering to Construction does not drop to navy.
+
+The partner staging page is vendored at `ocean-journey/index.html` and follows the same arc. This branch does not deploy it.
 
 Arrival azimuth is deliberately off the opening view axis (the camera looks toward about 197°). The long specular streak is not drawn while the sun is high. A short glitter path remains only while the sun is low, for sunset and the sunrise finale.
 
@@ -164,7 +167,7 @@ Scenic cays in `journeyPath.scenic` are dressing. They are not stops and have no
 | peninsula | 560 | 44 | 2.45 | peninsula |
 | mid:plans | 280 | 68 | 1.32 | ridge |
 | mid:construction | 260 | 64 | 1.22 | headland |
-| mid:engineering | 310 | 34 | 1.12 | lagoon |
+| mid:engineering | 220 | 16 | 1.72 | beachfront |
 | mid | 250 | 42 | 1.18 | ridge |
 | cay | 64 | 8 | 1.06 | cay |
 | bar | 120 | 1.15 | 1.85 | bar |
