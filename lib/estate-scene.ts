@@ -12,6 +12,38 @@ export const CAD_HIDE = /(?:^|\/)(T_Terrain(?:_withSkirt)?|SITE_Terrain|SITE_Sea
 const DUPE_SUFFIX = /(_\d+|\.00\d+)$/;
 const ANIM_KEEP = /crane|dump_truck|excavator|loader|beacon/i;
 
+/** Planting stays at full size. Only the built form grows in. */
+export const VEGETATION_NAME = /veg|canopy|palm|tree|landscap|plant|forest|shrub|flora|lawn|garden|jungle|hedge|grass|foliage|fern|bush/i;
+
+export function isVegetationNode(object: THREE.Object3D) {
+  let node: THREE.Object3D | null = object;
+  while (node) {
+    if (VEGETATION_NAME.test(node.name || "")) return true;
+    node = node.parent;
+  }
+  return false;
+}
+
+/** Pull planting out of the building group so a reveal scale does not grow the trees. */
+export function splitEstateVegetation(root: THREE.Object3D) {
+  const vegetation = new THREE.Group();
+  vegetation.name = "estate-vegetation";
+  const buildings = new THREE.Group();
+  buildings.name = "estate-buildings";
+  const moving: THREE.Object3D[] = [];
+  root.traverse((object) => {
+    if (object === root || !VEGETATION_NAME.test(object.name || "")) return;
+    if (object.parent && VEGETATION_NAME.test(object.parent.name || "")) return;
+    moving.push(object);
+  });
+  root.updateWorldMatrix(true, true);
+  for (const object of moving) vegetation.attach(object);
+  while (root.children.length > 0) buildings.add(root.children[0]);
+  root.add(buildings);
+  root.add(vegetation);
+  return { buildings, vegetation };
+}
+
 export function nodePath(object: THREE.Object3D, stop?: THREE.Object3D) {
   const parts: string[] = [];
   let node: THREE.Object3D | null = object;
@@ -140,7 +172,7 @@ export function batchStatic(root: THREE.Object3D) {
   root.traverse((object) => {
     const mesh = object as THREE.Mesh;
     if (!mesh.isMesh || !mesh.visible || (mesh as THREE.SkinnedMesh).isSkinnedMesh) return;
-    if (animatedAncestor(mesh)) return;
+    if (animatedAncestor(mesh) || isVegetationNode(mesh)) return;
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     if (materials.length !== 1 || !materials[0]) return;
     before += 1;

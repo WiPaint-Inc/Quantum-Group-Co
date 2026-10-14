@@ -205,16 +205,6 @@ export function OceanWorld({
   const palm = useMemo(() => {
     const geometry = makePalm();
     const material = new THREE.MeshBasicMaterial({ vertexColors: true });
-    material.onBeforeCompile = (shader) => {
-      shader.uniforms.uTime = { value: 0 };
-      shader.vertexShader = `uniform float uTime;\n${shader.vertexShader}`.replace(
-        "#include <begin_vertex>",
-        `#include <begin_vertex>
-         transformed.x += sin(uTime * 1.3 + position.z * 0.8) * 0.12 * smoothstep(1.5, 6.0, position.y);
-         transformed.z += cos(uTime * 1.1 + position.x) * 0.08 * smoothstep(1.5, 6.0, position.y);`,
-      );
-      material.userData.shader = shader;
-    };
     const spots: Array<{ x: number; y: number; z: number; rot: number; scale: number }> = [];
     for (const island of islands) {
       if (island.scale.radius < 22) continue;
@@ -360,7 +350,7 @@ export function OceanWorld({
     const floorLimit = journeyPath.camera.cruiseFloor;
     const floor = descending || flight.pos[1] < floorLimit ? journeyPath.camera.descentFloor : floorLimit;
     desired.y = Math.min(journeyPath.camera.cruiseCeiling, Math.max(floor, desired.y));
-    const damp = 1 - Math.exp(-2.4 * delta);
+    const damp = 1 - Math.exp(-10 * delta);
     camera.position.lerp(desired, damp);
     look.lerp(desiredLook, damp);
     camera.up.set(0, 1, 0);
@@ -378,8 +368,6 @@ export function OceanWorld({
       water.uniforms.uShipHeading.value = motion.heading;
     }
     canopyMat.uniforms.uTime.value = time;
-    const palmShader = palm.material.userData.shader as { uniforms: { uTime: { value: number } } } | undefined;
-    if (palmShader) palmShader.uniforms.uTime.value = time;
     const sun = water.uniforms.uSun.value as THREE.Vector3;
     sun.set(flight.sun[0], flight.sun[1], flight.sun[2]);
     (sky.uniforms.uSun.value as THREE.Vector3).copy(sun);
