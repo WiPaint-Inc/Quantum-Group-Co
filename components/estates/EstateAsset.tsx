@@ -4,7 +4,17 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Component, Suspense, useLayoutEffect, useMemo, type ReactNode } from "react";
 import * as THREE from "three";
+import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { chooseEstateLod, type EstateAvailability } from "@/lib/estate-drop";
+import { batchStatic, capTextures, disposeObjectTree, hideCadDupes } from "@/lib/estate-scene";
+
+let ktx2: KTX2Loader | null = null;
+
+function attachKtx2(loader: { setKTX2Loader?: (transcoder: unknown) => unknown }, gl: THREE.WebGLRenderer) {
+  if (!ktx2) ktx2 = new KTX2Loader().setTranscoderPath("/decoders/basis/");
+  ktx2.detectSupport(gl);
+  loader.setKTX2Loader?.(ktx2);
+}
 
 const glassVertex = /* glsl */ `
   varying vec3 vNormal;
@@ -33,16 +43,19 @@ const glassFragment = /* glsl */ `
   }
 `;
 
-function cloneScene(source: THREE.Object3D) {
+function cloneScene(source: THREE.Object3D, glass: boolean) {
   const scene = source.clone(true);
+  hideCadDupes(scene);
   scene.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
     if (!mesh.isMesh) return;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     if (Array.isArray(mesh.material)) mesh.material = mesh.material.map((material) => material.clone());
-    else mesh.material = mesh.material.clone();
+    else if (mesh.material) mesh.material = mesh.material.clone();
   });
+  capTextures(scene);
+  if (!glass) batchStatic(scene);
   return scene;
 }
 
@@ -55,9 +68,11 @@ function GlbModel({
   glass: boolean;
   revealRef: { current: number };
 }) {
-  const gltf = useGLTF(url);
-  const { camera } = useThree();
-  const scene = useMemo(() => cloneScene(gltf.scene), [gltf.scene]);
+  const { camera, gl } = useThree();
+  const gltf = useGLTF(url, "/decoders/draco/gltf/", true, (loader) => {
+    attachKtx2(loader as unknown as { setKTX2Loader?: (transcoder: unknown) => unknown }, gl);
+  });
+  const scene = useMemo(() => cloneScene(gltf.scene, glass), [glass, gltf.scene]);
   const glassMat = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -93,6 +108,11 @@ function GlbModel({
       glassMat.dispose();
     };
   }, [glass, glassMat, scene]);
+
+  useLayoutEffect(() => () => {
+    disposeObjectTree(scene);
+    useGLTF.clear(url);
+  }, [scene, url]);
 
   useFrame(() => {
     glassMat.uniforms.uReveal.value = revealRef.current;

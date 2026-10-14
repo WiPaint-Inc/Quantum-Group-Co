@@ -240,6 +240,9 @@ export const waterFragment = /* glsl */ `
     col += vec3(0.12, 0.72, 0.6) * bio * 0.28 * uNight;
     float haze = smoothstep(2200.0, 11000.0, distance(uCamera.xz, vWorld.xz));
     col = mix(col, uHorizon * 0.72 + uZenith * 0.28, haze * 0.22);
+    vec3 nightFloor = vec3(0.01961, 0.18824, 0.29020); // #05304a
+    float nightMix = smoothstep(0.28, 0.62, uNight);
+    col = max(col, nightFloor * nightMix);
     fragColor = vec4(col, 1.0);
   }
 `;

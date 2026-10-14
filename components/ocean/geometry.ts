@@ -18,8 +18,8 @@ function coast(angle: number, salt: number) {
   return 1 + 0.2 * Math.sin(angle * 3 + salt) + 0.09 * Math.sin(angle * 7.2 + salt * 1.7);
 }
 
-/** Metres above the water. Negative values are the underwater shelf. */
-export function sampleIslandHeight(form: IslandForm, x: number, z: number, radius: number, peak: number, stretch: number) {
+/** Metres above the water. Negative values are the underwater shelf. `lagoon` is the old ring, kept so the beachfront spit can be checked against it. */
+export function sampleIslandHeight(form: IslandForm | "lagoon", x: number, z: number, radius: number, peak: number, stretch: number) {
   const angle = Math.atan2(z, x);
   const edge = coast(angle, radius * 0.01);
   const d = Math.hypot(x / (radius * stretch * edge), z / (radius * edge));
@@ -34,6 +34,15 @@ export function sampleIslandHeight(form: IslandForm, x: number, z: number, radiu
   if (form === "cay") {
     const dome = Math.pow(Math.max(0, 1 - d), 1.15);
     return d < 1.02 ? 0.25 + dome * peak + n * 0.4 : drop;
+  }
+  if (form === "beachfront") {
+    const along = x / (radius * stretch * 0.92);
+    const across = z / (radius * 0.38);
+    const spine = Math.exp(-across * across * 0.7) * Math.pow(Math.max(0, 1 - along * along), 0.8);
+    let h = peak * spine * (0.42 + 0.58 * (0.55 + 0.45 * n));
+    if (z > radius * 0.05) h *= 0.32;
+    h += 0.45 * n * THREE.MathUtils.smoothstep(d, 0.98, 0.62);
+    return d < 1.02 ? Math.max(0.12, h) : drop;
   }
   if (form === "lagoon") {
     const ring = Math.exp(-((d - 0.58) ** 2) / 0.05);
@@ -108,6 +117,14 @@ export function applyCliffLedge(position: THREE.BufferAttribute | THREE.Interlea
     const blend = Math.max(side, front);
     position.setY(i, ledge.pad * (1 - blend) + y * blend);
   }
+}
+
+/** Beachfront stays coarse. The other sizes keep the previous segment steps. */
+export function islandMeshSegments(radius: number, form: IslandForm) {
+  if (form === "beachfront") return 96;
+  if (radius < 30) return 72;
+  if (radius > 200) return 176;
+  return 144;
 }
 
 export function makeIsland(

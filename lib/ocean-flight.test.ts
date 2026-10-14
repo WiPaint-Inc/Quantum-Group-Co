@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { oceanStops } from "../content/ocean-stops.ts";
 import { company } from "../content/site.ts";
-import { applyCliffLedge, sampleIslandHeight } from "../components/ocean/geometry.ts";
+import { applyCliffLedge, islandMeshSegments, sampleIslandHeight } from "../components/ocean/geometry.ts";
+import { waterFragment } from "../components/ocean/shaders.ts";
+import { cliffsideWireframeUrl, hideCadDupes, batchStatic } from "./estate-scene.ts";
 import { parseEstateCameraPath, setEstateCameraPath } from "./estate-drop.ts";
 import { contactReveal, estateAnchor, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
 import { journeyPath } from "../src/journey/path.ts";
@@ -30,19 +32,91 @@ test("the cruise sits near 285 m and approaches drop into the 60–160 m band", 
 
 test("the sun stays world-fixed while the heading turns into it at sunset", () => {
   const day = sampleFlight(stopProgress(1));
+  const engineering = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "engineering")));
   const sunset = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "construction")));
-  const night = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "engineering")));
+  const night = sampleFlight(stopProgress(oceanStops.findIndex((stop) => stop.id === "developments")));
   const dawn = sampleFlight(1);
+  const azimuths = journeyPath.sun.map((key) => key.az);
+  for (let i = 1; i < azimuths.length; i += 1) assert.ok(azimuths[i] > azimuths[i - 1], `azimuth ${azimuths[i - 1]} -> ${azimuths[i]}`);
   assert.ok(day.night < 0.05);
   assert.ok(day.sun[1] > 0.3);
-  assert.ok(sunset.night < 0.15, `sunset night ${sunset.night}`);
+  assert.ok(engineering.night < 0.12, `engineering night ${engineering.night}`);
+  assert.ok(engineering.sun[1] > 0.15, `engineering sunY ${engineering.sun[1]}`);
+  assert.ok(sunset.night < 0.28, `sunset night ${sunset.night}`);
+  assert.ok(sunset.night > engineering.night);
   assert.ok(sunset.sun[1] > 0 && sunset.sun[1] < 0.08, `sunset sunY ${sunset.sun[1]}`);
   assert.ok(align(sunset) > 0.85, `sunset align ${align(sunset)}`);
-  assert.ok(night.night > 0.8);
+  assert.ok(night.night > 0.65, `night ${night.night}`);
   assert.ok(night.sun[1] < 0);
   assert.ok(dawn.night < 0.08);
   assert.ok(dawn.sun[1] > 0);
+  assert.equal(journeyPath.sun.find((key) => key.stop === "contact")?.elev, 2.8);
+  assert.equal(journeyPath.sun.find((key) => key.stop === "contact")?.az, 471);
+  assert.equal(journeyPath.sun.find((key) => key.stop === "contact")?.night, 0);
+  assert.equal(journeyPath.ship.headingDeg, 48);
   assert.deepEqual(day.moon, night.moon);
+});
+
+test("engineering is a beachfront spit and night water stays at least #05304a", () => {
+  const scale = journeyPath.scales["mid:engineering"];
+  assert.equal(scale.form, "beachfront");
+  assert.equal(islandMeshSegments(scale.radius, scale.form), 96);
+  const spine = sampleIslandHeight(scale.form, 0, 0, scale.radius, scale.peak, scale.stretch);
+  const shelf = sampleIslandHeight(scale.form, 0, scale.radius * 0.45, scale.radius, scale.peak, scale.stretch);
+  const hole = sampleIslandHeight("lagoon", 0, 0, 310, 34, 1.12);
+  assert.ok(spine > 6, `spine ${spine}`);
+  assert.ok(shelf < spine * 0.5, `shelf ${shelf} spine ${spine}`);
+  assert.ok(hole < 1, `lagoon centre ${hole}`);
+  assert.match(waterFragment, /vec3\(0\.01961, 0\.18824, 0\.29020\)/);
+});
+
+test("mega keeps one terrain mesh and the cliffside wireframe skips the missing v1aa file", () => {
+  const root = new THREE.Group();
+  const site = new THREE.Group();
+  site.name = "Site";
+  const terrain = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  terrain.name = "T_Terrain_withSkirt";
+  site.add(terrain);
+  const pathNamed = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  pathNamed.name = "Site/T_Terrain_withSkirt";
+  const walls = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  walls.name = "A_FF_Walls";
+  const wallsCopy = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  wallsCopy.name = "A_FF_Walls_3";
+  const onlyCopy = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  onlyCopy.name = "Site/A_FF_Only_3";
+  const palmA = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  palmA.name = "VEG_CoconutPalm_0";
+  const palmB = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+  palmB.name = "VEG_CoconutPalm_3";
+  root.add(site, pathNamed, walls, wallsCopy, onlyCopy, palmA, palmB);
+  hideCadDupes(root);
+  assert.equal(terrain.visible, false);
+  assert.equal(pathNamed.visible, false);
+  assert.equal(walls.visible, true);
+  assert.equal(wallsCopy.visible, false);
+  assert.equal(onlyCopy.visible, true);
+  assert.equal(palmA.visible, true);
+  assert.equal(palmB.visible, true);
+  assert.equal(
+    cliffsideWireframeUrl("cliffside/web/v1aa/", "rustic-modern-cliffside"),
+    "cliffside/web/v2/rustic-modern-cliffside_wireframe.glb",
+  );
+  const material = new THREE.MeshBasicMaterial();
+  const crowd = new THREE.Group();
+  for (let i = 0; i < 8; i += 1) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+    mesh.position.set(i, 0, 0);
+    crowd.add(mesh);
+  }
+  const batched = batchStatic(crowd);
+  assert.equal(batched.before, 8);
+  assert.equal(batched.after, 1);
+  crowd.traverse((object) => {
+    const mesh = object as THREE.Mesh;
+    if (mesh.geometry) mesh.geometry.dispose();
+  });
+  material.dispose();
 });
 
 test("the launch line and the chapter lineup", () => {

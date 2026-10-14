@@ -7,9 +7,25 @@ import { buildCliffsideLines, buildCliffsidePlant, buildRockFace, CLIFF_VOLUMES,
 import { EstateAsset, MepAsset } from "@/components/estates/EstateAsset";
 import { buildMegaEstatePlaceholder } from "@/components/estates/mega-estate-build";
 import { lineFragment, lineVertex } from "@/components/ocean/shaders";
+import { oceanStops } from "@/content/ocean-stops";
 import { CLIFFSIDE_DROP, loadEstateDrop, MEGA_ESTATE_DROP, type EstateAvailability } from "@/lib/estate-drop";
 import { estateAnchor, estateFlyT, estateReveal, sampleFlight } from "@/lib/ocean-flight";
 import { journeyPath } from "@/src/journey/path";
+
+/** Load the estate while the camera is within 1.7 stops, and drop it past 2.55. */
+function useEstateNear(progressRef: { current: number }, stopId: string) {
+  const index = oceanStops.findIndex((stop) => stop.id === stopId);
+  const [near, setNear] = useState(false);
+  useFrame(() => {
+    const rel = Math.abs(progressRef.current * (oceanStops.length - 1) - index);
+    setNear((current) => {
+      if (rel > 2.55) return false;
+      if (rel < 1.7) return true;
+      return current;
+    });
+  });
+  return near;
+}
 
 const glassVertex = /* glsl */ `
   varying vec3 vNormal;
@@ -78,8 +94,10 @@ function MegaFlyIn({ progressRef }: { progressRef: { current: number } }) {
   const [found, setFound] = useState<EstateAvailability | null>(null);
   const [distance, setDistance] = useState(400);
   const { camera, size, gl } = useThree();
+  const near = useEstateNear(progressRef, "design-build");
 
   useEffect(() => {
+    if (!near) return;
     let live = true;
     loadEstateDrop(MEGA_ESTATE_DROP).then((next) => {
       if (live) setFound(next);
@@ -87,7 +105,7 @@ function MegaFlyIn({ progressRef }: { progressRef: { current: number } }) {
     return () => {
       live = false;
     };
-  }, []);
+  }, [near]);
 
   useEffect(() => () => {
     built.mass.dispose();
@@ -120,7 +138,7 @@ function MegaFlyIn({ progressRef }: { progressRef: { current: number } }) {
   return (
     <group position={[anchor.x, anchor.y, anchor.z]} rotation={[0, anchor.bearing, 0]}>
       <mesh geometry={built.lines} material={lines} renderOrder={4} visible={!found?.wireframe} />
-      <EstateAsset found={found} distance={distance} revealRef={revealRef} fallback={placeholder} />
+      {near ? <EstateAsset found={found} distance={distance} revealRef={revealRef} fallback={placeholder} /> : placeholder}
     </group>
   );
 }
@@ -211,8 +229,10 @@ export function CliffStudy({
   const [distance, setDistance] = useState(400);
   const light = useRef<THREE.PointLight>(null);
   const { camera, size, gl } = useThree();
+  const near = useEstateNear(progressRef, "construction");
 
   useEffect(() => {
+    if (!near) return;
     let live = true;
     loadEstateDrop(CLIFFSIDE_DROP).then((next) => {
       if (live) setFound(next);
@@ -220,7 +240,7 @@ export function CliffStudy({
     return () => {
       live = false;
     };
-  }, []);
+  }, [near]);
 
   useEffect(() => () => {
     lines.structure.dispose();
@@ -310,8 +330,8 @@ export function CliffStudy({
         </>
       )}
       <primitive object={plant} />
-      <EstateAsset found={found} distance={distance} glass revealRef={revealRef} fallback={null} />
-      <MepAsset url={found?.mep ?? null} fallback={null} />
+      {near ? <EstateAsset found={found} distance={distance} glass revealRef={revealRef} fallback={null} /> : null}
+      {near ? <MepAsset url={found?.mep ?? null} fallback={null} /> : null}
     </group>
   );
   if (!placed || !anchor) return body;
