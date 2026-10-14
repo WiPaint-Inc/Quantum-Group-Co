@@ -86,8 +86,11 @@ export const journeyPath = {
     face: 12,
   },
   timing: {
-    /** Homepage scroll track. Stop i sits at progress i / (stopCount - 1). */
-    scrollTrackVh: 1100,
+    /**
+     * Homepage scroll track. Stop i sits at progress i / (stopCount - 1).
+     * Longer than the old 1100vh track so the same wheel travel advances less of the path.
+     */
+    scrollTrackVh: 1760,
     /** Fraction of each stop-to-stop span spent holding the stop pose. */
     dwell: 0.17,
     /** Contact card fades in over the last 22% of the finale, starting at u = 0.78. */

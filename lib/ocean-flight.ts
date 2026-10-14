@@ -320,6 +320,26 @@ function finalePose(u: number): { pos: Vec3; look: Vec3 } {
   };
 }
 
+/** Map a 0–1 scroll fraction onto the bezier so equal progress is equal distance, including the cruise lift. */
+function arcParameter(a: Vec3, c1: Vec3, c2: Vec3, b: Vec3, hop: number, fraction: number) {
+  const steps = 32;
+  const cum = [0];
+  let prev = bez(a, c1, c2, b, 0);
+  for (let i = 1; i <= steps; i += 1) {
+    const u = i / steps;
+    const point = bez(a, c1, c2, b, u);
+    point[1] += Math.sin(Math.PI * u) * hop;
+    cum.push(cum[i - 1] + length(sub(point, prev)));
+    prev = point;
+  }
+  const target = clamp01(fraction) * cum[steps];
+  let i = 1;
+  while (i < steps && cum[i] < target) i += 1;
+  const span = cum[i] - cum[i - 1];
+  const local = span > 1e-4 ? (target - cum[i - 1]) / span : 0;
+  return (i - 1 + local) / steps;
+}
+
 function camAt(progressStops: number): { pos: Vec3; look: Vec3 } {
   const k = clamp(Math.floor(progressStops), 0, N - 1);
   const f = progressStops - k;
@@ -331,8 +351,6 @@ function camAt(progressStops: number): { pos: Vec3; look: Vec3 } {
   if (f <= DW) return viewPose(k, f / DW);
   if (f >= 1 - DW) return viewPose(k + 1, (f - 1) / DW);
   const tl = (f - DW) / (1 - 2 * DW);
-  const te = tl * tl * tl * (tl * (tl * 6 - 15) + 10);
-  const t = tl * 0.25 + te * 0.75;
   const start = viewPose(k, 1);
   const startBack = viewPose(k, 0.92);
   const end = viewPose(k + 1, -1);
@@ -343,13 +361,17 @@ function camAt(progressStops: number): { pos: Vec3; look: Vec3 } {
   const into = scale(norm(add(scale(norm(sub(endForward.pos, end.pos)), 0.6), dir)), span * 0.38);
   const c1 = add(start.pos, out);
   const c2 = sub(end.pos, into);
+  const hop = Math.max(0, journeyPath.camera.cruiseAltitude - (start.pos[1] + end.pos[1]) / 2);
+  const t = arcParameter(start.pos, c1, c2, end.pos, hop, tl);
   const pos = bez(start.pos, c1, c2, end.pos, t);
-  pos[1] += Math.sin(Math.PI * t) * Math.max(0, journeyPath.camera.cruiseAltitude - (start.pos[1] + end.pos[1]) / 2);
-  const next = bez(start.pos, c1, c2, end.pos, Math.min(1, t + 0.01));
-  const tangent = norm([next[0] - pos[0], 0, next[2] - pos[2]]);
+  pos[1] += Math.sin(Math.PI * t) * hop;
+  const next = bez(start.pos, c1, c2, end.pos, Math.min(1, t + 0.004));
+  next[1] += Math.sin(Math.PI * Math.min(1, t + 0.004)) * hop;
+  const step = sub(next, pos);
+  const flat = Math.hypot(step[0], step[2]) || 1;
+  const tangent: Vec3 = [step[0] / flat, 0, step[2] / flat];
   const cruiseLook: Vec3 = [pos[0] + tangent[0] * 1100, 0, pos[2] + tangent[2] * 1100];
-  const eased = t * t * (3 - 2 * t);
-  const look = lerp3(lerp3(start.look, end.look, eased), cruiseLook, Math.pow(Math.sin(Math.PI * t), 1.5) * 0.8);
+  const look = lerp3(lerp3(start.look, end.look, t), cruiseLook, Math.pow(Math.sin(Math.PI * t), 1.5) * 0.8);
   const low = Math.min(start.pos[1], end.pos[1]);
   const floor = journeyPath.camera.cruiseFloor;
   pos[1] = clamp(pos[1], low < floor ? low : floor, journeyPath.camera.cruiseCeiling);

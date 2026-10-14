@@ -6,7 +6,7 @@ import { Component, Suspense, useLayoutEffect, useMemo, type ReactNode } from "r
 import * as THREE from "three";
 import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 import { chooseEstateLod, type EstateAvailability } from "@/lib/estate-drop";
-import { batchStatic, capTextures, disposeObjectTree, hideCadDupes } from "@/lib/estate-scene";
+import { batchStatic, capTextures, disposeObjectTree, hideCadDupes, splitEstateVegetation } from "@/lib/estate-scene";
 
 let ktx2: KTX2Loader | null = null;
 
@@ -56,7 +56,8 @@ function cloneScene(source: THREE.Object3D, glass: boolean) {
   });
   capTextures(scene);
   if (!glass) batchStatic(scene);
-  return scene;
+  const parts = glass ? null : splitEstateVegetation(scene);
+  return { scene, buildings: parts?.buildings ?? scene };
 }
 
 function GlbModel({
@@ -72,7 +73,8 @@ function GlbModel({
   const gltf = useGLTF(url, "/decoders/draco/gltf/", true, (loader) => {
     attachKtx2(loader as unknown as { setKTX2Loader?: (transcoder: unknown) => unknown }, gl);
   });
-  const scene = useMemo(() => cloneScene(gltf.scene, glass), [glass, gltf.scene]);
+  const model = useMemo(() => cloneScene(gltf.scene, glass), [glass, gltf.scene]);
+  const { scene, buildings } = model;
   const glassMat = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -118,7 +120,7 @@ function GlbModel({
     glassMat.uniforms.uReveal.value = revealRef.current;
     (glassMat.uniforms.uCamera.value as THREE.Vector3).copy(camera.position);
     if (glass) return;
-    scene.scale.y = 0.04 + 0.96 * revealRef.current;
+    buildings.scale.y = 0.04 + 0.96 * revealRef.current;
   });
 
   return <primitive object={scene} />;

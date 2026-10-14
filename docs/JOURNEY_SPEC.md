@@ -27,7 +27,7 @@ The opening does not orbit an island. Later stops use the approach rows in `jour
 - Look-at is the island origin minus `(sin(bearing) * lookAhead * distance, …)` with look height `3 + height * 0.02`.
 - During the dwell, `bearing` shifts by `orbit * dwellProgress` degrees and height scales by `1.06 - 0.06 * orbit`. Design and Build and Engineering do not use that small orbit. They use `journeyPath.camera.estateFlyIn` instead.
 
-The scroll track is `1100vh`. Each stop-to-stop span holds the stop pose for the first `dwell` (`0.17`) of the span, travels on a cubic bezier, then settles into the next pose for the last `0.17`. The bezier is lifted toward the 285 m cruise. The website eases the parameter with a smootherstep blend (`0.25` linear + `0.75` smootherstep). That ease is part of the spline.
+The scroll track is `1760vh`, so the same wheel or swipe covers less of the route than the old `1100vh` track. Each stop-to-stop span holds the stop pose for the first `dwell` (`0.17`) of the span, travels on a cubic bezier, then settles into the next pose for the last `0.17`. The bezier is lifted toward the 285 m cruise. Travel is timed by arc length, so equal scroll during a leg is equal distance along that curve. The camera only moves forward along the leg. Island palms and canopy are present from the first frame and do not sway; only the built form scales in.
 
 Chapters, after Arrival: Full Design & Build, Construction, Engineering, Plans & Rendering, Developments & Hotels, Advanced Materials Distribution, Your Build, Live, Contact. The plans ridge stays in the water. It is not a chapter. The right-hand legend lists those chapters and not Arrival.
 

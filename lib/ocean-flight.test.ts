@@ -4,7 +4,7 @@ import { oceanStops } from "../content/ocean-stops.ts";
 import { company } from "../content/site.ts";
 import { applyCliffLedge, islandMeshSegments, sampleIslandHeight } from "../components/ocean/geometry.ts";
 import { waterFragment } from "../components/ocean/shaders.ts";
-import { cliffsideWireframeUrl, hideCadDupes, batchStatic } from "./estate-scene.ts";
+import { cliffsideWireframeUrl, hideCadDupes, batchStatic, splitEstateVegetation } from "./estate-scene.ts";
 import { parseEstateCameraPath, setEstateCameraPath } from "./estate-drop.ts";
 import { contactReveal, estateAnchor, sampleFlight, shipMotion, shipTrack, stopProgress } from "./ocean-flight.ts";
 import { journeyPath } from "../src/journey/path.ts";
@@ -20,6 +20,36 @@ function align(sample: ReturnType<typeof sampleFlight>) {
   const sun = Math.hypot(sample.sun[0], sample.sun[2]) || 1;
   return (sample.sun[0] * hx + sample.sun[2] * hz) / sun;
 }
+
+test("each cruise leg keeps an even forward pace", () => {
+  const n = oceanStops.length;
+  const dwell = journeyPath.timing.dwell;
+  for (let leg = 0; leg < n - 2; leg += 1) {
+    const start = (leg + dwell) / (n - 1);
+    const end = (leg + 1 - dwell) / (n - 1);
+    const steps = 24;
+    const distances: number[] = [];
+    let previous = sampleFlight(start);
+    let reverse = 0;
+    const chordX = sampleFlight(end).pos[0] - previous.pos[0];
+    const chordZ = sampleFlight(end).pos[2] - previous.pos[2];
+    const chord = Math.hypot(chordX, chordZ) || 1;
+    for (let i = 1; i <= steps; i += 1) {
+      const sample = sampleFlight(start + ((end - start) * i) / steps);
+      const dx = sample.pos[0] - previous.pos[0];
+      const dy = sample.pos[1] - previous.pos[1];
+      const dz = sample.pos[2] - previous.pos[2];
+      distances.push(Math.hypot(dx, dy, dz));
+      reverse = Math.min(reverse, (dx * chordX + dz * chordZ) / chord);
+      previous = sample;
+    }
+    const min = Math.min(...distances);
+    const max = Math.max(...distances);
+    assert.ok(min > 1, `leg ${leg} stalled at ${min}`);
+    assert.ok(max / min < 1.85, `leg ${leg} pace ${max / min}`);
+    assert.ok(reverse > -8, `leg ${leg} backed up ${reverse}`);
+  }
+});
 
 test("the cruise sits near 285 m and approaches drop into the 60–160 m band", () => {
   const arrival = sampleFlight(0);
@@ -68,6 +98,23 @@ test("engineering is a beachfront spit and night water stays at least #05304a", 
   assert.ok(shelf < spine * 0.5, `shelf ${shelf} spine ${spine}`);
   assert.ok(hole < 1, `lagoon centre ${hole}`);
   assert.match(waterFragment, /vec3\(0\.01961, 0\.18824, 0\.29020\)/);
+});
+
+test("estate vegetation stays full size while the building reveals", () => {
+  const root = new THREE.Group();
+  const palm = new THREE.Mesh(new THREE.BoxGeometry(1, 4, 1), new THREE.MeshBasicMaterial());
+  palm.name = "VEG_CoconutPalm_0";
+  const wall = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 2), new THREE.MeshBasicMaterial());
+  wall.name = "A_FF_Walls";
+  root.add(palm, wall);
+  const { buildings, vegetation } = splitEstateVegetation(root);
+  buildings.scale.y = 0.2;
+  palm.updateWorldMatrix(true, false);
+  wall.updateWorldMatrix(true, false);
+  assert.equal(vegetation.children.includes(palm), true);
+  assert.equal(buildings.children.includes(wall), true);
+  assert.ok(Math.abs(palm.matrixWorld.elements[5] - 1) < 0.001, "palm scale");
+  assert.ok(Math.abs(wall.matrixWorld.elements[5] - 0.2) < 0.001, "wall scale");
 });
 
 test("mega keeps one terrain mesh and the cliffside wireframe skips the missing v1aa file", () => {
@@ -261,8 +308,11 @@ test("design and construction fly in without a cut, and developments stays aeria
   assert.ok(developmentsRest.pos[1] > 140 && developmentsRest.pos[1] < 170, `developments ${developmentsRest.pos[1]}`);
   const seam = sampleFlight(stopProgress(design) + dwell / (n - 1));
   const after = sampleFlight(stopProgress(design) + dwell / (n - 1) + 1e-4);
+  const later = sampleFlight(stopProgress(design) + dwell / (n - 1) + 2e-4);
   const jump = Math.hypot(seam.pos[0] - after.pos[0], seam.pos[1] - after.pos[1], seam.pos[2] - after.pos[2]);
-  assert.ok(jump < 2, `design departure ${jump}`);
+  const next = Math.hypot(after.pos[0] - later.pos[0], after.pos[1] - later.pos[1], after.pos[2] - later.pos[2]);
+  assert.ok(jump < 25 && next < 25, `design departure ${jump} then ${next}`);
+  assert.ok(Math.abs(jump - next) / Math.max(jump, next, 1) < 0.35, `even departure ${jump} vs ${next}`);
 });
 
 test("a delivered camera path bends the middle of the fly-in and leaves the ends", () => {

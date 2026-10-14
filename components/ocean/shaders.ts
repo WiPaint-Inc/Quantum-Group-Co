@@ -385,7 +385,7 @@ export const canopyVertex = /* glsl */ `
   void main() {
     vUv = uv;
     vec3 p = position;
-    p.x += sin(uTime * 0.85 + position.y * 2.4 + position.z) * 0.06 * position.y;
+    p.x += uTime * 0.0;
     vec4 world = modelMatrix * instanceMatrix * vec4(p, 1.0);
     vWorld = world.xyz;
     vNormal = normalize(mat3(modelMatrix * instanceMatrix) * normal);
